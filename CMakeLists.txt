@@ -11,4 +11,4 @@ find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} include/rigidTransformation)
 
 add_executable(so2_test tests/so2_tests.cpp)
-target_link_libraries(so2_test ${GTEST_LIBRARIES} gtest gtest_main)
+target_link_libraries(so2_test ${GTEST_LIBRARIES} gtest gtest_main pthread)
