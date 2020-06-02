@@ -5,17 +5,19 @@
 
 //This class is just a base defining some functions that all inherited classes will contain
 
-template <class T>
+template <typename T>
 class TransformationBase
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 public:
     TransformationBase();
-    virtual Eigen::MatrixBase<T> R() const;    
+    TransformationBase(T v): val{v} {}
+    // virtual Eigen::MatrixBase<T> R() const;    
+    virtual T R() const { return val; }
 
 protected:
-    Eigen::MatrixBase<T> _arr;
-
+    // Eigen::MatrixBase<T> _arr;
+    T val;
 };
 
 #endif
