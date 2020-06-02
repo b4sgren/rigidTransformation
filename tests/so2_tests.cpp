@@ -1,6 +1,15 @@
 #include <gtest/gtest.h>
+#include <Eigen/Core>
 
-TEST(Something, Something)
+// #include "so2.h"
+
+TEST(AskForTheRotationMatrix, ReturnsTheRotationMatrix)
 {
-    EXPECT_EQ(1,1);
+    Eigen::Matrix2d R_true;
+    R_true << 1, 0, 0, 1;
+
+    // SO2<double> R(R_true);
+    
+    // EXPECT_TRUE(R_true.isApprox(R.R()));
+    EXPECT_TRUE(true);
 }

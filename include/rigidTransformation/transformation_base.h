@@ -10,10 +10,10 @@ class TransformationBase
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 public:
-    TransformationBase(const Eigen::MatrixBase<T> &mat);
+    TransformationBase();
     virtual Eigen::MatrixBase<T> R() const;    
 
-private:
+protected:
     Eigen::MatrixBase<T> _arr;
 
 };
