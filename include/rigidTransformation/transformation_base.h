@@ -4,6 +4,7 @@
 #include <Eigen/Core>
 
 //This class is just a base defining some functions that all inherited classes will contain
+const double PI = 3.14159265;
 
 template <typename T, unsigned int S>
 class TransformationBase
