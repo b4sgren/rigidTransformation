@@ -14,12 +14,18 @@ class SO2 : public TransformationBase<T,2>
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using TransformationBase<T,2>::_arr;
-    // using Mat2T = Eigen::Matrix<T,2,2>;
+    using Mat2T = Eigen::Matrix<T,2,2>;
 public:
     SO2(): TransformationBase<T,2>{Eigen::Matrix<T,2,2>::Identity()} {}
     SO2(Eigen::Matrix<T, 2, 2> mat) : TransformationBase<T,2>{mat} {}
 
     Eigen::Matrix<T,2,2> R() const { return _arr; }
+
+    bool isValidRotation() const
+    {
+        double det = _arr.determinant();
+        return abs(det - 1.0) < 1e-8;
+    }
 
     static SO2<T> random()
     {
@@ -35,10 +41,11 @@ public:
         return SO2<T>(arr);
     }
 
-    bool isValidRotation() const
+    static SO2<T> fromAngle(T ang)
     {
-        double det = _arr.determinant();
-        return abs(det - 1.0) < 1e-8;
+        T ct{cos(ang)}, st{sin(ang)};
+        Mat2T mat = (Mat2T() << ct, -st, st, ct).finished();
+        return SO2<T>(mat);
     }
 
 private:
