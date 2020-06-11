@@ -37,6 +37,11 @@ public:
         return SO2<double>(_arr.transpose());
     }
 
+    void selfInv()
+    {
+        _arr.transposeInPlace();
+    }
+
     static SO2<T> random()
     {
         std::random_device rd;

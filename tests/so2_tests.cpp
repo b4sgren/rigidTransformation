@@ -78,3 +78,15 @@ TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse)
         EXPECT_TRUE(I.R().isApprox(Eigen::Matrix2d::Identity()));
     }
 }
+
+TEST(InverseInPlace, InvertsObject)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        Eigen::Matrix2d inv = R.R().transpose();
+        R.selfInv();
+
+        EXPECT_TRUE(inv.isApprox(R.R()));
+    }
+}
