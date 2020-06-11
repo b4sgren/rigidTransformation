@@ -24,6 +24,11 @@ public:
         return SO2<T>(this->R() * R2.R());
     }
 
+    Eigen::Vector2d operator*(const Eigen::Vector2d &v)
+    {
+        return this->R() * v;
+    }
+
     Eigen::Matrix<T,2,2> R() const { return _arr; }
 
     bool isValidRotation() const
@@ -44,7 +49,12 @@ public:
 
     Eigen::Vector2d rota(const Eigen::Vector2d &v)
     {
-        return this->R() * v;
+        return (*this) * v;
+    }
+
+    Eigen::Vector2d rotp(const Eigen::Vector2d &v)
+    {
+        return this->inv() * v;
     }
 
     static SO2<T> random()
