@@ -19,6 +19,11 @@ public:
     SO2(): TransformationBase<T,2>{Eigen::Matrix<T,2,2>::Identity()} {}
     SO2(Eigen::Matrix<T, 2, 2> mat) : TransformationBase<T,2>{mat} {}
 
+    SO2<T> operator*(SO2<T> R2)
+    {
+        return SO2<T>(this->R() * R2.R());
+    }
+
     Eigen::Matrix<T,2,2> R() const { return _arr; }
 
     bool isValidRotation() const
