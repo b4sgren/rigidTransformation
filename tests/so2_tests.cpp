@@ -140,3 +140,18 @@ TEST(PassiveRotation, RotatedVector)
         EXPECT_TRUE(res_true.isApprox(res));
     }
 }
+
+TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        double angle{getAngle(R.R())};
+
+        Eigen::Matrix2d r{SO2<double>::hat(angle)};
+        Eigen::Matrix2d r_true;
+        r_true << 0.0, -angle, angle, 0.0;
+
+        EXPECT_TRUE(r_true.isApprox(r));
+    }
+}

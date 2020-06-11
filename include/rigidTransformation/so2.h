@@ -78,6 +78,13 @@ public:
         return SO2<T>(mat);
     }
 
+    static Eigen::Matrix2d hat(double ang)
+    {
+        Eigen::Matrix2d mat;
+        mat << 0.0, -ang, ang, 0.0;
+        return mat;
+    }
+
 private:
 };
 
