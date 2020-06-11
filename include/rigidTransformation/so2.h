@@ -42,6 +42,11 @@ public:
         _arr.transposeInPlace();
     }
 
+    Eigen::Vector2d rota(const Eigen::Vector2d &v)
+    {
+        return this->R() * v;
+    }
+
     static SO2<T> random()
     {
         std::random_device rd;

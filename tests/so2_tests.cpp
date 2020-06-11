@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <Eigen/Core>
 #include <iostream>
+#include <random>
 
 #include "so2.h"
 
@@ -17,6 +18,17 @@ double wrap(double ang)
     ang = ang > pi ? ang - 2 * pi : ang;
     ang = ang <= -pi ? ang + 2 * pi : ang;
     return ang;
+}
+
+Eigen::Vector2d randVec2d(double min, double max)
+{
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::uniform_real_distribution<double> dist(min, max);
+
+    Eigen::Vector2d vec;
+    vec << dist(generator), dist(generator);
+    return vec;
 }
 
 TEST(AskForTheRotationMatrix, ReturnsTheRotationMatrix)
@@ -88,5 +100,24 @@ TEST(InverseInPlace, InvertsObject)
         R.selfInv();
 
         EXPECT_TRUE(inv.isApprox(R.R()));
+    }
+}
+
+TEST(ActiveRotation, RotatedVector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
+        
+        Eigen::Vector2d res{R.rota(vec)};
+
+        double ang{getAngle(R.R())};
+        double ct{cos(ang)}, st{sin(ang)};
+        Eigen::Vector2d res_true{Eigen::Vector2d::Zero()};
+        res_true(0) = ct * vec(0) - st * vec(1);
+        res_true(1) = st * vec(0) + ct * vec(1);
+
+        EXPECT_TRUE(res_true.isApprox(res));
     }
 }
