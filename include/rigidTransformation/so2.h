@@ -37,9 +37,9 @@ public:
         return abs(det - 1.0) < 1e-8;
     }
 
-    SO2<double> inv()
+    SO2<T> inv()
     {
-        return SO2<double>(_arr.transpose());
+        return SO2<T>(_arr.transpose());
     }
 
     void selfInv()
@@ -47,12 +47,12 @@ public:
         _arr.transposeInPlace();
     }
 
-    Eigen::Vector2d rota(const Eigen::Vector2d &v)
+    Eigen::Vector2d rota(const Eigen::Vector2d &v) //Template for use with Ceres?
     {
         return (*this) * v;
     }
 
-    Eigen::Vector2d rotp(const Eigen::Vector2d &v)
+    Eigen::Vector2d rotp(const Eigen::Vector2d &v) //Template for use with Ceres?
     {
         return this->inv() * v;
     }
@@ -78,14 +78,14 @@ public:
         return SO2<T>(mat);
     }
 
-    static Eigen::Matrix2d hat(double ang)
+    static Eigen::Matrix2d hat(double ang) //Template for use with Ceres?
     {
         Eigen::Matrix2d mat;
         mat << 0.0, -ang, ang, 0.0;
         return mat;
     }
 
-    static double vee(const Eigen::Matrix2d &mat)
+    static double vee(const Eigen::Matrix2d &mat) //Template for use with Ceres?
     {
         return mat(1,0);
     }
