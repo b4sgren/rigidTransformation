@@ -85,6 +85,11 @@ public:
         return mat;
     }
 
+    static double vee(const Eigen::Matrix2d &mat)
+    {
+        return mat(1,0);
+    }
+
 private:
 };
 

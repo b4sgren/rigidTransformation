@@ -155,3 +155,17 @@ TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
         EXPECT_TRUE(r_true.isApprox(r));
     }
 }
+
+TEST(VeeOperator, GivenSkewSymmetricMatrixReturnAngle)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        double angle{getAngle(R.R())};
+
+        Eigen::Matrix2d tmp{SO2<double>::hat(angle)};
+        double ang{SO2<double>::vee(tmp)};
+
+        EXPECT_TRUE(ang==angle);
+    }
+}
