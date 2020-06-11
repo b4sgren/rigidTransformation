@@ -32,6 +32,11 @@ public:
         return abs(det - 1.0) < 1e-8;
     }
 
+    SO2<double> inv()
+    {
+        return SO2<double>(_arr.transpose());
+    }
+
     static SO2<T> random()
     {
         std::random_device rd;

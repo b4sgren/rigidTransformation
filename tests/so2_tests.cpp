@@ -65,3 +65,16 @@ TEST(ResultOfGroupMultiplication, ReturnsNewMemberOfGroup)
         EXPECT_TRUE(R3_true.R().isApprox(R3.R(), 1e-8));
     }
 }
+
+TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse)
+{
+    for(int i{0}; i != 100; i++)
+    {
+        SO2<double> R{SO2<double>::random()};
+        SO2<double> R_inv{R.inv()};
+
+        SO2<double> I = R * R_inv;
+
+        EXPECT_TRUE(I.R().isApprox(Eigen::Matrix2d::Identity()));
+    }
+}
