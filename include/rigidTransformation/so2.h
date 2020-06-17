@@ -15,6 +15,7 @@ class SO2 : public TransformationBase<T,2>
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using TransformationBase<T,2>::_arr;
     using Mat2T = Eigen::Matrix<T,2,2>;
+    using Vec2T = Eigen::Matrix<T,2,1>;
 public:
     SO2(): TransformationBase<T,2>{Eigen::Matrix<T,2,2>::Identity()} {}
     SO2(Eigen::Matrix<T, 2, 2> mat) : TransformationBase<T,2>{mat} {}
@@ -24,16 +25,16 @@ public:
         return SO2<T>(this->R() * R2.R());
     }
 
-    Eigen::Vector2d operator*(const Eigen::Vector2d &v)
+    Vec2T operator*(const Vec2T &v)
     {
         return this->R() * v;
     }
 
-    Eigen::Matrix<T,2,2> R() const { return _arr; }
+    Mat2T R() const { return _arr; }
 
     bool isValidRotation() const
     {
-        double det = _arr.determinant();
+        double det = _arr.determinant(); //double or type T?
         return abs(det - 1.0) < 1e-8;
     }
 
@@ -47,12 +48,12 @@ public:
         _arr.transposeInPlace();
     }
 
-    Eigen::Vector2d rota(const Eigen::Vector2d &v) //Template for use with Ceres?
+    Vec2T rota(const Vec2T &v)
     {
         return (*this) * v;
     }
 
-    Eigen::Vector2d rotp(const Eigen::Vector2d &v) //Template for use with Ceres?
+    Vec2T rotp(const Vec2T &v)
     {
         return this->inv() * v;
     }
@@ -66,7 +67,7 @@ public:
         T ang{dist(generator)};
 
         T ct{cos(ang)}, st{sin(ang)};
-        Eigen::Matrix<T,2,2> arr;
+        Mat2T arr;
         arr << ct, -st, st, ct;
         return SO2<T>(arr);
     }
@@ -78,14 +79,14 @@ public:
         return SO2<T>(mat);
     }
 
-    static Eigen::Matrix2d hat(double ang) //Template for use with Ceres?
+    static Mat2T hat(T ang)
     {
-        Eigen::Matrix2d mat;
-        mat << 0.0, -ang, ang, 0.0;
+        Mat2T mat;
+        mat << T(0.0), -ang, ang, T(0.0);
         return mat;
     }
 
-    static double vee(const Eigen::Matrix2d &mat) //Template for use with Ceres?
+    static T vee(const Mat2T &mat)
     {
         return mat(1,0);
     }

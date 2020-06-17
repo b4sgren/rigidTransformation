@@ -15,6 +15,8 @@ public:
     TransformationBase(const Eigen::Matrix<T,S,S> &mat): _arr{mat} {}
 
     virtual Eigen::Matrix<T,S,S> R() const = 0;    
+    virtual Eigen::Matrix<T,S,S> Mat() const { return _arr; }
+    virtual T* data() { return _arr.data(); }
 
 protected:
     Eigen::Matrix<T,S,S> _arr;
