@@ -30,7 +30,9 @@ public:
         return this->R() * v;
     }
 
-    Mat2T R() const { return _arr; }
+    Mat2T R() const override { return _arr; }
+    
+    Mat2T Adj() const override { return Mat2T::Identity(); }
 
     bool isValidRotation() const
     {
@@ -48,12 +50,12 @@ public:
         _arr.transposeInPlace();
     }
 
-    Vec2T rota(const Vec2T &v)
+    Vec2T rota(const Vec2T &v) //Should this be inherited?
     {
         return (*this) * v;
     }
 
-    Vec2T rotp(const Vec2T &v)
+    Vec2T rotp(const Vec2T &v) //should this be inherited?
     {
         return this->inv() * v;
     }

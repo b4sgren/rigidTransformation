@@ -14,9 +14,14 @@ public:
     TransformationBase() = default;
     TransformationBase(const Eigen::Matrix<T,S,S> &mat): _arr{mat} {}
 
-    virtual Eigen::Matrix<T,S,S> R() const = 0;    
+    // Defined virtual methods
     virtual Eigen::Matrix<T,S,S> Mat() const { return _arr; }
     virtual T* data() { return _arr.data(); }
+
+    // Pure virtual methods
+    virtual Eigen::Matrix<T,S,S> R() const = 0;    
+    virtual Eigen::Matrix<T,S,S> Adj() const = 0; //This signature will have to change with SE<T>
+    // virtual Eigen::Matrix<T,S,S> skew(const Eigen::Matrix<T,(S*(S-1))/2,1> &vec) const = 0; //Can this be virtual?
 
 protected:
     Eigen::Matrix<T,S,S> _arr;

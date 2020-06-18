@@ -169,3 +169,17 @@ TEST(VeeOperator, GivenSkewSymmetricMatrixReturnAngle)
         EXPECT_TRUE(ang==angle);
     }
 }
+
+TEST(SkewMethod, Value_ReturnSkewSymmetricMatrix)
+{
+    for(int i{0}; i !=100; ++i)
+    {
+        double j{i};
+        
+    }
+}
+
+TEST(Ajoint, DISABLED_GivenSO2Element)
+{
+    //Do once Exp is implemented
+}
