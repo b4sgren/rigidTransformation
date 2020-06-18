@@ -41,145 +41,145 @@ TEST(AskForTheRotationMatrix, ReturnsTheRotationMatrix)
     EXPECT_TRUE(R_true.isApprox(R.R()));
 }
 
-TEST(AskForRandomMatrix, ReturnsMatrixWithDeterminantOne)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        SO2<double> R = SO2<double>::random();
-        EXPECT_TRUE(R.isValidRotation());
-    }
-}
+// TEST(AskForRandomMatrix, ReturnsMatrixWithDeterminantOne)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SO2<double> R = SO2<double>::random();
+//         EXPECT_TRUE(R.isValidRotation());
+//     }
+// }
 
-TEST(AskForMatrixFromAngle, ReturnsRotationMatrix)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        SO2<double> R = SO2<double>::random();
-        double ang = atan2(R.R()(1,0), R.R()(0,0));
-        SO2<double> R2 = SO2<double>::fromAngle(ang);
-        EXPECT_TRUE(R.R().isApprox(R2.R()));
-    }
-}
+// TEST(AskForMatrixFromAngle, ReturnsRotationMatrix)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SO2<double> R = SO2<double>::random();
+//         double ang = atan2(R.R()(1,0), R.R()(0,0));
+//         SO2<double> R2 = SO2<double>::fromAngle(ang);
+//         EXPECT_TRUE(R.R().isApprox(R2.R()));
+//     }
+// }
 
-TEST(ResultOfGroupMultiplication, ReturnsNewMemberOfGroup)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        SO2<double> R1 = SO2<double>::random();
-        SO2<double> R2 = SO2<double>::random();
+// TEST(ResultOfGroupMultiplication, ReturnsNewMemberOfGroup)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SO2<double> R1 = SO2<double>::random();
+//         SO2<double> R2 = SO2<double>::random();
 
-        SO2<double> R3 = R1 * R2;
-        double ang1{getAngle(R1.R())}, ang2{getAngle(R2.R())};
-        double ang3{ang1 + ang2};
-        ang3 = wrap(ang3);
-        SO2<double> R3_true = SO2<double>::fromAngle(ang3);
+//         SO2<double> R3 = R1 * R2;
+//         double ang1{getAngle(R1.R())}, ang2{getAngle(R2.R())};
+//         double ang3{ang1 + ang2};
+//         ang3 = wrap(ang3);
+//         SO2<double> R3_true = SO2<double>::fromAngle(ang3);
 
-        EXPECT_TRUE(R3_true.R().isApprox(R3.R(), 1e-8));
-    }
-}
+//         EXPECT_TRUE(R3_true.R().isApprox(R3.R(), 1e-8));
+//     }
+// }
 
-TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse)
-{
-    for(int i{0}; i != 100; i++)
-    {
-        SO2<double> R{SO2<double>::random()};
-        SO2<double> R_inv{R.inv()};
+// TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse)
+// {
+//     for(int i{0}; i != 100; i++)
+//     {
+//         SO2<double> R{SO2<double>::random()};
+//         SO2<double> R_inv{R.inv()};
 
-        SO2<double> I = R * R_inv;
+//         SO2<double> I = R * R_inv;
 
-        EXPECT_TRUE(I.R().isApprox(Eigen::Matrix2d::Identity()));
-    }
-}
+//         EXPECT_TRUE(I.R().isApprox(Eigen::Matrix2d::Identity()));
+//     }
+// }
 
-TEST(InverseInPlace, InvertsObject)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        SO2<double> R{SO2<double>::random()};
-        Eigen::Matrix2d inv = R.R().transpose();
-        R.selfInv();
+// TEST(InverseInPlace, InvertsObject)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SO2<double> R{SO2<double>::random()};
+//         Eigen::Matrix2d inv = R.R().transpose();
+//         R.selfInv();
 
-        EXPECT_TRUE(inv.isApprox(R.R()));
-    }
-}
+//         EXPECT_TRUE(inv.isApprox(R.R()));
+//     }
+// }
 
-TEST(ActiveRotation, RotatedVector)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        SO2<double> R{SO2<double>::random()};
-        Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
+// TEST(ActiveRotation, RotatedVector)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SO2<double> R{SO2<double>::random()};
+//         Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
         
-        Eigen::Vector2d res{R.rota(vec)};
+//         Eigen::Vector2d res{R.rota(vec)};
 
-        double ang{getAngle(R.R())};
-        double ct{cos(ang)}, st{sin(ang)};
-        Eigen::Vector2d res_true{Eigen::Vector2d::Zero()};
-        res_true(0) = ct * vec(0) - st * vec(1);
-        res_true(1) = st * vec(0) + ct * vec(1);
+//         double ang{getAngle(R.R())};
+//         double ct{cos(ang)}, st{sin(ang)};
+//         Eigen::Vector2d res_true{Eigen::Vector2d::Zero()};
+//         res_true(0) = ct * vec(0) - st * vec(1);
+//         res_true(1) = st * vec(0) + ct * vec(1);
 
-        EXPECT_TRUE(res_true.isApprox(res));
-    }
-}
+//         EXPECT_TRUE(res_true.isApprox(res));
+//     }
+// }
 
-TEST(PassiveRotation, RotatedVector)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        SO2<double> R{SO2<double>::random()};
-        Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
+// TEST(PassiveRotation, RotatedVector)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SO2<double> R{SO2<double>::random()};
+//         Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
         
-        Eigen::Vector2d res{R.rotp(vec)};
+//         Eigen::Vector2d res{R.rotp(vec)};
 
-        double ang{getAngle(R.R())};
-        double ct{cos(ang)}, st{sin(ang)};
-        Eigen::Vector2d res_true{Eigen::Vector2d::Zero()};
-        res_true(0) = ct * vec(0) + st * vec(1);
-        res_true(1) = -st * vec(0) + ct * vec(1);
+//         double ang{getAngle(R.R())};
+//         double ct{cos(ang)}, st{sin(ang)};
+//         Eigen::Vector2d res_true{Eigen::Vector2d::Zero()};
+//         res_true(0) = ct * vec(0) + st * vec(1);
+//         res_true(1) = -st * vec(0) + ct * vec(1);
 
-        EXPECT_TRUE(res_true.isApprox(res));
-    }
-}
+//         EXPECT_TRUE(res_true.isApprox(res));
+//     }
+// }
 
-TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        SO2<double> R{SO2<double>::random()};
-        double angle{getAngle(R.R())};
+// TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SO2<double> R{SO2<double>::random()};
+//         double angle{getAngle(R.R())};
 
-        Eigen::Matrix2d r{SO2<double>::hat(angle)};
-        Eigen::Matrix2d r_true;
-        r_true << 0.0, -angle, angle, 0.0;
+//         Eigen::Matrix2d r{SO2<double>::hat(angle)};
+//         Eigen::Matrix2d r_true;
+//         r_true << 0.0, -angle, angle, 0.0;
 
-        EXPECT_TRUE(r_true.isApprox(r));
-    }
-}
+//         EXPECT_TRUE(r_true.isApprox(r));
+//     }
+// }
 
-TEST(VeeOperator, GivenSkewSymmetricMatrixReturnAngle)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        SO2<double> R{SO2<double>::random()};
-        double angle{getAngle(R.R())};
+// TEST(VeeOperator, GivenSkewSymmetricMatrixReturnAngle)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SO2<double> R{SO2<double>::random()};
+//         double angle{getAngle(R.R())};
 
-        Eigen::Matrix2d tmp{SO2<double>::hat(angle)};
-        double ang{SO2<double>::vee(tmp)};
+//         Eigen::Matrix2d tmp{SO2<double>::hat(angle)};
+//         double ang{SO2<double>::vee(tmp)};
 
-        EXPECT_TRUE(ang==angle);
-    }
-}
+//         EXPECT_TRUE(ang==angle);
+//     }
+// }
 
-TEST(SkewMethod, Value_ReturnSkewSymmetricMatrix)
-{
-    for(int i{0}; i !=100; ++i)
-    {
-        double j{i};
-        
-    }
-}
+// TEST(SkewMethod, Value_ReturnSkewSymmetricMatrix)
+// {
+//     for(int i{0}; i !=100; ++i)
+//     {
+//         double j{i};
 
-TEST(Ajoint, DISABLED_GivenSO2Element)
-{
-    //Do once Exp is implemented
-}
+//     }
+// }
+
+// TEST(Ajoint, DISABLED_GivenSO2Element)
+// {
+//     //Do once Exp is implemented
+// }
