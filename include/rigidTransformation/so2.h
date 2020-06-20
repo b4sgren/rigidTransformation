@@ -24,38 +24,7 @@ public:
         return SO2<T>(this->R() * R2.R());
     }
 
-    // Vec2T operator*(const Vec2T &v)
-    // {
-    //     return this->R() * v;
-    // }
-
     // Mat2T Adj() const override { return Mat2T::Identity(); }
-
-    // bool isValidRotation() const
-    // {
-    //     double det = _arr.determinant(); //double or type T?
-    //     return abs(det - 1.0) < 1e-8;
-    // }
-
-    // SO2<T> inv()
-    // {
-    //     return SO2<T>(_arr.transpose());
-    // }
-
-    // void selfInv()
-    // {
-    //     _arr.transposeInPlace();
-    // }
-
-    // Vec2T rota(const Vec2T &v) //Should this be inherited?
-    // {
-    //     return (*this) * v;
-    // }
-
-    // Vec2T rotp(const Vec2T &v) //should this be inherited?
-    // {
-    //     return this->inv() * v;
-    // }
 
     static SO2<T> random()
     {
@@ -78,17 +47,17 @@ public:
         return SO2<T>(mat);
     }
 
-    // static Mat2T hat(T ang)
-    // {
-    //     Mat2T mat;
-    //     mat << T(0.0), -ang, ang, T(0.0);
-    //     return mat;
-    // }
+    static Mat2T hat(T ang)
+    {
+        Mat2T mat;
+        mat << T(0.0), -ang, ang, T(0.0);
+        return mat;
+    }
 
-    // static T vee(const Mat2T &mat)
-    // {
-    //     return mat(1,0);
-    // }
+    static T vee(const Mat2T &mat)
+    {
+        return mat(1,0);
+    }
 
 private:
 };

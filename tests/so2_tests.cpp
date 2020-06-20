@@ -141,34 +141,34 @@ TEST(PassiveRotation, RotatedVector)
     }
 }
 
-// TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         double angle{getAngle(R.R())};
+TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        double angle{getAngle(R.R())};
 
-//         Eigen::Matrix2d r{SO2<double>::hat(angle)};
-//         Eigen::Matrix2d r_true;
-//         r_true << 0.0, -angle, angle, 0.0;
+        Eigen::Matrix2d r{SO2<double>::hat(angle)};
+        Eigen::Matrix2d r_true;
+        r_true << 0.0, -angle, angle, 0.0;
 
-//         EXPECT_TRUE(r_true.isApprox(r));
-//     }
-// }
+        EXPECT_TRUE(r_true.isApprox(r));
+    }
+}
 
-// TEST(VeeOperator, GivenSkewSymmetricMatrixReturnAngle)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         double angle{getAngle(R.R())};
+TEST(VeeOperator, GivenSkewSymmetricMatrixReturnAngle)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        double angle{getAngle(R.R())};
 
-//         Eigen::Matrix2d tmp{SO2<double>::hat(angle)};
-//         double ang{SO2<double>::vee(tmp)};
+        Eigen::Matrix2d tmp{SO2<double>::hat(angle)};
+        double ang{SO2<double>::vee(tmp)};
 
-//         EXPECT_TRUE(ang==angle);
-//     }
-// }
+        EXPECT_TRUE(ang==angle);
+    }
+}
 
 // TEST(SkewMethod, Value_ReturnSkewSymmetricMatrix)
 // {
