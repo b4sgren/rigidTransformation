@@ -50,16 +50,16 @@ TEST(AskForRandomMatrix, ReturnsMatrixWithDeterminantOne)
     }
 }
 
-// TEST(AskForMatrixFromAngle, ReturnsRotationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R = SO2<double>::random();
-//         double ang = atan2(R.R()(1,0), R.R()(0,0));
-//         SO2<double> R2 = SO2<double>::fromAngle(ang);
-//         EXPECT_TRUE(R.R().isApprox(R2.R()));
-//     }
-// }
+TEST(AskForMatrixFromAngle, ReturnsRotationMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R = SO2<double>::random();
+        double ang = atan2(R.R()(1,0), R.R()(0,0));
+        SO2<double> R2 = SO2<double>::fromAngle(ang);
+        EXPECT_TRUE(R.R().isApprox(R2.R()));
+    }
+}
 
 // TEST(ResultOfGroupMultiplication, ReturnsNewMemberOfGroup)
 // {

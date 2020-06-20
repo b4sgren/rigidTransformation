@@ -72,12 +72,12 @@ public:
         return SO2<T>(arr);
     }
 
-    // static SO2<T> fromAngle(T ang)
-    // {
-    //     T ct{cos(ang)}, st{sin(ang)};
-    //     Mat2T mat = (Mat2T() << ct, -st, st, ct).finished();
-    //     return SO2<T>(mat);
-    // }
+    static SO2<T> fromAngle(T ang)
+    {
+        T ct{cos(ang)}, st{sin(ang)};
+        Mat2T mat = (Mat2T() << ct, -st, st, ct).finished();
+        return SO2<T>(mat);
+    }
 
     // static Mat2T hat(T ang)
     // {
