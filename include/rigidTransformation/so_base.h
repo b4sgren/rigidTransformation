@@ -3,6 +3,7 @@
 
 // #include "transformation_base.h"
 #include <Eigen/Core>
+#include <cmath>
 
 constexpr double PI = 3.14159265;
 
@@ -17,6 +18,14 @@ public:
     virtual ~SO_Base() = default;
 
     MatST R() const { return _arr; }
+
+    bool isValidRotation() const 
+    {
+        T det = _arr.determinant();
+        return abs(det - 1.0) < 1e-8;
+    }
+
+    //virtual Functions
 
 protected:
     MatST _arr;

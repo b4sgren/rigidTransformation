@@ -58,19 +58,19 @@ public:
     //     return this->inv() * v;
     // }
 
-    // static SO2<T> random()
-    // {
-    //     std::random_device rd;
-    //     std::mt19937 generator(rd());
-    //     std::uniform_real_distribution<T> dist(T(-PI), T(PI));
+    static SO2<T> random()
+    {
+        std::random_device rd;
+        std::mt19937 generator(rd());
+        std::uniform_real_distribution<T> dist(T(-PI), T(PI));
 
-    //     T ang{dist(generator)};
+        T ang{dist(generator)};
 
-    //     T ct{cos(ang)}, st{sin(ang)};
-    //     Mat2T arr;
-    //     arr << ct, -st, st, ct;
-    //     return SO2<T>(arr);
-    // }
+        T ct{cos(ang)}, st{sin(ang)};
+        Mat2T arr;
+        arr << ct, -st, st, ct;
+        return SO2<T>(arr);
+    }
 
     // static SO2<T> fromAngle(T ang)
     // {
