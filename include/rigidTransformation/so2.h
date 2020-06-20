@@ -17,19 +17,18 @@ class SO2 : public SO_Base<T,2>
 public:
     SO2(): SO_Base<T,2>{Eigen::Matrix<T,2,2>::Identity()} {}
     SO2(Eigen::Matrix<T, 2, 2> mat) : SO_Base<T,2>{mat} {}
+    SO2(const SO_Base<T,2> &R) : SO_Base<T,2>(R) {}
 
-    // SO2<T> operator*(SO2<T> R2)
-    // {
-    //     return SO2<T>(this->R() * R2.R());
-    // }
+    SO2<T> operator*(SO2<T> R2) //Can this be inherited somehow??
+    {
+        return SO2<T>(this->R() * R2.R());
+    }
 
     // Vec2T operator*(const Vec2T &v)
     // {
     //     return this->R() * v;
     // }
 
-    // Mat2T R() const override { return _arr; }
-    
     // Mat2T Adj() const override { return Mat2T::Identity(); }
 
     // bool isValidRotation() const
