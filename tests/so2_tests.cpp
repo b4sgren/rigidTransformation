@@ -91,17 +91,17 @@ TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse)
     }
 }
 
-// TEST(InverseInPlace, InvertsObject)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         Eigen::Matrix2d inv = R.R().transpose();
-//         R.selfInv();
+TEST(InverseInPlace, InvertsObject)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        Eigen::Matrix2d inv = R.R().transpose();
+        R.selfInv();
 
-//         EXPECT_TRUE(inv.isApprox(R.R()));
-//     }
-// }
+        EXPECT_TRUE(inv.isApprox(R.R()));
+    }
+}
 
 // TEST(ActiveRotation, RotatedVector)
 // {

@@ -36,6 +36,11 @@ public:
         return SO_Base<T, S>(_arr.transpose());
     }
 
+    void selfInv()
+    {
+        _arr.transposeInPlace();
+    }
+
     VecST rota(const VecST &v)
     {
         return (*this) * v;
