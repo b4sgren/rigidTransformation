@@ -35,6 +35,8 @@ public:
 
     Mat2T R() const { return _arr; }
 
+    Mat2T Adj() const { return Mat2T::Identity(); }
+
     bool isValidRotation() const 
     {
         T det{_arr.determinant()};

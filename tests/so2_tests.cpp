@@ -231,7 +231,16 @@ TEST(MatrixExponential, GivenDouble_ReturnSO2Element)
     }
 }
 
-// TEST(Ajoint, DISABLED_GivenSO2Element)
-// {
-//     //Do once Exp is implemented
-// }
+TEST(Ajoint,_GivenSO2ElementAndAngle_TestAdjoint)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        double phi{R.Log()};
+
+        SO2<double> R1{R * SO2<double>::Exp(phi)};
+        SO2<double> R2{SO2<double>::Exp(phi) * R};
+
+        EXPECT_TRUE(R1 == R2);
+    }
+}
