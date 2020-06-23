@@ -130,6 +130,11 @@ public:
         return SO2<T>::fromAngle(theta);
     }
 
+    static SO2<T> Exp(const double phi)
+    {
+        return SO2<T>::fromAngle(phi);
+    }
+
 private:
     Mat2T _arr;
 };
