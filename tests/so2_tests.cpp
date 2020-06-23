@@ -178,10 +178,30 @@ TEST(MatrixLogarithm, GivenSO2Element_ReturnMatrixLog)
         SO2<double> R{SO2<double>::random()};
 
         Eigen::Matrix2d log_R{SO2<double>::log(R)};
-        // Eigen::Matrix2d log_R{R.log()};
+        Eigen::Matrix2d log_R2(SO2<double>::log(R.R()));
+        Eigen::Matrix2d log_R3(R.log());
         Eigen::Matrix2d log_R_true{R.R().log()};
 
         EXPECT_TRUE(log_R_true.isApprox(log_R));
+        EXPECT_TRUE(log_R_true.isApprox(log_R2));
+        EXPECT_TRUE(log_R_true.isApprox(log_R3));
+    }
+}
+
+TEST(MatrixLogarithm, GivenSO2Element_ReturnsDouble)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+
+        double phi(SO2<double>::Log(R));
+        double phi2(SO2<double>::Log(R.R()));
+        double phi3(R.Log());
+        double phi_true{getAngle(R.R())};
+
+        EXPECT_TRUE(phi_true == phi);
+        EXPECT_TRUE(phi_true == phi2);
+        EXPECT_TRUE(phi_true == phi3);
     }
 }
 

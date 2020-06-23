@@ -101,6 +101,24 @@ public:
         return SO2<T>::log(this->R());
     }
 
+    static T Log(const Mat2T &R)
+    {
+        Mat2T log_R{SO2<T>::log(R)};
+        return SO2<T>::vee(log_R);
+    }
+
+    static T Log(const SO2<T> &R)
+    {
+        Mat2T log_R{SO2<T>::log(R)};
+        return SO2<T>::vee(log_R);
+    }
+
+    T Log() const 
+    {
+        Mat2T log_R{this->log()};
+        return SO2<T>::vee(log_R);
+    }
+
 private:
     Mat2T _arr;
 };
