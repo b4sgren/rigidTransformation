@@ -1,15 +1,15 @@
 #ifndef SO2_H
 #define SO2_H
 
-#include "so_base.h"
 #include <Eigen/Dense>
 #include <iostream>
 #include <random>
 #include <cmath>
 
+constexpr double PI = 3.14159265;
 
 template<typename T> 
-class SO2 //: public SO_Base<T,2>
+class SO2
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using Mat2T = Eigen::Matrix<T,2,2>;
@@ -17,9 +17,8 @@ class SO2 //: public SO_Base<T,2>
 public:
     SO2() = default;
     SO2(Eigen::Matrix<T, 2, 2> mat) : _arr{mat} {}
-    SO2(const SO_Base<T,2> &R) : _arr{R} {}
 
-    SO2<T> operator*(SO2<T> R2) //Can this be inherited somehow??
+    SO2<T> operator*(SO2<T> R2) 
     {
         return SO2<T>(this->R() * R2.R());
     }
@@ -30,8 +29,6 @@ public:
     }
 
     Mat2T R() const { return _arr; }
-
-    // Mat2T Adj() const override { return Mat2T::Identity(); }
 
     bool isValidRotation() const 
     {
@@ -86,13 +83,17 @@ public:
         return mat(1,0);
     }
 
-    // static Mat2T log(const SO2<T> &R) const
     static Mat2T log(const Mat2T &R)
     {
         T theta{atan2(R(1,0), R(0,0))};
         Mat2T log_R;
         log_R << T(0.0), -theta, theta, T(0.0);
         return log_R;
+    }
+
+    static Mat2T log(const SO2<T> &R)
+    {
+        return R.log();
     }
 
     Mat2T log() const 

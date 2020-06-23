@@ -177,8 +177,8 @@ TEST(MatrixLogarithm, GivenSO2Element_ReturnMatrixLog)
     {
         SO2<double> R{SO2<double>::random()};
 
-        // Eigen::Matrix2d log_R{SO2<double>::log(R)};
-        Eigen::Matrix2d log_R{R.log()};
+        Eigen::Matrix2d log_R{SO2<double>::log(R)};
+        // Eigen::Matrix2d log_R{R.log()};
         Eigen::Matrix2d log_R_true{R.R().log()};
 
         EXPECT_TRUE(log_R_true.isApprox(log_R));
