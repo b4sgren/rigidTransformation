@@ -205,6 +205,19 @@ TEST(MatrixLogarithm, GivenSO2Element_ReturnsDouble)
     }
 }
 
+TEST(MatrixExponential, GivenSkewSymetricMatrix_ReturnsSO2Element)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+
+        Eigen::Matrix2d log_R{R.log()};
+        SO2<double> R2{SO2<double>::exp(log_R)};
+
+        EXPECT_TRUE(R == R2);
+    }
+}
+
 // TEST(Ajoint, DISABLED_GivenSO2Element)
 // {
 //     //Do once Exp is implemented

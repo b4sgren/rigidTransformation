@@ -28,6 +28,11 @@ public:
         return this->R() * v;
     }
 
+    bool operator==(const SO2<T> &rhs) const
+    {
+        return this->R().isApprox(rhs.R());
+    }
+
     Mat2T R() const { return _arr; }
 
     bool isValidRotation() const 
@@ -117,6 +122,12 @@ public:
     {
         Mat2T log_R{this->log()};
         return SO2<T>::vee(log_R);
+    }
+
+    static SO2<T> exp(const Mat2T &R)
+    {
+        T theta{SO2<T>::vee(R)};
+        return SO2<T>::fromAngle(theta);
     }
 
 private:
