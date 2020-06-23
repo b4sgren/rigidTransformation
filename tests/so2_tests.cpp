@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <Eigen/Core>
+#include <eigen3/unsupported/Eigen/MatrixFunctions>
 #include <iostream>
 #include <random>
 
@@ -78,7 +79,7 @@ TEST(ResultOfGroupMultiplication, ReturnsNewMemberOfGroup)
     }
 }
 
-TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse)
+TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse) //FIX THIS ONE
 {
     for(int i{0}; i != 100; i++)
     {
@@ -170,14 +171,19 @@ TEST(VeeOperator, GivenSkewSymmetricMatrixReturnAngle)
     }
 }
 
-// TEST(SkewMethod, Value_ReturnSkewSymmetricMatrix)
-// {
-//     for(int i{0}; i !=100; ++i)
-//     {
-//         double j{i};
+TEST(MatrixLogarithm, GivenSO2Element_ReturnMatrixLog)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
 
-//     }
-// }
+        // Eigen::Matrix2d log_R{SO2<double>::log(R)};
+        Eigen::Matrix2d log_R{R.log()};
+        Eigen::Matrix2d log_R_true{R.R().log()};
+
+        EXPECT_TRUE(log_R_true.isApprox(log_R));
+    }
+}
 
 // TEST(Ajoint, DISABLED_GivenSO2Element)
 // {

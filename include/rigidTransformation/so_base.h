@@ -1,14 +1,13 @@
 #ifndef SOBASE_H
 #define SOBASE_H
 
-// #include "transformation_base.h"
 #include <Eigen/Core>
 #include <cmath>
 
 constexpr double PI = 3.14159265;
 
 template <typename T, unsigned int S>
-class SO_Base //: TransformationBase<T>
+class SO_Base 
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using MatST = Eigen::Matrix<T,S,S>;
@@ -31,9 +30,10 @@ public:
         return abs(det - 1.0) < 1e-8;
     }
 
-    SO_Base<T,S> inv()
+    SO_Base<T,S>& inv() //Can't return SO_Base<T,S> because abstract. Need this in this class for rotp...
+    //Is inheritance the right setup. Should I just use templating?
     {
-        return SO_Base<T, S>(_arr.transpose());
+        return SO_Base<T, S>(_arr.transpose()); //This return type isn't valid b/c abstract
     }
 
     void selfInv()
@@ -52,6 +52,10 @@ public:
     }
 
     //virtual Functions
+    virtual MatST log() const = 0;
+    // virtual MatST Adj() const = 0;
+    // virtual SO_Base<T,S> boxplus(const VecST &v) = 0;
+    // virtual VecST boxminus(const SO_Base<T,S> R) = 0;
 
 protected:
     MatST _arr;

@@ -9,22 +9,49 @@
 
 
 template<typename T> 
-class SO2 : public SO_Base<T,2>
+class SO2 //: public SO_Base<T,2>
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using Mat2T = Eigen::Matrix<T,2,2>;
     using Vec2T = Eigen::Matrix<T,2,1>;
 public:
-    SO2(): SO_Base<T,2>{Eigen::Matrix<T,2,2>::Identity()} {}
-    SO2(Eigen::Matrix<T, 2, 2> mat) : SO_Base<T,2>{mat} {}
-    SO2(const SO_Base<T,2> &R) : SO_Base<T,2>(R) {}
+    SO2() = default;
+    SO2(Eigen::Matrix<T, 2, 2> mat) : _arr{mat} {}
+    SO2(const SO_Base<T,2> &R) : _arr{R} {}
 
     SO2<T> operator*(SO2<T> R2) //Can this be inherited somehow??
     {
         return SO2<T>(this->R() * R2.R());
     }
 
+    Vec2T operator*(const Vec2T &v) const 
+    {
+        return this->R() * v;
+    }
+
+    Mat2T R() const { return _arr; }
+
     // Mat2T Adj() const override { return Mat2T::Identity(); }
+
+    bool isValidRotation() const 
+    {
+        T det{_arr.determinant()};
+        return abs(det - 1.0) < 1e-8;
+    }
+
+    SO2<T> inv() { return SO2<T>(_arr.transpose()); }
+
+    void selfInv() { _arr.transposeInPlace(); }
+
+    Vec2T rota(const Vec2T &v)
+    {
+        return (*this) * v;
+    }
+
+    Vec2T rotp(const Vec2T &v)
+    {
+        return this->inv() * v;
+    }
 
     static SO2<T> random()
     {
@@ -59,7 +86,22 @@ public:
         return mat(1,0);
     }
 
+    // static Mat2T log(const SO2<T> &R) const
+    static Mat2T log(const Mat2T &R)
+    {
+        T theta{atan2(R(1,0), R(0,0))};
+        Mat2T log_R;
+        log_R << T(0.0), -theta, theta, T(0.0);
+        return log_R;
+    }
+
+    Mat2T log() const 
+    {
+        return SO2<T>::log(this->R());
+    }
+
 private:
+    Mat2T _arr;
 };
 
 #endif
