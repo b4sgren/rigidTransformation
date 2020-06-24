@@ -43,7 +43,7 @@ public:
         return abs(det - 1.0) < 1e-8;
     }
 
-    SO2<T> inv() { return SO2<T>(_arr.transpose()); }
+    SO2<T> inv() const { return SO2<T>(_arr.transpose()); }
 
     void selfInv() { _arr.transposeInPlace(); }
 
@@ -60,6 +60,11 @@ public:
     SO2<T> boxplus(const T &delta)
     {
         return (*this) * SO2<T>::Exp(delta);
+    }
+
+    T boxminus(const SO2<T> &R)
+    {
+        return SO2<T>::Log(R.inv() * (*this));
     }
 
     T* data() const 

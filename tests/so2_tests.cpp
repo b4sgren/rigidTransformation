@@ -267,3 +267,18 @@ TEST(BoxPlus, GivenSO2AndDelta_ReturnNewSO2)
         EXPECT_TRUE(R2 == R2_true);
     }
 }
+
+TEST(BoxMinus, Given2SO2Elements_ReturnDelta)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        SO2<double> R1{SO2<double>::random()};
+        SO2<double> R2{SO2<double>::random()};
+        double phi1{getAngle(R1.R())}, phi2{getAngle(R2.R())};
+
+        double delta{R1.boxminus(R2)};
+        SO2<double> R{R2.boxplus(delta)};
+
+        EXPECT_TRUE(R1 == R);
+    }
+}
