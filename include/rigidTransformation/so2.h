@@ -18,7 +18,7 @@ public:
     SO2() = default;
     SO2(Eigen::Matrix<T, 2, 2> mat) : _arr{mat} {}
 
-    SO2<T> operator*(SO2<T> R2) 
+    SO2<T> operator*(const SO2<T> &R2) 
     {
         return SO2<T>(this->R() * R2.R());
     }
@@ -57,6 +57,11 @@ public:
         return this->inv() * v;
     }
 
+    SO2<T> boxplus(const T &delta)
+    {
+        return (*this) * SO2<T>::Exp(delta);
+    }
+
     T* data() const 
     {
         return _arr.data();
@@ -76,14 +81,14 @@ public:
         return SO2<T>(arr);
     }
 
-    static SO2<T> fromAngle(T ang)
+    static SO2<T> fromAngle(const T &ang)
     {
         T ct{cos(ang)}, st{sin(ang)};
         Mat2T mat = (Mat2T() << ct, -st, st, ct).finished();
         return SO2<T>(mat);
     }
 
-    static Mat2T hat(T ang)
+    static Mat2T hat(const T &ang)
     {
         Mat2T mat;
         mat << T(0.0), -ang, ang, T(0.0);
@@ -137,7 +142,7 @@ public:
         return SO2<T>::fromAngle(theta);
     }
 
-    static SO2<T> Exp(const double phi)
+    static SO2<T> Exp(const T &phi)
     {
         return SO2<T>::fromAngle(phi);
     }

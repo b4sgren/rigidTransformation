@@ -32,6 +32,14 @@ Eigen::Vector2d randVec2d(double min, double max)
     return vec;
 }
 
+double getRandomDouble(double min, double max)
+{
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::uniform_real_distribution<double> dist(min, max);
+    return dist(generator);
+}
+
 TEST(AskForTheRotationMatrix, ReturnsTheRotationMatrix)
 {
     Eigen::Matrix2d R_true;
@@ -231,7 +239,7 @@ TEST(MatrixExponential, GivenDouble_ReturnSO2Element)
     }
 }
 
-TEST(Ajoint,_GivenSO2ElementAndAngle_TestAdjoint)
+TEST(Ajoint, GivenSO2ElementAndAngle_TestAdjoint)
 {
     for(int i{0}; i != 100; ++i)
     {
@@ -242,5 +250,20 @@ TEST(Ajoint,_GivenSO2ElementAndAngle_TestAdjoint)
         SO2<double> R2{SO2<double>::Exp(phi) * R}; //Adj is identity
 
         EXPECT_TRUE(R1 == R2);
+    }
+}
+
+TEST(BoxPlus, GivenSO2AndDelta_ReturnNewSO2)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        double delta{getRandomDouble(-PI, PI)};
+        double phi = getAngle(R.R());
+
+        SO2<double> R2_true{SO2<double>::fromAngle(delta + phi)};
+        SO2<double> R2{R.boxplus(delta)};
+
+        EXPECT_TRUE(R2 == R2_true);
     }
 }
