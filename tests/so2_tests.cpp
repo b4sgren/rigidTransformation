@@ -239,7 +239,7 @@ TEST(Ajoint,_GivenSO2ElementAndAngle_TestAdjoint)
         double phi{R.Log()};
 
         SO2<double> R1{R * SO2<double>::Exp(phi)};
-        SO2<double> R2{SO2<double>::Exp(phi) * R};
+        SO2<double> R2{SO2<double>::Exp(phi) * R}; //Adj is identity
 
         EXPECT_TRUE(R1 == R2);
     }

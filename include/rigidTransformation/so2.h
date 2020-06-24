@@ -57,6 +57,11 @@ public:
         return this->inv() * v;
     }
 
+    T* data() const 
+    {
+        return _arr.data();
+    }
+
     static SO2<T> random()
     {
         std::random_device rd;
