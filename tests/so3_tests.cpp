@@ -13,3 +13,12 @@ TEST(GivenSO3Element, Return3By3Matrix)
 
    EXPECT_TRUE(R_true.isApprox(R.R()));
 }
+
+TEST(RandomGeneration, AskedForRandomRotationMatrix_ReturnsValidRotationMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO3<double> R{SO3<double>::random()};
+        EXPECT_TRUE(R.isValidRotation());
+    }
+}
