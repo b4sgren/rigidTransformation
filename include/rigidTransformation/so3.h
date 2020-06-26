@@ -98,6 +98,24 @@ public:
         return SO3(Rz * Ry * Rx);
     }
 
+    static SO3 fromRPY(T& phi, T&theta, T&psi)
+    {
+        Vec3T angs;
+        angs << phi, theta, psi;
+        return SO3::fromRPY(angs);
+    }
+
+    static SO3 fromQuaternion(const Eigen::Matrix<T,4,1> &q) // q is a hamiltonian quaternion
+    {
+        T qw{q(0)};
+        Vec3T qv{q.template tail<3>()};
+        Mat3T qv_x{skew(qv)};
+
+        // Mat3T R{(2 * pow(qw,2) - 1.0) * Mat3T::Identity() - 2 * qw * qv_x + 2 * qv * qv.transpose()}; //Passive rotation. Need to check my implementation
+        Mat3T R{(2 * pow(qw,2) - 1.0) * Mat3T::Identity() + 2 * qw * qv_x + 2 * qv * qv.transpose()}; //Active rotation
+        return SO3(R);
+    }
+
 private:
     Mat3T _arr;
 };
