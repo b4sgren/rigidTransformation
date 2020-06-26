@@ -9,6 +9,14 @@
 constexpr double PI = 3.14159265;
 
 template <typename T>
+Eigen::Matrix<T,3,3> skew(const Eigen::Matrix<T,3,1> &v)
+{
+    Eigen::Matrix<T,3,3> v_x;
+    v_x << T(0), -v(2), v(1), v(2), T(0), -v(0), -v(1), v(0), T(0);
+    return v_x;
+}
+
+template <typename T>
 class SO3
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -44,7 +52,28 @@ public:
 
         Mat3T H{Mat3T::Identity() - 2 * v * v.transpose()};
 
-        return SO3<T>(-H * R);
+        return SO3(-H * R);
+    }
+
+    static SO3 fromAxisAngle(const Vec3T &w)
+    {
+        T theta{w.norm()};
+        Mat3T w_x{skew(w)};
+
+        T A,B;
+        if(abs(theta) > 1e-6)
+        {
+            A = sin(theta) / theta;
+            B = (1 - cos(theta)) / (pow(theta,2));
+        }
+        else // Taylor Series Expansion
+        {
+            A = 1.0 - pow(theta,2)/6.0 + pow(theta,4)/120.0;
+            B = 0.5 - pow(theta,2)/24.0 + pow(theta,4)/720.0;
+        }
+
+        Mat3T R{Mat3T::Identity() + A * w_x + B * w_x * w_x};
+        return SO3(R);
     }
 
 private:
