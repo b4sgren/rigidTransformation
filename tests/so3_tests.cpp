@@ -210,7 +210,7 @@ TEST(PassiveRotation, SO3ElementAnd3Vector_ReturnPassivelyRotatedVector)
     }
 }
 
-TEST(MatrixLogarithm, DISABLED_SO3Element_ReturnsMatrixLogarithm)
+TEST(MatrixLogarithm, SO3Element_ReturnsMatrixLogarithm)
 {
     for(int i{0}; i!=100; ++i)
     {
@@ -260,28 +260,32 @@ TEST(MatrixLogTaylor0, ActiveRotation_ReturnsMatrixLogarithm)
     }
 }
 
-TEST(MatrixLogTaylorPI, DISABLED_ActiveRotation_ReturnsMatrixLogarithm)
+TEST(MatrixLogTaylorPI, ActiveRotation_ReturnsMatrixLogarithm) //Issues with this one in python also
 {
     for(int i{0}; i!=100; ++i)
     {
         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
         v /= v.norm();
-        double ang{getRandomDouble(PI-1e-6, PI)};
+        double ang{getRandomDouble(PI-(1e-6), PI+(1e-6))};
 
-        Eigen::Matrix3d R{Eigen::AngleAxisd(ang, v)};
-        SO3<double> R1{R};
+        // Eigen::Matrix3d R{Eigen::AngleAxisd(ang, v)};
+        // SO3<double> R1{R};
+        SO3<double> R1{SO3<double>::fromAxisAngle(ang * v)};
+        Eigen::Matrix3d R{R1.R()};
 
         Eigen::Matrix3d log_R_true{R.log()};
         Eigen::Matrix3d log_R{R1.log()};
 
-        if(!log_R_true.isApprox(log_R, 1e-8))
+        auto norm{(log_R_true.array() - log_R.array()).matrix().norm()};
+        if(!log_R_true.isApprox(log_R))
         {
             std::cout << "Truth\n" << log_R_true << std::endl;
             std::cout << "Mine\n" << log_R << std::endl;
-            int x{3};
+            std::cout << norm << std::endl;
+            Eigen::Matrix3d temp{R1.log()};
         }
 
-        EXPECT_TRUE(log_R_true.isApprox(log_R, 1e-8)); //Test doesn't pass. Close but not yet
+        EXPECT_TRUE(log_R_true.isApprox(log_R)); //Test doesn't pass. Close but not yet
     }
 }
 

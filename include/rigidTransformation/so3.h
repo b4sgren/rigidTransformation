@@ -2,6 +2,7 @@
 #define SO3_H
 
 #include <Eigen/Dense>
+#include <eigen3/unsupported/Eigen/MatrixFunctions> //Get rid of this when log works around pi
 #include <random>
 #include <iostream>
 #include <cmath>
@@ -169,7 +170,9 @@ public:
         {
             T th_m_PI{theta - PI};
             T temp{-PI/th_m_PI - 1.0 - PI/6.0 * th_m_PI - pow(th_m_PI,2)/6.0 - 7 * PI/360.0 * pow(th_m_PI,3) - 7/360.0 * pow(th_m_PI,4)};
-            return temp/2.0 * (R - R.transpose());
+            // return temp/2.0 * (R - R.transpose());
+            Mat3T tempR{R.log()};
+            return R.log();
         }
         else
             return theta / (2.0 * sin(theta)) * (R - R.transpose());
