@@ -86,3 +86,20 @@ TEST(FromAxisAngleEigen, SuppliedAxisAngleVector_ReturnsValidRotation)
         EXPECT_TRUE(R.isValidRotation());
     }
 }
+
+TEST(FromRPYAngles, SuppliedRPYAngles_ReturnsValidRotation)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        Eigen::Vector3d angs{getRandomVector(-PI, PI)};
+
+        SO3<double>R{SO3<double>::fromRPY(angs)};
+        Eigen::Matrix3d Rx{Eigen::AngleAxisd(angs(0), Eigen::Vector3d::UnitX())};
+        Eigen::Matrix3d Ry{Eigen::AngleAxisd(angs(1), Eigen::Vector3d::UnitY())};
+        Eigen::Matrix3d Rz{Eigen::AngleAxisd(angs(2), Eigen::Vector3d::UnitZ())};
+        Eigen::Matrix3d R_true{Rz * Ry * Rx};
+
+        EXPECT_TRUE(R.isValidRotation());
+        EXPECT_TRUE(R_true.isApprox(R.R()));
+    }
+}

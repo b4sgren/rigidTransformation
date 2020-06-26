@@ -82,6 +82,22 @@ public:
         return SO3(v);
     }
 
+    static SO3 fromRPY(const Vec3T &v)
+    {
+        T phi{v(0)}, theta{v(1)}, psi{v(2)};
+
+        T cp{cos(phi)}, sp{sin(phi)};
+        T ct{cos(theta)}, st{sin(theta)};
+        T cpsi{cos(psi)}, spsi{sin(psi)};
+
+        Mat3T Rx, Ry, Rz;
+        Rx << T(1.0), T(0.0), T(0.0), T(0.0), cp, -sp, T(0.0), sp, cp;
+        Ry << ct, T(0.0), st, T(0.0), T(1.0), T(0.0), -st, T(0.0), ct;
+        Rz << cpsi, -spsi, T(0.0), spsi, cpsi, T(0.0), T(0.0), T(0.0), T(1.0);
+
+        return SO3(Rz * Ry * Rx);
+    }
+
 private:
     Mat3T _arr;
 };
