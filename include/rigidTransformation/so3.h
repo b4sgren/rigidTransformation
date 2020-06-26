@@ -181,7 +181,14 @@ public:
         T theta{w.norm()};
 
         Mat3T R;
-        R = Mat3T::Identity() + sin(theta)/theta * log_R + (1 - cos(theta))/pow(theta,2) * log_R * log_R;
+        if(abs(theta) > 1e-6)
+            R = Mat3T::Identity() + sin(theta)/theta * log_R + (1 - cos(theta))/pow(theta,2) * log_R * log_R;
+        else 
+        {
+            T A{1.0 - pow(theta,2)/6.0 + pow(theta,4)/120.0};
+            T B{0.5 - pow(theta,2)/24.0 + pow(theta,4)/720.0};
+            R = Mat3T::Identity() + A * log_R + B * log_R * log_R;
+        }
         return SO3(R);
     }
 

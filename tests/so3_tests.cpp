@@ -306,11 +306,27 @@ TEST(HatOperator, Vector_ReturnsSkewSymmetricMatrix)
     }
 }
 
-TEST(MatrixExponential, SkewSymmetricMatrix_ReturnMatixExponential)
+TEST(MatrixExponential, SkewSymmetricMatrix_ReturnSO3Element)
 {
     for(int i{0}; i != 100; ++i)
     {
         Eigen::Vector3d w{getRandomVector(-PI, PI)};
+        Eigen::Matrix3d log_R{SO3<double>::hat(w)};
+
+        SO3<double> R{SO3<double>::exp(log_R)};
+        Eigen::Matrix3d R_true{log_R.exp()};
+
+        EXPECT_TRUE(R_true.isApprox(R.R()));
+    }
+}
+
+TEST(MatrixExponentialTaylor, SkewSymmetricMatrix_ReturnsSO3Element)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d w{getRandomVector(-10.0, 10.0)};
+        double ang{getRandomDouble(0, 1e-6)};
+        w = w / w.norm() * ang;
         Eigen::Matrix3d log_R{SO3<double>::hat(w)};
 
         SO3<double> R{SO3<double>::exp(log_R)};
