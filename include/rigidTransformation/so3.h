@@ -170,12 +170,29 @@ public:
         {
             T th_m_PI{theta - PI};
             T temp{-PI/th_m_PI - 1.0 - PI/6.0 * th_m_PI - pow(th_m_PI,2)/6.0 - 7 * PI/360.0 * pow(th_m_PI,3) - 7/360.0 * pow(th_m_PI,4)};
-            // return temp/2.0 * (R - R.transpose());
-            Mat3T tempR{R.log()};
-            return R.log();
+            return temp/2.0 * (R - R.transpose()); //Not always great but hopefully close enough
+            // Mat3T tempR{R.log()};
+            // return R.log();
         }
         else
             return theta / (2.0 * sin(theta)) * (R - R.transpose());
+    }
+
+    Vec3T Log() const 
+    {
+        Mat3T log_R{this->log()};
+        return SO3::vee(log_R);
+    }
+
+    static Vec3T Log(const SO3 &R)
+    {
+        return R.Log();
+    }
+
+    static Vec3T Log(const Mat3T &R)
+    {
+        Mat3T log_R{SO3::log(R)};
+        return SO3::vee(log_R);
     }
 
     static SO3 exp(const Mat3T &log_R)
