@@ -35,7 +35,7 @@ public:
 
     Mat3T R() const { return _arr; }
 
-    SO3 inv() { return SO3(_arr.transpose()); }
+    SO3 inv() const { return SO3(_arr.transpose()); }
 
     void selfInv() { _arr.transposeInPlace(); }
 
