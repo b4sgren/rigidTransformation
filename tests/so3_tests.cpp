@@ -141,3 +141,14 @@ TEST(FromQuaternionEigen, SuppliedEigenQuaternion_ReturnsValidRotation)
         EXPECT_TRUE(R_true.isApprox(R.R()));
     }
 }
+
+TEST(Inverse, AskedForInverse_InverseTimesOriginalGivesIdentity)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO3<double> R{SO3<double>::random()};
+        SO3<double> R_inv{R.inv()};
+
+        EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(R_inv.R() * R.R()));
+    }
+}

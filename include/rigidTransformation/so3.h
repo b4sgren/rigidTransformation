@@ -30,6 +30,8 @@ public:
 
     Mat3T R() { return _arr; }
 
+    SO3 inv() { return SO3(_arr.transpose()); }
+
     bool isValidRotation() const 
     {
         T det{_arr.determinant()};
