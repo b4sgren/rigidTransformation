@@ -390,3 +390,19 @@ TEST(Adjoint, SO3ElementAnd3Vector_ComposeWithAdjoint)
         EXPECT_TRUE(R2 == R3);
     }
 }
+
+TEST(BoxPlus, SO3AndVector_ReturnsConcatenationOfTheTwo)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        SO3<double> R{SO3<double>::random()};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        v /= v.norm();
+        double ang{getRandomDouble(0.0, PI)};
+
+        SO3<double> R2{R.boxplus(v*ang)};
+        SO3<double> R2_true{R * SO3<double>::fromAxisAngle(v*ang)};
+
+        EXPECT_EQ(R2_true, R2);
+    }
+}
