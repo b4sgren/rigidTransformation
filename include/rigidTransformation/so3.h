@@ -26,6 +26,7 @@ public:
     SO3() = default;
     SO3(const Mat3T &mat): _arr{mat} {}
     SO3(const Eigen::AngleAxis<T> &mat): _arr{mat} {}
+    SO3(const Eigen::Quaternion<T> &q): _arr{q} {}
 
     Mat3T R() { return _arr; }
 
@@ -114,6 +115,11 @@ public:
         // Mat3T R{(2 * pow(qw,2) - 1.0) * Mat3T::Identity() - 2 * qw * qv_x + 2 * qv * qv.transpose()}; //Passive rotation. Need to check my implementation
         Mat3T R{(2 * pow(qw,2) - 1.0) * Mat3T::Identity() + 2 * qw * qv_x + 2 * qv * qv.transpose()}; //Active rotation
         return SO3(R);
+    }
+
+    static SO3 fromQuaternion(const Eigen::Quaternion<T> &q)
+    {
+        return SO3(q);
     }
 
 private:

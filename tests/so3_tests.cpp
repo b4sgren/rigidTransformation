@@ -123,3 +123,21 @@ TEST(FromQuaternion, SuppliedHamiltonianQuaternion_ReturnsValidRotation)
         EXPECT_TRUE(R_true.isApprox(R.R()));
     }
 }
+
+TEST(FromQuaternionEigen, SuppliedEigenQuaternion_ReturnsValidRotation)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        v /= v.norm();
+        double ang{getRandomDouble(0, PI)};
+
+        Eigen::Matrix3d R_true{Eigen::AngleAxisd(ang, v)};
+        Eigen::Quaterniond q{Eigen::AngleAxisd(ang, v)};
+
+        SO3<double> R{SO3<double>::fromQuaternion(q)};
+
+        EXPECT_TRUE(R.isValidRotation());
+        EXPECT_TRUE(R_true.isApprox(R.R()));
+    }
+}
