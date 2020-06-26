@@ -182,6 +182,11 @@ public:
         return w;
     }
 
+    static Mat3T hat(const Vec3T &w)
+    {
+        return skew(w);
+    }
+
 private:
     Mat3T _arr;
 };

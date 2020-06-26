@@ -292,3 +292,16 @@ TEST(VeeOperator, SkewSymmetrixMatrix_Return3Vector)
         EXPECT_TRUE(w_true.isApprox(w));
     }
 }
+
+TEST(HatOperator, Vector_ReturnsSkewSymmetricMatrix)
+{
+    for(int i{0}; i!= 100; ++i)
+    {
+        Eigen::Vector3d w{getRandomVector(-10.0, 10.0)};
+        Eigen::Matrix3d log_R{SO3<double>::hat(w)};
+        Eigen::Matrix3d log_R_true;
+        log_R_true << 0.0, -w(2), w(1), w(2), 0.0, -w(0), -w(1), w(0), 0.0;
+
+        EXPECT_TRUE(log_R_true.isApprox(log_R));
+    }
+}
