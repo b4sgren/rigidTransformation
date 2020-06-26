@@ -73,6 +73,11 @@ public:
         return (*this) * SO3::Exp(v);
     }
 
+    Vec3T boxminus(const SO3 &R) const 
+    {
+        return SO3::Log(R.inv() * (*this));
+    }
+
     T* data() const { return _arr.data(); }
 
     static SO3 random() 

@@ -406,3 +406,16 @@ TEST(BoxPlus, SO3AndVector_ReturnsConcatenationOfTheTwo)
         EXPECT_EQ(R2_true, R2);
     }
 }
+
+TEST(BoxMinus, SO3Elements_ReturnDifferenceBetweenTheTwo)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO3<double> R1{SO3<double>::random()}, R2{SO3<double>::random()};
+
+        Eigen::Vector3d w{R1.boxminus(R2)};
+        SO3<double> R3{R2.boxplus(w)};
+
+        EXPECT_EQ(R1, R3);
+    }
+}
