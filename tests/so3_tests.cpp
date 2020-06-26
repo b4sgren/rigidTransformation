@@ -164,3 +164,19 @@ TEST(SelfInverse, Inverse_AskedForInverse_InverseTimesOriginalGivesIdentity_Test
         EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(R_inv * R.R()));
     }
 }
+
+TEST(GroupOperator, TwoSO3ElementsMultiplied_ReturnsValidRotation)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO3<double> R1{SO3<double>::random()};
+        SO3<double> R2{SO3<double>::random()};
+
+        SO3<double> R3{R1 * R2};
+
+        Eigen::Matrix3d R_true{R1.R() * R2.R()};
+
+        EXPECT_TRUE(R_true.isApprox(R3.R()));
+        EXPECT_TRUE(R3.isValidRotation());
+    }
+}

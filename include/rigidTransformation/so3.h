@@ -28,7 +28,12 @@ public:
     SO3(const Eigen::AngleAxis<T> &mat): _arr{mat} {}
     SO3(const Eigen::Quaternion<T> &q): _arr{q} {}
 
-    Mat3T R() { return _arr; }
+    SO3 operator*(const SO3 &rhs) const
+    {
+        return SO3(this->R() * rhs.R());
+    }
+
+    Mat3T R() const { return _arr; }
 
     SO3 inv() { return SO3(_arr.transpose()); }
 
