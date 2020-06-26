@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cmath>
 
-constexpr double PI = 3.14159265;
+constexpr double PI = 3.141592653589793238462643383279;
 
 template <typename T>
 Eigen::Matrix<T,3,3> skew(const Eigen::Matrix<T,3,1> &v)
@@ -160,7 +160,26 @@ public:
     {
         T theta{acos((R.trace() -1.0)/2.0)};
         
-        return theta / (2.0 * sin(theta)) * (R - R.transpose());
+        if(abs(theta) < 1e-6)
+        {
+            T temp{0.5 * (1 + pow(theta,2)/6.0 + 7 * pow(theta,4)/360.0)};
+            return temp * (R - R.transpose());
+        }
+        else if(abs(abs(theta) - PI) < 1e-6)
+        {
+            T th_m_PI{theta - PI};
+            T temp{-PI/th_m_PI - 1 - PI/6.0 * th_m_PI - pow(th_m_PI,2)/6.0 - 7 * PI/360. * pow(th_m_PI,3) - 7/360.0 * pow(th_m_PI,4)};
+            return temp/2.0 * (R - R.transpose());
+        }
+        else
+            return theta / (2.0 * sin(theta)) * (R - R.transpose());
+    }
+
+    static Vec3T vee(const Mat3T &log_R)
+    {
+        Vec3T w;
+        w << log_R(2,1), log_R(0,2), log_R(1,0);
+        return w;
     }
 
 private:

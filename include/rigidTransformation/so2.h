@@ -6,7 +6,7 @@
 #include <random>
 #include <cmath>
 
-constexpr double PI = 3.14159265;
+constexpr double PI = 3.141592653589793238462643383279;
 
 template<typename T> 
 class SO2
