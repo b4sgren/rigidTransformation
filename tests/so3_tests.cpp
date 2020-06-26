@@ -376,3 +376,17 @@ TEST(MatrixExponential, Vector_ReturnSO3Element)
         EXPECT_TRUE(R_true.isApprox(R.R()));
     }
 }
+
+TEST(Adjoint, SO3ElementAnd3Vector_ComposeWithAdjoint)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO3<double> R{SO3<double>::random()};
+        Eigen::Vector3d w{getRandomVector(-PI, PI)};
+
+        SO3<double> R2{R * SO3<double>::Exp(w)};
+        SO3<double> R3{SO3<double>::Exp(R.Adj() * w) * R};
+
+        EXPECT_TRUE(R2 == R3);
+    }
+}

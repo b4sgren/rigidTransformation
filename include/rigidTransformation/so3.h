@@ -39,7 +39,14 @@ public:
         return (*this).R() * v;
     }
 
+    bool operator==(const SO3 &rhs) const 
+    {
+        return this->R().isApprox(rhs.R());
+    }
+
     Mat3T R() const { return _arr; }
+    
+    Mat3T Adj() const { return this->R(); }
 
     SO3 inv() const { return SO3(_arr.transpose()); }
 
@@ -60,6 +67,8 @@ public:
     {
         return this->inv() * v;
     }
+
+    T* data() const { return _arr.data(); }
 
     static SO3 random() 
     {
