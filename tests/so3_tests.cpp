@@ -194,3 +194,17 @@ TEST(ActiveRotation, SO3ElementAnd3Vector_ReturnActivelyRotatedVector)
         EXPECT_TRUE(vp_true.isApprox(vp));
     }
 }
+
+TEST(PassiveRotation, SO3ElementAnd3Vector_ReturnPassivelyRotatedVector)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        SO3<double> R{SO3<double>::random()};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+
+        Eigen::Vector3d vp{R.rotp(v)};
+        Eigen::Vector3d vp_true{R.inv().R() * v};
+
+        EXPECT_TRUE(vp_true.isApprox(vp));
+    }
+}

@@ -55,6 +55,11 @@ public:
         return (*this) * v;
     }
 
+    Vec3T rotp(const Vec3T &v) const 
+    {
+        return this->inv() * v;
+    }
+
     static SO3 random() 
     {
         std::random_device rd;
