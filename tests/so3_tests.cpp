@@ -231,7 +231,7 @@ TEST(MatrixLogarithm, DISABLED_SO3Element_ReturnsMatrixLogarithm)
     }
 }
 
-TEST(MatrixLogTaylor0, DISABLED_ActiveRotation_ReturnsMatrixLogarithm)
+TEST(MatrixLogTaylor0, ActiveRotation_ReturnsMatrixLogarithm)
 {
     for(int i{0}; i!=100; ++i)
     {
@@ -245,15 +245,18 @@ TEST(MatrixLogTaylor0, DISABLED_ActiveRotation_ReturnsMatrixLogarithm)
         Eigen::Matrix3d log_R_true{R.log()};
         Eigen::Matrix3d log_R{R1.log()};
 
-        // if(!log_R_true.isApprox(log_R, 1e-8))
-        // {
-        //     std::cout << "Truth\n" << log_R_true << std::endl;
-        //     std::cout << "Mine\n" << log_R << std::endl;
-        //     std::cout << (log_R_true.array() - log_R.array()).matrix().norm() << std::endl;
-        //     int x{3};
-        // }
+        // if(!log_R_true.isApprox(log_R)) //this always fails for some reason
+        auto norm{(log_R_true.array() - log_R.array()).matrix().norm()};
+        if(!(norm <= 1e-10))
+        {
+            std::cout << "Truth\n" << log_R_true << std::endl;
+            std::cout << "Mine\n" << log_R << std::endl;
+            std::cout << norm << std::endl;
+            int x{3};
+        }
 
-        EXPECT_TRUE(log_R_true.isApprox(log_R, 1e-8)); //Test doesn't pass but they are equivalent
+        // EXPECT_TRUE(log_R_true.isApprox(log_R)); //Test doesn't pass but they are equivalent
+        EXPECT_TRUE(norm <= 1e-10); 
     }
 }
 
