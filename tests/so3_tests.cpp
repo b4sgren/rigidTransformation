@@ -70,3 +70,19 @@ TEST(FromAxisAngleTaylorSeries, SuppliedAxisAngleVector_ReturnsValidRotationMatr
         EXPECT_TRUE(R_true.isApprox(R.R()));
     }
 }
+
+TEST(FromAxisAngleEigen, SuppliedAxisAngleVector_ReturnsValidRotation)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        v /= v.norm();
+        double ang = getRandomDouble(0.0, PI);
+
+        Eigen::Matrix3d R_true{Eigen::AngleAxisd(ang, v)};
+
+        SO3<double> R{SO3<double>::fromAxisAngle(Eigen::AngleAxisd(ang, v))};
+        EXPECT_TRUE(R_true.isApprox(R.R()));
+        EXPECT_TRUE(R.isValidRotation());
+    }
+}

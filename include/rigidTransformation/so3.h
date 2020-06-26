@@ -25,6 +25,7 @@ class SO3
 public:
     SO3() = default;
     SO3(const Mat3T &mat): _arr{mat} {}
+    SO3(const Eigen::AngleAxis<T> &mat): _arr{mat} {}
 
     Mat3T R() { return _arr; }
 
@@ -74,6 +75,11 @@ public:
 
         Mat3T R{Mat3T::Identity() + A * w_x + B * w_x * w_x};
         return SO3(R);
+    }
+
+    static SO3 fromAxisAngle(const Eigen::AngleAxis<T> &v)
+    {
+        return SO3(v);
     }
 
 private:
