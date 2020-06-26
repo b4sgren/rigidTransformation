@@ -168,7 +168,7 @@ public:
         else if(abs(abs(theta) - PI) < 1e-6)
         {
             T th_m_PI{theta - PI};
-            T temp{-PI/th_m_PI - 1 - PI/6.0 * th_m_PI - pow(th_m_PI,2)/6.0 - 7 * PI/360. * pow(th_m_PI,3) - 7/360.0 * pow(th_m_PI,4)};
+            T temp{-PI/th_m_PI - 1.0 - PI/6.0 * th_m_PI - pow(th_m_PI,2)/6.0 - 7 * PI/360.0 * pow(th_m_PI,3) - 7/360.0 * pow(th_m_PI,4)};
             return temp/2.0 * (R - R.transpose());
         }
         else

@@ -219,14 +219,15 @@ TEST(MatrixLogarithm, DISABLED_SO3Element_ReturnsMatrixLogarithm)
         Eigen::Matrix3d log_R{R.log()};
         Eigen::Matrix3d log_R_true{R.R().log()};
 
-        // if(!log_R_true.isApprox(log_R, 1e-8))
-        // {
-        //     std::cout << "Truth\n" << log_R_true << std::endl;
-        //     std::cout << "Mine\n" << log_R << std::endl;
-        //     int x{3};
-        // }
+        if(!log_R_true.isApprox(log_R))
+        {
+            std::cout << "Truth\n" << log_R_true << std::endl;
+            std::cout << "Mine\n" << log_R << std::endl;
+            std::cout << "Diff:\t" << (log_R_true.array() - log_R.array()).matrix().norm() << std::endl;
+            int x{3};
+        }
 
-        EXPECT_TRUE(log_R_true.isApprox(log_R, 1e-8));
+        EXPECT_TRUE(log_R_true.isApprox(log_R));
     }
 }
 
