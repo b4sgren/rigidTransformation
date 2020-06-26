@@ -32,6 +32,8 @@ public:
 
     SO3 inv() { return SO3(_arr.transpose()); }
 
+    void selfInv() { _arr.transposeInPlace(); }
+
     bool isValidRotation() const 
     {
         T det{_arr.determinant()};

@@ -152,3 +152,15 @@ TEST(Inverse, AskedForInverse_InverseTimesOriginalGivesIdentity)
         EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(R_inv.R() * R.R()));
     }
 }
+
+TEST(SelfInverse, Inverse_AskedForInverse_InverseTimesOriginalGivesIdentity_Test)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        SO3<double> R{SO3<double>::random()};
+        Eigen::Matrix3d R_inv{R.R()};
+        R.selfInv();
+
+        EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(R_inv * R.R()));
+    }
+}
