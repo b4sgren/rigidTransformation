@@ -180,3 +180,17 @@ TEST(GroupOperator, TwoSO3ElementsMultiplied_ReturnsValidRotation)
         EXPECT_TRUE(R3.isValidRotation());
     }
 }
+
+TEST(ActiveRotation, SO3ElementAnd3Vector_ReturnActivelyRotatedVector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO3<double> R{SO3<double>::random()};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+
+        Eigen::Vector3d vp{R.rota(v)};
+        Eigen::Vector3d vp_true{R.R() * v};
+
+        EXPECT_TRUE(vp_true.isApprox(vp));
+    }
+}

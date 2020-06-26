@@ -33,6 +33,11 @@ public:
         return SO3(this->R() * rhs.R());
     }
 
+    Vec3T operator*(const Vec3T &v) const
+    {
+        return (*this).R() * v;
+    }
+
     Mat3T R() const { return _arr; }
 
     SO3 inv() const { return SO3(_arr.transpose()); }
@@ -43,6 +48,11 @@ public:
     {
         T det{_arr.determinant()};
         return abs(det - 1.0) < 1e-8;
+    }
+
+    Vec3T rota(const Vec3T &v) const 
+    {
+        return (*this) * v;
     }
 
     static SO3 random() 
