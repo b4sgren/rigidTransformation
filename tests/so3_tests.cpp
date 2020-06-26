@@ -219,7 +219,9 @@ TEST(MatrixLogarithm, SO3Element_ReturnsMatrixLogarithm)
         Eigen::Matrix3d log_R{R.log()};
         Eigen::Matrix3d log_R_true{R.R().log()};
 
-        if(!log_R_true.isApprox(log_R))
+        auto norm{(log_R_true.array() - log_R.array()).matrix().norm()};
+        // if(!log_R_true.isApprox(log_R))
+        if(norm >= 1e-10)
         {
             std::cout << "Truth\n" << log_R_true << std::endl;
             std::cout << "Mine\n" << log_R << std::endl;
@@ -227,7 +229,8 @@ TEST(MatrixLogarithm, SO3Element_ReturnsMatrixLogarithm)
             int x{3};
         }
 
-        EXPECT_TRUE(log_R_true.isApprox(log_R));
+        // EXPECT_TRUE(log_R_true.isApprox(log_R));
+        EXPECT_TRUE(norm <= 1e-10);
     }
 }
 
@@ -354,6 +357,20 @@ TEST(MatrixExponentialTaylor, SkewSymmetricMatrix_ReturnsSO3Element)
         Eigen::Matrix3d log_R{SO3<double>::hat(w)};
 
         SO3<double> R{SO3<double>::exp(log_R)};
+        Eigen::Matrix3d R_true{log_R.exp()};
+
+        EXPECT_TRUE(R_true.isApprox(R.R()));
+    }
+}
+
+TEST(MatrixExponential, Vector_ReturnSO3Element)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d w{getRandomVector(-PI, PI)};
+
+        SO3<double> R{SO3<double>::Exp(w)};
+        Eigen::Matrix3d log_R{SO3<double>::hat(w)};
         Eigen::Matrix3d R_true{log_R.exp()};
 
         EXPECT_TRUE(R_true.isApprox(R.R()));

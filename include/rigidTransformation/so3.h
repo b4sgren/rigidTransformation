@@ -212,6 +212,12 @@ public:
         return SO3(R);
     }
 
+    static SO3 Exp(const Vec3T &w)
+    {
+        Mat3T log_R{SO3::hat(w)};
+        return SO3::exp(log_R);
+    }
+
     static Vec3T vee(const Mat3T &log_R)
     {
         Vec3T w;
