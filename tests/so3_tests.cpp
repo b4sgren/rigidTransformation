@@ -419,3 +419,15 @@ TEST(BoxMinus, SO3Elements_ReturnDifferenceBetweenTheTwo)
         EXPECT_EQ(R1, R3);
     }
 }
+
+TEST(Normalize, GivenSO3ElementWithDetNotEq1_NormalizeElement)
+{
+    SO3<double> R1{SO3<double>::random()}, R2{SO3<double>::random()};
+
+    // while(R1.isValidRotation()) //Really slow to not be valid
+        // R1 *= R2;
+    
+    R1.normalize();
+
+    EXPECT_TRUE(R1.isValidRotation());
+}

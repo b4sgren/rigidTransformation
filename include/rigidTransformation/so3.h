@@ -34,6 +34,12 @@ public:
         return SO3(this->R() * rhs.R());
     }
 
+    SO3& operator*=(const SO3 &rhs)
+    {
+        (*this) = (*this) * rhs;
+        return *this;
+    }
+
     Vec3T operator*(const Vec3T &v) const
     {
         return (*this).R() * v;
@@ -76,6 +82,19 @@ public:
     Vec3T boxminus(const SO3 &R) const 
     {
         return SO3::Log(R.inv() * (*this));
+    }
+
+    void normalize()
+    {
+        Vec3T x{this->R().col(0)}, y, z;
+        x /= x.norm();
+        y = x.cross(this->R().col(2));
+        y /= y.norm();
+        z = x.cross(y);
+
+        _arr.col(0) = x;
+        _arr.col(1) = y;
+        _arr.col(2) = z;
     }
 
     T* data() const { return _arr.data(); }
