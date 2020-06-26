@@ -13,3 +13,6 @@ include_directories(${EIGEN3_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${CERES_INCLUDE
 
 add_executable(so2_tests tests/so2_tests.cpp)
 target_link_libraries(so2_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
+
+add_executable(so3_tests tests/so3_tests.cpp)
+target_link_libraries(so3_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)

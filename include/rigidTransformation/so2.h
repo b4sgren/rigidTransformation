@@ -2,7 +2,7 @@
 #define SO2_H
 
 #include <Eigen/Dense>
-#include <iostream>
+#include <iostream> // TODO Add << operator to print
 #include <random>
 #include <cmath>
 
