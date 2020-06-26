@@ -156,4 +156,18 @@ private:
     Mat2T _arr;
 };
 
+// template<typename T>
+// struct SO2_GroupJacobians: public SO2<T>
+// {
+//     bool operator()(const T* x1, const T* x2, T* residual)
+//     {
+//         const Eigen::Map<Eigen::Matrix<T,2,2>> R1(x1);
+//         const Eigen::Map<Eigen::Matrix<T,2,2>> R2(x2);
+//         const Eigen::Map<Eigen::Matrix<T,2,2>> res(residual);
+
+//         res = R1 * R2;
+//         return true;
+//     }
+// };
+
 #endif

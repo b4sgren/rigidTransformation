@@ -4,6 +4,8 @@
 #include <iostream>
 #include <random>
 
+#include <ceres/ceres.h>
+
 #include "so2.h"
 
 //The SO2 class is templated but I mostly care that it works with doubles and ceres jet
@@ -282,3 +284,26 @@ TEST(BoxMinus, Given2SO2Elements_ReturnDelta)
         EXPECT_TRUE(R1 == R);
     }
 }
+
+// TEST(GroupAutodiff, Given2SO2Elements_ReturnGroupJacobian)
+// {
+//     for(int i{0}; i!=100; ++i)
+//     {
+//         SO2<double> R1{SO2<double>::random()};
+//         SO2<double> R2{SO2<double>::random()};
+
+//         Eigen::Matrix<double, 2, 2, Eigen::RowMajor> J;
+//         Eigen::Matrix<double, 2, 2> res;
+//         double *Jptr[1]{J.data()};    
+//         double const *r1_ptr[1]{R1.data()};
+//         double const *r2_ptr[1]{R2.data()};
+//         double *res_ptr{res.data()};
+        
+//         double* params[2]{r1_ptr, r2_ptr};
+
+//         ceres::CostFunction *cost_func = new ceres::AutoDiffCostFunction<SO2_GroupJacobians<double>, 4, 4, 4>(new SO2_GroupJacobian<double>());
+//         cost_func->Evaluate(params, res_ptr, Jptr);
+
+//         EXPECT_TRUE(J.isApprox(Eigen::Matrix<double,2,2,Eigen::RowMajor>::Identity()));
+//     }
+// }

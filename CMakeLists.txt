@@ -7,8 +7,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(GTest REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(Ceres REQUIRED)
 
-include_directories(${EIGEN3_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} include/rigidTransformation)
+include_directories(${EIGEN3_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${CERES_INCLUDE_DIRS} include/rigidTransformation)
 
 add_executable(so2_tests tests/so2_tests.cpp)
-target_link_libraries(so2_tests ${GTEST_LIBRARIES} gtest gtest_main pthread)
+target_link_libraries(so2_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
