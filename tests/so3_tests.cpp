@@ -305,3 +305,17 @@ TEST(HatOperator, Vector_ReturnsSkewSymmetricMatrix)
         EXPECT_TRUE(log_R_true.isApprox(log_R));
     }
 }
+
+TEST(MatrixExponential, SkewSymmetricMatrix_ReturnMatixExponential)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d w{getRandomVector(-PI, PI)};
+        Eigen::Matrix3d log_R{SO3<double>::hat(w)};
+
+        SO3<double> R{SO3<double>::exp(log_R)};
+        Eigen::Matrix3d R_true{log_R.exp()};
+
+        EXPECT_TRUE(R_true.isApprox(R.R()));
+    }
+}

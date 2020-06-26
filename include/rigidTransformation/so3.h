@@ -175,6 +175,16 @@ public:
             return theta / (2.0 * sin(theta)) * (R - R.transpose());
     }
 
+    static SO3 exp(const Mat3T &log_R)
+    {
+        Vec3T w{SO3::vee(log_R)};
+        T theta{w.norm()};
+
+        Mat3T R;
+        R = Mat3T::Identity() + sin(theta)/theta * log_R + (1 - cos(theta))/pow(theta,2) * log_R * log_R;
+        return SO3(R);
+    }
+
     static Vec3T vee(const Mat3T &log_R)
     {
         Vec3T w;
