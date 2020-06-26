@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <eigen3/unsupported/Eigen/MatrixFunctions>
 #include <random>
 
 #include "so3.h"
@@ -206,5 +207,25 @@ TEST(PassiveRotation, SO3ElementAnd3Vector_ReturnPassivelyRotatedVector)
         Eigen::Vector3d vp_true{R.inv().R() * v};
 
         EXPECT_TRUE(vp_true.isApprox(vp));
+    }
+}
+
+TEST(MatrixLogarithm, SO3Element_ReturnsMatrixLogarithm)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        SO3<double> R{SO3<double>::random()};
+
+        Eigen::Matrix3d log_R{R.log()};
+        Eigen::Matrix3d log_R_true{R.R().log()};
+
+        if(!log_R_true.isApprox(log_R))
+        {
+            std::cout << "Truth\n" << log_R_true << std::endl;
+            std::cout << "Mine\n" << log_R_true << std::endl;
+            int x{3};
+        }
+
+        EXPECT_TRUE(log_R_true.isApprox(log_R));
     }
 }

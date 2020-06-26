@@ -146,6 +146,23 @@ public:
         return SO3(q);
     }
 
+    Mat3T log() const 
+    {
+        return SO3::log(this->R());
+    }
+
+    static Mat3T log(const SO3 &R)
+    {
+        return R.log();
+    }
+
+    static Mat3T log(const Mat3T &R)
+    {
+        T theta{acos((R.trace() -1.0)/2.0)};
+        
+        return theta / (2.0 * sin(theta)) * (R - R.transpose());
+    }
+
 private:
     Mat3T _arr;
 };
