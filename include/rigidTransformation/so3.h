@@ -2,7 +2,6 @@
 #define SO3_H
 
 #include <Eigen/Dense>
-#include <eigen3/unsupported/Eigen/MatrixFunctions> //Get rid of this when log works around pi
 #include <random>
 #include <iostream>
 #include <cmath>
@@ -204,7 +203,7 @@ public:
             T temp{0.5 * (1 + pow(theta,2)/6.0 + 7 * pow(theta,4)/360.0)};
             return temp * (R - R.transpose());
         }
-        else if(abs(abs(theta) - PI) < 1e-6)
+        else if(abs(abs(theta) - PI) < 1e-6) //Try 2 else if: 1 for less than pi the other for greater than pi
         {
             T th_m_PI{theta - PI};
             T temp{-PI/th_m_PI - 1.0 - PI/6.0 * th_m_PI - pow(th_m_PI,2)/6.0 - 7 * PI/360.0 * pow(th_m_PI,3) - 7/360.0 * pow(th_m_PI,4)};
