@@ -18,3 +18,12 @@ TEST(SE2_Element, AskedForMatrix_ReturnsHomogeneousTransformationMatrix)
     EXPECT_TRUE(R.isApprox(T1.R()));
     EXPECT_TRUE(t.isApprox(T1.t()));
 }
+
+TEST(GenerateRandomSE2Element, IfTransformationIsValid_ReturnsTrue)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
+        EXPECT_TRUE(T.isValidTransformation());
+    }
+}
