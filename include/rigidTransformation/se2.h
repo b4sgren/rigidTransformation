@@ -43,7 +43,7 @@ public:
     {
         std::random_device rd;
         std::mt19937 generator(rd());
-        std::uniform_real_distribution<F> dist(F(-PI), F(PI));
+        std::uniform_real_distribution<F> dist(F(-PI), F(PI)); //Could edit to get bigger range for translation
 
         F ang{dist(generator)};
         transF t;
@@ -53,6 +53,13 @@ public:
         RotF arr;
         arr << ct, -st, st, ct;
         return SE2(arr, t);
+    }
+
+    static SE2 fromAngleAndVec(const F ang, const transF &t)
+    {
+        RotF R;
+        R << cos(ang), -sin(ang), sin(ang), cos(ang);
+        return SE2(R, t);
     }
 
 private:

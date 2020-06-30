@@ -6,6 +6,22 @@
 
 #include "se2.h"
 
+double getRandomDouble(double min, double max)
+{
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::uniform_real_distribution<double> dist(min, max);
+
+    return dist(generator);
+}
+
+Eigen::Vector2d getRandomVector(double min, double max)
+{
+    Eigen::Vector2d v;
+    v << getRandomDouble(min, max), getRandomDouble(min, max);
+    return v;
+}
+
 TEST(SE2_Element, AskedForMatrix_ReturnsHomogeneousTransformationMatrix)
 {
     Eigen::Matrix3d T;
@@ -25,5 +41,21 @@ TEST(GenerateRandomSE2Element, IfTransformationIsValid_ReturnsTrue)
     {
         SE2<double> T{SE2<double>::random()};
         EXPECT_TRUE(T.isValidTransformation());
+    }
+}
+
+TEST(FromAngleAndVec, AngleAndTranslationVector_ReturnTransformationMatrix)
+{
+    for(int i{0}; i!=100; ++i)
+    {
+        double angle{getRandomDouble(-PI, PI)};
+        Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+        
+        SE2<double> T{SE2<double>::fromAngleAndVec(angle, t)};
+        double ct{cos(angle)}, st{sin(angle)};
+        Eigen::Matrix3d T_true;
+        T_true << ct, -st, t(0), st, ct, t(1), 0.0, 0.0, 1.0;
+
+        EXPECT_TRUE(T_true.isApprox(T.T()));
     }
 }
