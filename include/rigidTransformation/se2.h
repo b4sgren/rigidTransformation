@@ -17,7 +17,7 @@ class SE2
     using Vec3F = Eigen::Matrix<F,3,1>;
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 public:
-    //Add a constructor that takes in an Eigen::Affine something
+    //Add a constructor that takes in an Eigen::Affine something and taking a F*
     SE2() = default;
     SE2(const Mat3F &mat): _arr{mat} {}
     SE2(const RotF &R, const transF &t)
@@ -48,6 +48,13 @@ public:
     Mat3F T() const { return _arr; }
     RotF R() const { return _arr.template block<2,2>(0,0); }
     transF t() const {return _arr.template block<2,1>(0,2); }
+
+    SE2 inv() const
+    {
+        RotF R_inv{this->R().transpose()};
+        transF t_inv{-R_inv * this->t()};
+        return SE2(R_inv, t_inv);
+    }
 
     bool isValidTransformation() const 
     {

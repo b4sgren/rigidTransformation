@@ -76,6 +76,19 @@ TEST(GroupMultiplication, TwoSE2Objects_ReturnConcatenatedSE2Object)
     }
 }
 
+TEST(Inverse, SE2Object_ReturnInverse)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
+        SE2<double> T_inv{T.inv()};
+
+        SE2<double> res{T * T_inv};
+
+        EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(res.T()));
+    }
+}
+
 TEST(GroupActionOnVector, SE2ObjectAndPoint_TranslatedPoint)
 {
     for(int i{0}; i !=100; ++i)
@@ -85,6 +98,10 @@ TEST(GroupActionOnVector, SE2ObjectAndPoint_TranslatedPoint)
         Eigen::Vector3d vn; // HOmogeneous coordinates
         vn << v(0), v(1), 1.0;
 
+        /*
+        Note that you get out what you pass in. If you want a vector in 
+        homogeneous coordinates then pass in a vector in homogeneous coordinates
+        */
         Eigen::Vector2d vp{T * v};
         Eigen::Vector3d vn_p{T * vn};
 
@@ -94,3 +111,4 @@ TEST(GroupActionOnVector, SE2ObjectAndPoint_TranslatedPoint)
         EXPECT_TRUE(vp_true.isApprox(vn_p.segment<2>(0)));
     }
 }
+
