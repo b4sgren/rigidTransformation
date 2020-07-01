@@ -17,6 +17,7 @@ class SE2
     using Vec3F = Eigen::Matrix<F,3,1>;
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 public:
+    //Add a constructor that takes in an Eigen::Affine something
     SE2() = default;
     SE2(const Mat3F &mat): _arr{mat} {}
     SE2(const RotF &R, const transF &t)
@@ -24,6 +25,11 @@ public:
         _arr.template block<2,2>(0,0) = R;
         _arr.template block<2,1>(0,2) = t;
         _arr(2,2) = F(1.0);
+    }
+
+    SE2 operator*(const SE2 &rhs)
+    {
+        return SE2(this->T() * rhs.T());
     }
 
     Mat3F T() const { return _arr; }
