@@ -148,3 +148,20 @@ TEST(PassiveTransformation, SE2ObjectAndPoint_ReturnsTransformedPoint)
         EXPECT_TRUE(vp_true.isApprox(vn_p.segment<2>(0)));
     }
 }
+
+TEST(HatOperator, ThreeVector_3by3MatrixOfLieAlgebra)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+        double ang{getRandomDouble(-PI, PI)};
+        Eigen::Vector3d w;
+        w << ang, t(0), t(1);
+
+        Eigen::Matrix3d log_T{SE2<double>::hat(w)};
+        Eigen::Matrix3d log_T_true;
+        log_T_true << 0, -ang, t(0), ang, 0, t(1), 0, 0, 0;
+
+        EXPECT_TRUE(log_T_true.isApprox(log_T));
+    }
+}

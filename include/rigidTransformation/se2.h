@@ -114,6 +114,21 @@ public:
         return SE2(R, t);
     }
 
+    static RotF skew(const F &val)
+    {
+        RotF val_x;
+        val_x << F(0.0), -val, val, F(0.0);
+        return val_x;
+    }
+
+    static Mat3F hat(const Vec3F &w)
+    {
+        Mat3F log_T{Mat3F::Zero()};
+        log_T.template block<2,2>(0,0) = SE2::skew(w(0));
+        log_T.template block<2,1>(0,2) = w.template segment<2>(1);
+        return log_T;
+    }
+
 private:
     Mat3F _arr;
 };
