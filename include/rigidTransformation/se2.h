@@ -129,6 +129,13 @@ public:
         return log_T;
     }
 
+    static Vec3F vee(const Mat3F &log_T)
+    {
+        Vec3F w;
+        w << log_T(1,0), log_T(0,2), log_T(1,2);
+        return w;
+    }
+
 private:
     Mat3F _arr;
 };

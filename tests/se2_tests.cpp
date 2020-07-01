@@ -165,3 +165,19 @@ TEST(HatOperator, ThreeVector_3by3MatrixOfLieAlgebra)
         EXPECT_TRUE(log_T_true.isApprox(log_T));
     }
 }
+
+TEST(VeeOperator, se2Element_Return3Vector)
+{
+    for(int i{0}; i !=100; ++i)
+    {
+        Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+        double ang{getRandomDouble(-PI, PI)};
+        Eigen::Vector3d w_true;
+        w_true << ang, t(0), t(1);
+
+        Eigen::Matrix3d log_T{SE2<double>::hat(w_true)};
+        Eigen::Vector3d w{SE2<double>::vee(log_T)};
+
+        EXPECT_TRUE(w_true.isApprox(w));
+    }
+}
