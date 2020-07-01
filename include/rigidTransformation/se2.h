@@ -67,9 +67,19 @@ public:
         return (*this) * v;
     }
 
+    Vec3F transp(const Vec3F &v)
+    {
+        return (*this).inv() * v;
+    }
+
     transF transa(const transF &v)
     {
         return (*this) * v;
+    }
+
+    transF transp(const transF &v)
+    {
+        return (*this).inv() * v;
     }
 
     bool isValidTransformation() const 

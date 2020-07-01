@@ -125,3 +125,26 @@ TEST(ActiveTransformation, SE2ObjectAndPoint_ReturnsTransformedPoint)
         EXPECT_TRUE(vp_true.isApprox(vn_p.segment<2>(0)));
     }
 }
+
+TEST(PassiveTransformation, SE2ObjectAndPoint_ReturnsTransformedPoint)
+{
+    for(int i{0}; i !=100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
+        Eigen::Vector2d v{getRandomVector(-10.0, 10.0)};
+        Eigen::Vector3d vn; // Homogeneous coordinates
+        vn << v(0), v(1), 1.0;
+
+        /*
+        Note that you get out what you pass in. If you want a vector in 
+        homogeneous coordinates then pass in a vector in homogeneous coordinates
+        */
+        Eigen::Vector2d vp{T.transp(v)};
+        Eigen::Vector3d vn_p{T.transp(vn)};
+
+        Eigen::Vector2d vp_true{T.inv().R() * v + T.inv().t()};
+
+        EXPECT_TRUE(vp_true.isApprox(vp));
+        EXPECT_TRUE(vp_true.isApprox(vn_p.segment<2>(0)));
+    }
+}
