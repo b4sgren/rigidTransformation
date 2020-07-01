@@ -89,6 +89,20 @@ TEST(Inverse, SE2Object_ReturnInverse)
     }
 }
 
+TEST(InverseInPlace, SE2Object_InvertsSelf)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
+        Eigen::Matrix3d T_mat{T.T()};
+
+        T.selfInv();
+        Eigen::Matrix3d res{T.T() * T_mat};
+
+        EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(res));
+    }
+}
+
 TEST(GroupActionOnVector, SE2ObjectAndPoint_TranslatedPoint)
 {
     for(int i{0}; i !=100; ++i)

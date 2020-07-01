@@ -56,6 +56,12 @@ public:
         return SE2(R_inv, t_inv);
     }
 
+    void selfInv()
+    {
+        _arr.template block<2,2>(0,0) = this->R().transpose();
+        _arr.template block<2,1>(0,2) = -this->R() * this->t();
+    };
+
     bool isValidTransformation() const 
     {
         F det{this->R().determinant()};
