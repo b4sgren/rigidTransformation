@@ -60,7 +60,17 @@ public:
     {
         _arr.template block<2,2>(0,0) = this->R().transpose();
         _arr.template block<2,1>(0,2) = -this->R() * this->t();
-    };
+    }
+
+    Vec3F transa(const Vec3F &v)
+    {
+        return (*this) * v;
+    }
+
+    transF transa(const transF &v)
+    {
+        return (*this) * v;
+    }
 
     bool isValidTransformation() const 
     {

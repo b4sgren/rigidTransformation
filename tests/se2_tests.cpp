@@ -103,7 +103,7 @@ TEST(InverseInPlace, SE2Object_InvertsSelf)
     }
 }
 
-TEST(GroupActionOnVector, SE2ObjectAndPoint_TranslatedPoint)
+TEST(ActiveTransformation, SE2ObjectAndPoint_ReturnsTransformedPoint)
 {
     for(int i{0}; i !=100; ++i)
     {
@@ -116,8 +116,8 @@ TEST(GroupActionOnVector, SE2ObjectAndPoint_TranslatedPoint)
         Note that you get out what you pass in. If you want a vector in 
         homogeneous coordinates then pass in a vector in homogeneous coordinates
         */
-        Eigen::Vector2d vp{T * v};
-        Eigen::Vector3d vn_p{T * vn};
+        Eigen::Vector2d vp{T.transa(v)};
+        Eigen::Vector3d vn_p{T.transa(vn)};
 
         Eigen::Vector2d vp_true{T.R() * v + T.t()};
 
@@ -125,4 +125,3 @@ TEST(GroupActionOnVector, SE2ObjectAndPoint_TranslatedPoint)
         EXPECT_TRUE(vp_true.isApprox(vn_p.segment<2>(0)));
     }
 }
-
