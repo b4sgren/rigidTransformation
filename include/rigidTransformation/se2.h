@@ -32,6 +32,19 @@ public:
         return SE2(this->T() * rhs.T());
     }
 
+    Vec3F operator*(const Vec3F &v)
+    {
+        return this->T() * v;
+    }
+
+    transF operator*(const transF &v)
+    {
+        Vec3F v1;
+        v1 << v(0), v(1), F(1.0);
+        Vec3F vp{(*this) * v1};
+        return vp.template segment<2>(0);
+    }
+
     Mat3F T() const { return _arr; }
     RotF R() const { return _arr.template block<2,2>(0,0); }
     transF t() const {return _arr.template block<2,1>(0,2); }

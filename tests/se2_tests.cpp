@@ -75,3 +75,22 @@ TEST(GroupMultiplication, TwoSE2Objects_ReturnConcatenatedSE2Object)
         EXPECT_TRUE(T3_true.isApprox(T3.T()));
     }
 }
+
+TEST(GroupActionOnVector, SE2ObjectAndPoint_TranslatedPoint)
+{
+    for(int i{0}; i !=100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
+        Eigen::Vector2d v{getRandomVector(-10.0, 10.0)};
+        Eigen::Vector3d vn; // HOmogeneous coordinates
+        vn << v(0), v(1), 1.0;
+
+        Eigen::Vector2d vp{T * v};
+        Eigen::Vector3d vn_p{T * vn};
+
+        Eigen::Vector2d vp_true{T.R() * v + T.t()};
+
+        EXPECT_TRUE(vp_true.isApprox(vp));
+        EXPECT_TRUE(vp_true.isApprox(vn_p.segment<2>(0)));
+    }
+}
