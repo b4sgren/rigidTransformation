@@ -176,6 +176,21 @@ public:
         return log_T;
     }
 
+    Vec3F Log() const
+    {
+        return SE2::Log(this->T());
+    }
+
+    static Vec3F Log(const SE2 &T)
+    {
+        return T.Log();
+    }
+
+    static Vec3F Log(const Mat3F &T)
+    {
+        return SE2::vee(SE2::log(T));
+    }
+
     static SE2 exp(const Mat3F &log_T)
     {
         F theta{log_T(1,0)};

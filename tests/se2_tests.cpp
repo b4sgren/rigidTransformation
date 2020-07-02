@@ -215,6 +215,25 @@ TEST(TaylorMatrixLogarithm, SE2Element_ReturnsElementOfLieAlgebra)
     }
 }
 
+TEST(MatrixLogarith, SE2Element_Returns3Vector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
+
+        Eigen::Vector3d log_T{T.Log()};
+        Eigen::Vector3d log_T2{SE2<double>::Log(T)};
+        Eigen::Vector3d log_T3{SE2<double>::Log(T.T())};
+
+        Eigen::Matrix3d temp{T.T().log()};
+        Eigen::Vector3d log_T_true{SE2<double>::vee(temp)};
+
+        EXPECT_TRUE(log_T_true.isApprox(log_T));
+        EXPECT_TRUE(log_T_true.isApprox(log_T2));
+        EXPECT_TRUE(log_T_true.isApprox(log_T3));
+    }
+}
+
 TEST(MatrixExponential, se2Element_ReturnSE2Element)
 {
     for(int i{0}; i != 100; ++i)
