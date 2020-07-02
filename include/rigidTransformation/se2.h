@@ -45,9 +45,25 @@ public:
         return vp.template segment<2>(0);
     }
 
+    bool operator==(const SE2 &rhs)
+    {
+        return this->T().isApprox(rhs.T());
+    }
+
     Mat3F T() const { return _arr; }
     Mat2F R() const { return _arr.template block<2,2>(0,0); }
     Vec2F t() const {return _arr.template block<2,1>(0,2); }
+    
+    Mat3F Adj() const 
+    {
+        Mat2F J;
+        J << 0.0, 1.0, -1.0, 0.0;
+
+        Mat3F adj{Mat3F::Identity()};
+        adj.template block<2,1>(1,0) = J * this->t();
+        adj.template block<2,2>(1,1) = this->R();
+        return adj;
+    }
 
     SE2 inv() const
     {
