@@ -176,6 +176,29 @@ public:
         return log_T;
     }
 
+    static SE2 exp(const Mat3F &log_T)
+    {
+        F theta{log_T(1,0)};
+
+        F A, B;
+        if(abs(theta) > 1e-6)
+        {
+            A = sin(theta) / theta;
+            B = (1 - cos(theta)) / theta;
+        }
+        else 
+        {
+            A = 1.0 - pow(theta,2) / 6.0 + pow(theta, 4) / 120.0;
+            B = theta / 2.0 - pow(theta, 3) / 24.0 + pow(theta,5) / 720.0;
+        }
+
+        Mat2F V;
+        V << A, -B, B, A;
+        Vec2F t{V * log_T.template block<2,1>(0,2)};
+
+        return SE2::fromAngleAndVec(theta, t);
+    }
+
 private:
     Mat3F _arr;
 };
