@@ -305,6 +305,12 @@ TEST(Adjoint, SE2ElementAnd3Vector_ReturnsCorrectComposition)
         SE2<double> temp2{SE2<double>::Exp(temp)};
         SE2<double> res2{temp2 * T};
 
+        if(!(res1 == res2))
+        {
+            int debug = 1;
+            SE2<double> blah{temp2 * T};
+        }
+
         EXPECT_TRUE(res1 == res2);
     }
 }
