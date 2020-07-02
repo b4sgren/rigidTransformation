@@ -12,15 +12,15 @@ template<typename F>
 class SE2
 {
     using Mat3F = Eigen::Matrix<F,3,3>;
-    using RotF = Eigen::Matrix<F,2,2>;
-    using transF = Eigen::Matrix<F,2,1>;
+    using Mat2F = Eigen::Matrix<F,2,2>;
+    using Vec2F = Eigen::Matrix<F,2,1>;
     using Vec3F = Eigen::Matrix<F,3,1>;
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 public:
     //Add a constructor that takes in an Eigen::Affine something and taking a F*
     SE2() = default;
     SE2(const Mat3F &mat): _arr{mat} {}
-    SE2(const RotF &R, const transF &t)
+    SE2(const Mat2F &R, const Vec2F &t)
     {
         _arr.template block<2,2>(0,0) = R;
         _arr.template block<2,1>(0,2) = t;
@@ -37,7 +37,7 @@ public:
         return this->T() * v;
     }
 
-    transF operator*(const transF &v)
+    Vec2F operator*(const Vec2F &v)
     {
         Vec3F v1;
         v1 << v(0), v(1), F(1.0);
@@ -46,13 +46,13 @@ public:
     }
 
     Mat3F T() const { return _arr; }
-    RotF R() const { return _arr.template block<2,2>(0,0); }
-    transF t() const {return _arr.template block<2,1>(0,2); }
+    Mat2F R() const { return _arr.template block<2,2>(0,0); }
+    Vec2F t() const {return _arr.template block<2,1>(0,2); }
 
     SE2 inv() const
     {
-        RotF R_inv{this->R().transpose()};
-        transF t_inv{-R_inv * this->t()};
+        Mat2F R_inv{this->R().transpose()};
+        Vec2F t_inv{-R_inv * this->t()};
         return SE2(R_inv, t_inv);
     }
 
@@ -72,12 +72,12 @@ public:
         return (*this).inv() * v;
     }
 
-    transF transa(const transF &v)
+    Vec2F transa(const Vec2F &v)
     {
         return (*this) * v;
     }
 
-    transF transp(const transF &v)
+    Vec2F transp(const Vec2F &v)
     {
         return (*this).inv() * v;
     }
@@ -98,25 +98,25 @@ public:
         std::uniform_real_distribution<F> dist(F(-PI), F(PI)); //Could edit to get bigger range for translation
 
         F ang{dist(generator)};
-        transF t;
+        Vec2F t;
         t << dist(generator), dist(generator);
 
         F ct{cos(ang)}, st{sin(ang)};
-        RotF arr;
+        Mat2F arr;
         arr << ct, -st, st, ct;
         return SE2(arr, t);
     }
 
-    static SE2 fromAngleAndVec(const F ang, const transF &t)
+    static SE2 fromAngleAndVec(const F ang, const Vec2F &t)
     {
-        RotF R;
+        Mat2F R;
         R << cos(ang), -sin(ang), sin(ang), cos(ang);
         return SE2(R, t);
     }
 
-    static RotF skew(const F &val)
+    static Mat2F skew(const F &val)
     {
-        RotF val_x;
+        Mat2F val_x;
         val_x << F(0.0), -val, val, F(0.0);
         return val_x;
     }
@@ -149,7 +149,7 @@ public:
     static Mat3F log(const Mat3F &T)
     {
         F theta{atan2(T(1,0), T(0,0))};
-        transF t{T.template block<2,1>(0,2)};
+        Vec2F t{T.template block<2,1>(0,2)};
 
         F A, B;
         if(abs(theta) > 1e-6)
@@ -164,9 +164,9 @@ public:
         }
 
         F normalizer{1.0 / (pow(A,2) + pow(B,2))};
-        RotF temp;
+        Mat2F temp;
         temp << A, B, -B, A;
-        RotF V_inv{normalizer * temp};
+        Mat2F V_inv{normalizer * temp};
 
         Mat3F log_T{Mat3F::Zero()};
         log_T.template block<2,1>(0,2) = V_inv * t;
