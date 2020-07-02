@@ -232,3 +232,22 @@ TEST(MatrixExponential, se2Element_ReturnSE2Element)
         EXPECT_TRUE(T_true.isApprox(T.T()));
     }
 }
+
+TEST(TaylorMatrixExponential, se2Element_ReturnsSE2Element)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{getRandomDouble(-1e-6, 1e-6)};
+        Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+        Eigen::Vector3d w;
+        w << ang, t(0), t(1);
+
+        Eigen::Matrix3d log_T{SE2<double>::hat(w)};
+
+        SE2<double> T{SE2<double>::exp(log_T)};
+        Eigen::Matrix3d T_true{log_T.exp()};
+
+        EXPECT_TRUE(T_true.isApprox(T.T()));
+
+    }
+}
