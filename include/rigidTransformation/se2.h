@@ -214,6 +214,12 @@ public:
         return SE2::fromAngleAndVec(theta, t);
     }
 
+    static SE2 Exp(const Vec3F &w)
+    {
+        Mat3F log_T{SE2::hat(w)};
+        return SE2::exp(log_T);
+    }
+
 private:
     Mat3F _arr;
 };
