@@ -181,3 +181,20 @@ TEST(VeeOperator, se2Element_Return3Vector)
         EXPECT_TRUE(w_true.isApprox(w));
     }
 }
+
+TEST(MatrixLogarithm, SE2Element_ReturnElementOfLieAlgebra)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
+
+        Eigen::Matrix3d log_T{T.log()};
+        Eigen::Matrix3d log_T2{SE2<double>::log(T)};
+        Eigen::Matrix3d log_T3{SE2<double>::log(T.T())};
+        Eigen::Matrix3d log_T_true{T.T().log()};
+
+        EXPECT_TRUE(log_T_true.isApprox(log_T));
+        EXPECT_TRUE(log_T_true.isApprox(log_T2));
+        EXPECT_TRUE(log_T_true.isApprox(log_T3));
+    }
+}

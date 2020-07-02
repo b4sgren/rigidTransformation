@@ -136,6 +136,46 @@ public:
         return w;
     }
 
+    Mat3F log() const 
+    {
+        return SE2::log(this->T());
+    }
+
+    static Mat3F log(const SE2 &T)
+    {
+        return T.log();
+    }
+
+    static Mat3F log(const Mat3F &T)
+    {
+        F theta{atan2(T(1,0), T(0,0))};
+        transF t{T.template block<2,1>(0,2)};
+
+        F A, B;
+        if(abs(theta) > 1e-6)
+        {
+            A = sin(theta) / theta;
+            B = (1 - cos(theta)) / theta;
+        }
+        else 
+        {
+            A = 1.0 - pow(theta,2) / 6.0 + pow(theta, 4) / 120.0;
+            B = theta / 2.0 - pow(theta, 3) / 24.0 + pow(theta,5) / 720.0;
+        }
+
+        F normalizer{1.0 / (pow(A,2) + pow(B,2))};
+        RotF temp;
+        temp << A, B, -B, A;
+        RotF V_inv{normalizer * temp};
+
+        Mat3F log_T{Mat3F::Zero()};
+        log_T.template block<2,1>(0,2) = V_inv * t;
+        log_T(0,1) = -theta;
+        log_T(1,0) = theta;
+
+        return log_T;
+    }
+
 private:
     Mat3F _arr;
 };
