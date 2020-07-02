@@ -198,3 +198,19 @@ TEST(MatrixLogarithm, SE2Element_ReturnElementOfLieAlgebra)
         EXPECT_TRUE(log_T_true.isApprox(log_T3));
     }
 }
+
+TEST(TaylorMatrixLogarithm, SE2Element_ReturnsElementOfLieAlgebra)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{getRandomDouble(-1e-6, 1e-6)};
+        Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+
+        SE2<double> T{SE2<double>::fromAngleAndVec(ang, t)};
+
+        Eigen::Matrix3d log_T{T.log()};
+        Eigen::Matrix3d log_T_true{T.T().log()};
+
+        EXPECT_TRUE(log_T_true.isApprox(log_T));
+    }
+}
