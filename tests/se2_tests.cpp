@@ -300,28 +300,28 @@ TEST(MatrixExponential, 3Vector_ReturnsSE2Element)
     }
 }
 
-// TEST(Adjoint, SE2ElementAnd3Vector_ReturnsCorrectComposition)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
+TEST(Adjoint, SE2ElementAnd3Vector_ReturnsCorrectComposition)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
 
-//         double ang{getRandomDouble(-PI, PI)};
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector3d delta;
-//         delta << ang, t(0), t(1);
+        double ang{getRandomDouble(-PI, PI)};
+        Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+        Eigen::Vector3d delta;
+        delta << ang, t(0), t(1);
 
-//         SE2<double> res1{T * SE2<double>::Exp(delta)};
-//         Eigen::Vector3d temp{T.Adj() * delta};
-//         SE2<double> temp2{SE2<double>::Exp(temp)};
-//         SE2<double> res2{temp2 * T};
+        SE2<double> res1{T * SE2<double>::Exp(delta)};
+        Eigen::Vector3d temp{T.Adj() * delta};
+        SE2<double> temp2{SE2<double>::Exp(temp)};
+        SE2<double> res2{temp2 * T};
 
-//         if(!(res1 == res2))
-//         {
-//             int debug = 1;
-//             SE2<double> blah{temp2 * T};
-//         }
+        if(!(res1 == res2))
+        {
+            int debug = 1;
+            SE2<double> blah{temp2 * T};
+        }
 
-//         EXPECT_TRUE(res1 == res2);
-//     }
-// }
+        EXPECT_TRUE(res1 == res2);
+    }
+}
