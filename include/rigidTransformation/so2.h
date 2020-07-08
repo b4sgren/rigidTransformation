@@ -14,9 +14,11 @@ class SO2
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using Mat2T = Eigen::Matrix<T,2,2>;
     using Vec2T = Eigen::Matrix<T,2,1>;
+    using Map2T = Eigen::Map<Mat2T>;
 public:
     SO2() = default;
     SO2(Eigen::Matrix<T, 2, 2> mat) : _arr{mat} {}
+    SO2(T* mat) : _arr(Map2T(mat)) {}
 
     SO2<T> operator*(const SO2<T> &R2) 
     {

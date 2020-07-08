@@ -72,6 +72,21 @@ TEST(AskForMatrixFromAngle, ReturnsRotationMatrix)
     }
 }
 
+TEST(AskForMatrixFromArray, ReturnsRotationMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SO2<double> R{SO2<double>::random()};
+        double ang(getAngle(R.R()));
+        double ct{cos(ang)}, st{sin(ang)};
+        // double *arr{new double[4]}; 
+        double arr[4]{ct, st, -st, ct}; //Order this way because column major order
+        SO2<double> R2{arr};
+
+        EXPECT_TRUE(R == R2);
+    }
+}
+
 TEST(ResultOfGroupMultiplication, ReturnsNewMemberOfGroup)
 {
     for(int i{0}; i != 100; ++i)
