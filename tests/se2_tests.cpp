@@ -325,3 +325,20 @@ TEST(Adjoint, SE2ElementAnd3Vector_ReturnsCorrectComposition)
         EXPECT_TRUE(res1 == res2);
     }
 }
+
+TEST(BoxPlus, SE2And3Vector_ReturnsNewSE2Element)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE2<double> T{SE2<double>::random()};
+        Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+        double ang{getRandomDouble(-PI, PI)};
+        Eigen::Vector3d d;
+        d << t, ang;
+
+        SE2<double> res{T.boxplus(d)};
+        SE2<double> res_true{T * SE2<double>::Exp(d)};
+
+        EXPECT_TRUE(res == res_true);
+    }
+}
