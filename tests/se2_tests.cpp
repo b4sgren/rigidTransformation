@@ -77,14 +77,11 @@ TEST(GroupMultiplication, TwoSE2Objects_ReturnConcatenatedSE2Object)
     {
         SE2<double> T1{SE2<double>::random()}, T2{SE2<double>::random()};
 
-        SE2<double> T3{T1 * T2}; //Issue in here with multiplication
+        SE2<double> T3{T1 * T2}; 
         Eigen::Matrix3d T3_true;
         T3_true.block<2,2>(0,0) = T1.R() * T2.R();
         T3_true.block<2,1>(0,2) = T1.t() + T1.R() * T2.t();
         T3_true(2,2) = 1.0;
-
-        // std::cout << T3_true << std::endl;
-        // std::cout << T3.T() << std::endl << std::endl;
 
         EXPECT_TRUE(T3_true.isApprox(T3.T()));
     }

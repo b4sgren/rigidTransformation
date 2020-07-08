@@ -33,11 +33,7 @@ public:
 
     SE2 operator*(const SE2 &rhs)
     {
-        Mat3F mat{this->T() * rhs.T()};
-        // std::cout << this->T() << std::endl << rhs.T() << std::endl;
-        // std::cout << mat << std::endl;
-        return SE2{mat};
-        // return SE2(this->T() * rhs.T());
+        return SE2(this->T() * rhs.T());
     }
 
     Vec3F operator*(const Vec3F &v)
