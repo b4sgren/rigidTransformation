@@ -69,10 +69,8 @@ public:
         return SO2<T>::Log(R.inv() * (*this));
     }
 
-    T* data() const 
-    {
-        return _arr.data();
-    }
+    T* data() { return _arr.data(); }
+    const T* data() const { return _arr.data(); }
 
     static SO2<T> random()
     {
