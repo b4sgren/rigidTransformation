@@ -105,6 +105,23 @@ TEST(FromRPYAngles, SuppliedRPYAngles_ReturnsValidRotation)
     }
 }
 
+TEST(FromPointer, ReturnsValidRotation)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d angs{getRandomVector(-PI, PI)};
+
+        SO3<double> R{SO3<double>::fromRPY(angs)};
+        Eigen::Matrix3d Rx{Eigen::AngleAxisd(angs(0), Eigen::Vector3d::UnitX())};
+        Eigen::Matrix3d Ry{Eigen::AngleAxisd(angs(1), Eigen::Vector3d::UnitY())};
+        Eigen::Matrix3d Rz{Eigen::AngleAxisd(angs(2), Eigen::Vector3d::UnitZ())};
+        Eigen::Matrix3d R_data(Rz * Ry * Rx);
+        SO3<double> R2{R_data.data()};
+
+        EXPECT_TRUE(R == R2);
+    }
+}
+
 TEST(FromQuaternion, SuppliedHamiltonianQuaternion_ReturnsValidRotation)
 {
     for(int i{0}; i!=100; ++i)

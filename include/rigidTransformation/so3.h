@@ -22,11 +22,13 @@ class SO3
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using Mat3T = Eigen::Matrix<T,3,3>;
     using Vec3T = Eigen::Matrix<T,3,1>;
+    using Map3T = Eigen::Map<Mat3T>;
 public:
     SO3() = default;
     SO3(const Mat3T &mat): _arr{mat} {}
     SO3(const Eigen::AngleAxis<T> &mat): _arr{mat} {}
     SO3(const Eigen::Quaternion<T> &q): _arr{q} {}
+    SO3(T* mat): _arr{Map3T(mat)} {}
 
     SO3 operator*(const SO3 &rhs) const
     {

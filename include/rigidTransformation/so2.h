@@ -17,7 +17,7 @@ class SO2
     using Map2T = Eigen::Map<Mat2T>;
 public:
     SO2() = default;
-    SO2(Eigen::Matrix<T, 2, 2> mat) : _arr{mat} {}
+    SO2(const Mat2T &mat) : _arr{mat} {}
     SO2(T* mat) : _arr(Map2T(mat)) {}
 
     SO2<T> operator*(const SO2<T> &R2) 
