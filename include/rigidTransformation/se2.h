@@ -18,6 +18,7 @@ class SE2
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 public:
     //Add a constructor that takes in an Eigen::Affine something and taking a F*
+    //To accept a pointer _arr might have to be an Eigen::Map...
     SE2() = default;
     SE2(const Mat3F &mat): _arr{mat} {}
     SE2(const Mat2F &R, const Vec2F &t)
