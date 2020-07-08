@@ -15,6 +15,7 @@ class SE2
     using Mat2F = Eigen::Matrix<F,2,2>;
     using Vec2F = Eigen::Matrix<F,2,1>;
     using Vec3F = Eigen::Matrix<F,3,1>;
+    using Map3F = Eigen::Map<Mat3F>;
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 public:
     //Add a constructor that takes in an Eigen::Affine something and taking a F*
@@ -23,14 +24,20 @@ public:
     SE2(const Mat3F &mat): _arr{mat} {}
     SE2(const Mat2F &R, const Vec2F &t)
     {
+        _arr = Mat3F::Zero();
         _arr.template block<2,2>(0,0) = R;
         _arr.template block<2,1>(0,2) = t;
         _arr(2,2) = F(1.0);
     }
+    SE2(F* mat): _arr{Map3F(mat)} {}
 
     SE2 operator*(const SE2 &rhs)
     {
-        return SE2(this->T() * rhs.T());
+        Mat3F mat{this->T() * rhs.T()};
+        // std::cout << this->T() << std::endl << rhs.T() << std::endl;
+        // std::cout << mat << std::endl;
+        return SE2{mat};
+        // return SE2(this->T() * rhs.T());
     }
 
     Vec3F operator*(const Vec3F &v)
@@ -54,6 +61,8 @@ public:
     Mat3F T() const { return _arr; }
     Mat2F R() const { return _arr.template block<2,2>(0,0); }
     Vec2F t() const {return _arr.template block<2,1>(0,2); }
+    F* data() {return _arr.data(); }
+    const F* data() const {return _arr.data(); }
     
     Mat3F Adj() const 
     {
