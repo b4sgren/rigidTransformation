@@ -109,6 +109,11 @@ public:
         return (*this) * Exp(d);
     }
 
+    Vec3F boxminus(const SE2 &T)
+    {
+        return Log(T.inv() * (*this));
+    }
+
     bool isValidTransformation() const 
     {
         F det{this->R().determinant()};

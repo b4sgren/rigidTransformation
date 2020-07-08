@@ -342,3 +342,16 @@ TEST(BoxPlus, SE2And3Vector_ReturnsNewSE2Element)
         EXPECT_TRUE(res == res_true);
     }
 }
+
+TEST(BoxMinus, 2SE2Elements_ReturnsDifference)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE2<double> T1{SE2<double>::random()}, T2{SE2<double>::random()};
+
+        Eigen::Vector3d d{T1.boxminus(T2)};
+        SE2<double> T{T2.boxplus(d)};
+
+        EXPECT_TRUE(T == T1);
+    }
+}
