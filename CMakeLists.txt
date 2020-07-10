@@ -18,4 +18,7 @@ add_executable(so3_tests tests/so3_tests.cpp)
 target_link_libraries(so3_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
 
 add_executable(se2_tests tests/se2_tests.cpp)
-target_link_libraries(se2_tests ${CTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
+target_link_libraries(se2_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
+
+add_executable(quaternion_tests tests/quaternion_tests.cpp)
+target_link_libraries(quaternion_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
