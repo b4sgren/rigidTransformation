@@ -16,14 +16,20 @@ class Quaternion
     using Vec3T = Eigen::Matrix<T,3,1>;
 public:
     Quaternion() = default;
-    Quaternion(const QuatT &q): _arr{q} {} //Add check that quaternion has positive real part
+    Quaternion(const QuatT &q): _arr{q} { rectifyQuat(); } 
 
     QuatT q() const { return _arr; }
 
     bool isValidQuaternion() const 
     {
         T norm{_arr.norm()};
-        return abs(1.0 - norm) < 1e-8;
+        return abs(1.0 - norm) < 1e-8 && _arr(0) >= 0.0;
+    }
+
+    void rectifyQuat()
+    {
+        if(_arr(0) < 0.0)
+            _arr *= -1.0;
     }
 
     static Quaternion random()
