@@ -6,6 +6,8 @@
 
 #include "quaternion.h"
 
+//Make a helper file for stuff like skew functions and what not
+
 TEST(Quaternion, Returns4Vector)
 {
     Eigen::Vector4d q_true;
@@ -23,4 +25,9 @@ TEST(RandomGeneration, RandomQuaternion_ReturnsValidQuaternion)
         Quaternion<double> q{Quaternion<double>::random()};
         EXPECT_TRUE(q.isValidQuaternion());
     }
+}
+
+TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
+{
+
 }
