@@ -15,3 +15,12 @@ TEST(Quaternion, Returns4Vector)
 
     EXPECT_TRUE(q_true.isApprox(q.q()));
 }
+
+TEST(RandomGeneration, RandomQuaternion_ReturnsValidQuaternion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+        EXPECT_TRUE(q.isValidQuaternion());
+    }
+}
