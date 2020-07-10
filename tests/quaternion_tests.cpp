@@ -6,7 +6,12 @@
 
 #include "quaternion.h"
 
-TEST(Blah, BlahBlah)
+TEST(Quaternion, Returns4Vector)
 {
-    EXPECT_TRUE(true);
+    Eigen::Vector4d q_true;
+    q_true << 1.0, 0.0, 0.0, 0.0;
+
+    Quaternion<double> q{q_true};
+
+    EXPECT_TRUE(q_true.isApprox(q.q()));
 }

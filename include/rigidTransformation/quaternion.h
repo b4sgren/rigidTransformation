@@ -13,6 +13,10 @@ class Quaternion
     using Mat3T = Eigen::Matrix<T,3,3>;
     using Vec3T = Eigen::Matrix<T,3,1>;
 public:
+    Quaternion() = default;
+    Quaternion(const QuatT &q): _arr{q} {}
+
+    QuatT q() const { return _arr; }
 
 private:
     QuatT _arr;
