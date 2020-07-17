@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cmath>
 
-constexpr double PI = 3.141592653589793238462643383279;
+#include "utils.h"
 
 template<typename T>
 class Quaternion
@@ -18,7 +18,12 @@ public:
     Quaternion() = default;
     Quaternion(const QuatT &q): _arr{q} { rectifyQuat(); } 
 
-    QuatT q() const { return _arr; }
+    inline T qw() const { return _arr(0); }
+    inline T qx() const { return _arr(1); }
+    inline T qy() const { return _arr(2); }
+    inline T qz() const { return _arr(3); }
+    inline Vec3T qv() const { return _arr.template segment<3>(1); }
+    inline QuatT q() const { return _arr; }
 
     bool isValidQuaternion() const 
     {
@@ -30,6 +35,13 @@ public:
     {
         if(_arr(0) < 0.0)
             _arr *= -1.0;
+    }
+
+    Mat3T R() const 
+    {
+        Mat3T I{Mat3T::Identity()};
+        Vec3T q_v{qv()};
+        return (2 * pow(qw(),2) - 1.0) * I + 2 * qw() * skew3(q_v) + 2 * q_v * q_v.transpose();
     }
 
     static Quaternion random()

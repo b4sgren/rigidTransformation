@@ -5,8 +5,7 @@
 #include <random>
 
 #include "quaternion.h"
-
-//Make a helper file for stuff like skew functions and what not
+#include "so3.h"
 
 TEST(Quaternion, Returns4Vector)
 {
@@ -27,7 +26,19 @@ TEST(RandomGeneration, RandomQuaternion_ReturnsValidQuaternion)
     }
 }
 
-TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
+TEST(GetRotationMatrix, RandomQuaternion_ReturnsCorrectRotationMatrix)
 {
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+        SO3<double> R_true{SO3<double>::fromQuaternion(q.q())};
+        Eigen::Matrix3d R{q.R()};
 
+        EXPECT_TRUE(R_true.R().isApprox(R));
+    }
 }
+
+// TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
+// {
+    // for(int i{0}; i != 100; ++i)
+// }
