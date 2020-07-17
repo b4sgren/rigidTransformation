@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cmath>
 
-constexpr double PI = 3.141592653589793238462643383279;
+#include "utils.h"
 
 template<typename F>
 class SE2
@@ -125,9 +125,9 @@ public:
 
     static SE2 random()
     {
-        std::random_device rd;
-        std::mt19937 generator(rd());
-        std::uniform_real_distribution<F> dist(F(-PI), F(PI)); //Could edit to get bigger range for translation
+        static std::random_device rd;
+        static std::mt19937 generator(rd());
+        static std::uniform_real_distribution<F> dist(F(-PI), F(PI)); //Could edit to get bigger range for translation
 
         F ang{dist(generator)};
         Vec2F t;
@@ -141,22 +141,16 @@ public:
 
     static SE2 fromAngleAndVec(const F ang, const Vec2F &t)
     {
+        F ct{cos(ang)}, st{sin(ang)};
         Mat2F R;
-        R << cos(ang), -sin(ang), sin(ang), cos(ang);
+        R << ct, -st, st, ct;
         return SE2(R, t);
-    }
-
-    static Mat2F skew(const F &val)
-    {
-        Mat2F val_x;
-        val_x << F(0.0), -val, val, F(0.0);
-        return val_x;
     }
 
     static Mat3F hat(const Vec3F &w)
     {
         Mat3F log_T{Mat3F::Zero()};
-        log_T.template block<2,2>(0,0) = SE2::skew(w(0));
+        log_T.template block<2,2>(0,0) = skew2(w(0));
         log_T.template block<2,1>(0,2) = w.template segment<2>(1);
         return log_T;
     }
