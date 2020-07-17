@@ -21,4 +21,15 @@ Eigen::Matrix<T,2,2> skew2(const T &v)
     return mat;
 }
 
+template<int n>
+Eigen::Matrix<double,n,1> ei(const int i)
+{
+    Eigen::Matrix<double,n,1> arr{Eigen::Matrix<double,n,1>::Zero()};
+    if(i < n)
+        return arr;
+
+    arr(i) = 1.0;    
+    return arr;
+}
+
 #endif
