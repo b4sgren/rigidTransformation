@@ -8,9 +8,9 @@
 
 double getRandomDouble(double min, double max)
 {
-    std::random_device rd;
-    std::mt19937 generator(rd());
-    std::uniform_real_distribution<double> dist(min, max);
+    static std::random_device rd;
+    static std::mt19937 generator(rd());
+    static std::uniform_real_distribution<double> dist(min, max);
 
     return dist(generator);
 }

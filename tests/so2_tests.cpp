@@ -23,24 +23,21 @@ double wrap(double ang)
     return ang;
 }
 
+double getRandomDouble(double min, double max)
+{
+    static std::random_device rd;
+    static std::mt19937 generator(rd());
+    static std::uniform_real_distribution<double> dist(min, max);
+    return dist(generator);
+}
+
 Eigen::Vector2d randVec2d(double min, double max)
 {
-    std::random_device rd;
-    std::mt19937 generator(rd());
-    std::uniform_real_distribution<double> dist(min, max);
-
     Eigen::Vector2d vec;
-    vec << dist(generator), dist(generator);
+    vec << getRandomDouble(min, max), getRandomDouble(min, max);
     return vec;
 }
 
-double getRandomDouble(double min, double max)
-{
-    std::random_device rd;
-    std::mt19937 generator(rd());
-    std::uniform_real_distribution<double> dist(min, max);
-    return dist(generator);
-}
 
 TEST(AskForTheRotationMatrix, ReturnsTheRotationMatrix)
 {

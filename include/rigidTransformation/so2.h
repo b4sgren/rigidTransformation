@@ -6,7 +6,8 @@
 #include <random>
 #include <cmath>
 
-constexpr double PI = 3.141592653589793238462643383279;
+#include "utils.h"
+
 
 template<typename T> 
 class SO2
@@ -74,16 +75,12 @@ public:
 
     static SO2<T> random()
     {
-        std::random_device rd;
-        std::mt19937 generator(rd());
-        std::uniform_real_distribution<T> dist(T(-PI), T(PI));
+        static std::random_device rd;
+        static std::mt19937 generator(rd());
+        static std::uniform_real_distribution<T> dist(T(-PI), T(PI));
 
         T ang{dist(generator)};
-
-        T ct{cos(ang)}, st{sin(ang)};
-        Mat2T arr;
-        arr << ct, -st, st, ct;
-        return SO2<T>(arr);
+        return SO2::fromAngle(ang);
     }
 
     static SO2<T> fromAngle(const T &ang)
@@ -95,8 +92,7 @@ public:
 
     static Mat2T hat(const T &ang)
     {
-        Mat2T mat;
-        mat << T(0.0), -ang, ang, T(0.0);
+        Mat2T mat{skew2(ang)};
         return mat;
     }
 
@@ -108,8 +104,7 @@ public:
     static Mat2T log(const Mat2T &R)
     {
         T theta{atan2(R(1,0), R(0,0))};
-        Mat2T log_R;
-        log_R << T(0.0), -theta, theta, T(0.0);
+        Mat2T log_R{skew2(theta)};
         return log_R;
     }
 
