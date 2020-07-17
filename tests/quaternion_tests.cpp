@@ -7,6 +7,12 @@
 #include "quaternion.h"
 #include "so3.h"
 
+void fixQuat(Eigen::Vector4d &q)
+{
+    if(q(0) < 0.0)
+        q *= -1;
+}
+
 TEST(Quaternion, Returns4Vector)
 {
     Eigen::Vector4d q_true;
@@ -35,6 +41,24 @@ TEST(GetRotationMatrix, RandomQuaternion_ReturnsCorrectRotationMatrix)
         Eigen::Matrix3d R{q.R()};
 
         EXPECT_TRUE(R_true.R().isApprox(R));
+    }
+}
+
+TEST(QuaternionMultiply, RandomQuaternions_ReturnsConcatenatedRotation)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q1{Quaternion<double>::random()}, q2{Quaternion<double>::random()};
+        Quaternion<double> q3{q1 * q2};
+
+        Eigen::Vector4d q_true;
+        q_true << q1.qw() * q2.qw() - q1.qx() * q2.qx() - q1.qy() * q2.qy() - q1.qz() * q2.qz(),
+                  q1.qw() * q2.qx() + q1.qx() * q2.qw() + q1.qy() * q2.qz() - q1.qz() * q2.qy(),
+                  q1.qw() * q2.qy() - q1.qx() * q2.qz() + q1.qy() * q2.qw() + q1.qz() * q2.qx(),
+                  q1.qw() * q2.qz() + q1.qx() * q2.qy() - q1.qy() * q2.qx() + q1.qz() * q2.qw();
+        fixQuat(q_true);
+        
+        EXPECT_TRUE(q_true.isApprox(q3.q())); //Just the last element doesn't match
     }
 }
 

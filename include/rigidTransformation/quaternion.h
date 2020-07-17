@@ -18,6 +18,11 @@ public:
     Quaternion() = default;
     Quaternion(const QuatT &q): _arr{q} { rectifyQuat(); } 
 
+    Quaternion operator*(const Quaternion &rhs)
+    {
+        return this->otimes(rhs);
+    }
+
     inline T qw() const { return _arr(0); }
     inline T qx() const { return _arr(1); }
     inline T qy() const { return _arr(2); }
@@ -42,6 +47,19 @@ public:
         Mat3T I{Mat3T::Identity()};
         Vec3T q_v{qv()};
         return (2 * pow(qw(),2) - 1.0) * I + 2 * qw() * skew3(q_v) + 2 * q_v * q_v.transpose();
+    }
+
+    Quaternion otimes(const Quaternion &rhs)
+    {
+        Vec3T q_v{qv()};
+        Mat3T I{Mat3T::Identity()};
+
+        Eigen::Matrix<T,4,4> Q{Eigen::Matrix<T,4,4>::Zero()};
+        Q(0,0) = qw();
+        Q.template block<1,3>(0,1) = -q_v.transpose();
+        Q.template block<3,1>(1,0) = q_v;
+        Q.template block<3,3>(1,1) = qw() * I + skew3(q_v);
+        return Quaternion(Q * rhs.q());
     }
 
     static Quaternion random()
