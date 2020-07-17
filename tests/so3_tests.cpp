@@ -330,7 +330,7 @@ TEST(VeeOperator, SkewSymmetrixMatrix_Return3Vector)
     for(int i{0}; i != 100; ++i)
     {
         Eigen::Vector3d w_true{getRandomVector(-10.0, 10.0)};
-        Eigen::Matrix3d log_R{skew(w_true)};
+        Eigen::Matrix3d log_R{skew3(w_true)};
         Eigen::Vector3d w{SO3<double>::vee(log_R)};
 
         EXPECT_TRUE(w_true.isApprox(w));

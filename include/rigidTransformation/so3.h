@@ -6,15 +6,7 @@
 #include <iostream>
 #include <cmath>
 
-constexpr double PI = 3.141592653589793238462643383279;
-
-template <typename T>
-Eigen::Matrix<T,3,3> skew(const Eigen::Matrix<T,3,1> &v)
-{
-    Eigen::Matrix<T,3,3> v_x;
-    v_x << T(0), -v(2), v(1), v(2), T(0), -v(0), -v(1), v(0), T(0);
-    return v_x;
-}
+#include "utils.h"
 
 template <typename T>
 class SO3
@@ -125,7 +117,7 @@ public:
     static SO3 fromAxisAngle(const Vec3T &w)
     {
         T theta{w.norm()};
-        Mat3T w_x{skew(w)};
+        Mat3T w_x{skew3(w)};
 
         T A,B;
         if(abs(theta) > 1e-6)
@@ -175,7 +167,7 @@ public:
     {
         T qw{q(0)};
         Vec3T qv{q.template tail<3>()};
-        Mat3T qv_x{skew(qv)};
+        Mat3T qv_x{skew3(qv)};
 
         // Mat3T R{(2 * pow(qw,2) - 1.0) * Mat3T::Identity() - 2 * qw * qv_x + 2 * qv * qv.transpose()}; //Passive rotation. Need to check my implementation
         Mat3T R{(2 * pow(qw,2) - 1.0) * Mat3T::Identity() + 2 * qw * qv_x + 2 * qv * qv.transpose()}; //Active rotation
@@ -267,7 +259,7 @@ public:
 
     static Mat3T hat(const Vec3T &w)
     {
-        return skew(w);
+        return skew3(w);
     }
 
 private:
