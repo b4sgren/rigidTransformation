@@ -13,6 +13,23 @@ void fixQuat(Eigen::Vector4d &q)
         q *= -1;
 }
 
+double randomDouble(double min, double max)
+{
+    static std::random_device rd;
+    static std::mt19937 generator(rd());
+    static std::uniform_real_distribution<double> dist(min, max);
+
+    return dist(generator);
+}
+
+Eigen::Vector3d getRandomVector(double min, double max)
+{
+    Eigen::Vector3d v;
+    v << randomDouble(min, max), randomDouble(min, max), randomDouble(min, max);
+
+    return v;
+}
+
 TEST(Quaternion, Returns4Vector)
 {
     Eigen::Vector4d q_true;
@@ -44,6 +61,21 @@ TEST(GetRotationMatrix, RandomQuaternion_ReturnsCorrectRotationMatrix)
     }
 }
 
+TEST(Inverse, QuaternionInverse_QuaternionInverse)
+{
+    Eigen::Vector4d qi;
+    qi << 1.0, 0.0, 0.0, 0.0;
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+
+        Quaternion<double> q_inv{q.inv()};
+        Quaternion<double> res{q * q_inv};
+
+        EXPECT_TRUE(qi.isApprox(res.q()));
+    }
+}
+
 TEST(QuaternionMultiply, RandomQuaternions_ReturnsConcatenatedRotation)
 {
     for(int i{0}; i != 100; ++i)
@@ -58,7 +90,25 @@ TEST(QuaternionMultiply, RandomQuaternions_ReturnsConcatenatedRotation)
                   q1.qw() * q2.qz() + q1.qx() * q2.qy() - q1.qy() * q2.qx() + q1.qz() * q2.qw();
         fixQuat(q_true);
         
-        EXPECT_TRUE(q_true.isApprox(q3.q())); //Just the last element doesn't match
+        EXPECT_TRUE(q_true.isApprox(q3.q())); 
+    }
+}
+
+TEST(ActiveRotation, QuaternionAndVector_ReturnRotatedVector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+
+        Eigen::Vector4d temp;
+        temp << 0.0, v;
+        Quaternion<double> v_q{temp};
+
+        Eigen::Vector3d vp{q.rota(v)};
+        Eigen::Vector3d res{q.R() * v};
+
+        EXPECT_TRUE(res.isApprox(vp));
     }
 }
 

@@ -62,6 +62,23 @@ public:
         return Quaternion(Q * rhs.q());
     }
 
+    Quaternion inv() const 
+    {
+        QuatT q_inv;
+        q_inv << qw(), -qv();
+
+        return Quaternion(q_inv);
+    }
+
+    Vec3T rota(const Vec3T &v)
+    {
+        T qw{this->qw()};
+        Vec3T qv{this->qv()};
+
+        Vec3T t{2 * skew3(v) * qv};
+        return v - qw * t + skew3(t) * qv;
+    }
+
     static Quaternion random()
     {
         std::random_device rd;
