@@ -109,6 +109,16 @@ public:
         return Quaternion(q);
     }
 
+    static Quaternion fromAxisAngle(const Vec3T &vec)
+    {
+        T ang{vec.norm()};
+        Vec3T v{vec / ang};
+
+        QuatT q;
+        q << cos(ang/2.0), v * sin(ang/2.0);
+        return Quaternion(q);
+    }
+
 private:
     QuatT _arr;
 };

@@ -6,6 +6,7 @@
 
 #include "quaternion.h"
 #include "so3.h"
+#include "utils.h"
 
 void fixQuat(Eigen::Vector4d &q)
 {
@@ -138,7 +139,19 @@ TEST(PassiveRotation, QuaternionAndVector_ReturnRotatedVector)
     }
 }
 
-// TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
-// {
-    // for(int i{0}; i != 100; ++i)
-// }
+TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{randomDouble(0, PI)};
+        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+        vec = vec / vec.norm() * ang;
+
+        Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
+        Eigen::Vector4d q_true;
+        q_true << cos(ang/2.0), vec / ang * sin(ang/2.0);
+        fixQuat(q_true);
+
+        EXPECT_TRUE(q_true.isApprox(q.q()));
+    }
+}
