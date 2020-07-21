@@ -70,6 +70,11 @@ public:
         return Quaternion(q_inv);
     }
 
+    void selfInv()
+    {
+        _arr.template segment<3>(1) *= -1;
+    }
+
     Vec3T rota(const Vec3T &v) const
     {
         T qw{this->qw()};

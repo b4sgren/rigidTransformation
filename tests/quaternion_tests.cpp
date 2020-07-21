@@ -76,6 +76,22 @@ TEST(Inverse, QuaternionInverse_QuaternionInverse)
     }
 }
 
+TEST(SelfInverse, Quaternion_QuaternionInverse)
+{
+    Eigen::Vector4d qi;
+    qi << 1.0, 0.0, 0.0, 0.0;
+    for(int i{0}; i!= 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+        Quaternion<double> q2{q};
+
+        q.selfInv();
+        Quaternion<double> res{q * q2};
+
+        EXPECT_TRUE(qi.isApprox(res.q()));
+    }
+}
+
 TEST(QuaternionMultiply, RandomQuaternions_ReturnsConcatenatedRotation)
 {
     for(int i{0}; i != 100; ++i)
