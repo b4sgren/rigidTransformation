@@ -101,12 +101,22 @@ TEST(ActiveRotation, QuaternionAndVector_ReturnRotatedVector)
         Quaternion<double> q{Quaternion<double>::random()};
         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
 
-        Eigen::Vector4d temp;
-        temp << 0.0, v;
-        Quaternion<double> v_q{temp};
-
         Eigen::Vector3d vp{q.rota(v)};
         Eigen::Vector3d res{q.R() * v};
+
+        EXPECT_TRUE(res.isApprox(vp));
+    }
+}
+
+TEST(PassiveRotation, QuaternionAndVector_ReturnRotatedVector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+
+        Eigen::Vector3d vp{q.rotp(v)};
+        Eigen::Vector3d res{q.inv().R() * v};
 
         EXPECT_TRUE(res.isApprox(vp));
     }

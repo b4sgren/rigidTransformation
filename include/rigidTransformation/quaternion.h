@@ -70,13 +70,18 @@ public:
         return Quaternion(q_inv);
     }
 
-    Vec3T rota(const Vec3T &v)
+    Vec3T rota(const Vec3T &v) const
     {
         T qw{this->qw()};
         Vec3T qv{this->qv()};
 
         Vec3T t{2 * skew3(v) * qv};
         return v - qw * t + skew3(t) * qv;
+    }
+
+    Vec3T rotp(const Vec3T &v) const
+    {
+        return this->inv().rota(v);
     }
 
     static Quaternion random()
