@@ -132,10 +132,35 @@ public:
         return Quaternion(q);
     }
 
-    // static Quaternion fromRotationMatrix(const Mat3T &R)
-    // {
+    static Quaternion fromRotationMatrix(const Mat3T &R)
+    {
+        T d{R.trace()}, s;
+        QuatT q;
+        
+        if(d > 0)
+        {
+            s = 2.0 * sqrt(d + 1.0);
+            q << s/4.0, 1/s * (R(1,2) - R(2,1)), 1/s * (R(2,0) - R(0,2)), 1/s * (R(0,1) - R(1,0));
+        }
+        else if(R(0,0) > R(1,1) && R(0,0) > R(2,2))
+        {
+            s = 2 * sqrt(1 + R(0,0) - R(1,1) - R(2,2));
+            q << 1/s * (R(1,2) - R(2,1)), s/4, 1/s * (R(1,0) + R(0,1)), 1/s * (R(2,0) + R(0,2));
+        }
+        else if(R(1,1) > R(2,2))
+        {
+            s = 2 * sqrt(1 + R(1,1) - R(0,0) - R(2,2));
+            q << 1/s * (R(2,0) - R(0,2)), 1/s * (R(1,0) + R(0,1)), s/4, 1/s * (R(2,1) + R(1,2));
+        }
+        else 
+        {
+            s = 2 * sqrt(1 + R(2,2) - R(0,0) - R(1,1));
+            q << 1/s * (R(0,1) - R(1,0)), 1/s * (R(2,0) + R(0,2)), 1/s * (R(2,1) + R(1,2)), s/4;
+        }
+        q.template segment<3>(1) *= -1;
 
-    // }
+        return Quaternion(q);
+    }
 
 private:
     QuatT _arr;
