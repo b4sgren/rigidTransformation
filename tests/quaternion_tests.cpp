@@ -155,3 +155,31 @@ TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
         EXPECT_TRUE(q_true.isApprox(q.q()));
     }
 }
+
+TEST(FromAxisAngleTaylorSeries, AxisAngle_ReturnValidQuaternion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{randomDouble(0, 1e-6)};
+        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+        vec = vec / vec.norm() * ang;
+
+        Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
+        SO3<double> R_true{SO3<double>::fromAxisAngle(vec)};
+
+        EXPECT_TRUE(R_true.R().isApprox(q.R()));
+    }
+}
+
+// TEST(FromRotationMatrix, RotationMatrix_ReturnValidQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         Eigen::Matrix3d R{q.R()};
+
+//         Quaternion<double> q2{Quaternion<double>::fromRotationMatrix(R)};
+
+//         EXPECT_TRUE(q == q2);
+//     }
+// }

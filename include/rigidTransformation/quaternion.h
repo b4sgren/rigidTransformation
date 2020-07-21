@@ -23,6 +23,11 @@ public:
         return this->otimes(rhs);
     }
 
+    bool operator==(const Quaternion &rhs)
+    {
+        return this->q().isApprox(rhs.q());
+    }
+
     inline T qw() const { return _arr(0); }
     inline T qx() const { return _arr(1); }
     inline T qy() const { return _arr(2); }
@@ -115,9 +120,22 @@ public:
         Vec3T v{vec / ang};
 
         QuatT q;
-        q << cos(ang/2.0), v * sin(ang/2.0);
+        if(abs(ang) > 1e-6)
+            q << cos(ang/2.0), v * sin(ang/2.0);
+        else 
+        {
+            T qw{1.0 - pow(ang,2)/8.0 + pow(ang,4)/46080.0};
+            T temp{0.5 - pow(ang,2)/48.0 + pow(ang,4)/3840};
+            Vec3T qv{vec * temp};
+            q << qw, qv;
+        }
         return Quaternion(q);
     }
+
+    // static Quaternion fromRotationMatrix(const Mat3T &R)
+    // {
+
+    // }
 
 private:
     QuatT _arr;
