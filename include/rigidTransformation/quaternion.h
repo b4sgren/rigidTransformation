@@ -192,6 +192,18 @@ public:
         return Quaternion(q);
     }
 
+    static Vec3T vee(const QuatT &q)
+    {
+        return q.template segment<3>(1);
+    }
+
+    static QuatT hat(const Vec3T &v)
+    {
+        QuatT q;
+        q << T(0.0), v;
+        return q;
+    }
+
 private:
     QuatT _arr;
 };

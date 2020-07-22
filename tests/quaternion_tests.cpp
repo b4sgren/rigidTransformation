@@ -220,3 +220,29 @@ TEST(FromRPYAngles, RPYEulerAngles_ReturnQuaternion)
         EXPECT_TRUE(q.isValidQuaternion());
     }
 }
+
+TEST(VeeOperator, PureQuaternion_ReturnTheVectorPortion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+
+        Eigen::Vector3d v1{Quaternion<double>::vee(q.q())}, v2;
+        v2 << q.qx(), q.qy(), q.qz();
+
+        EXPECT_TRUE(v1.isApprox(v2));
+    }
+}
+
+TEST(HatOperator, 3Vector_ReturnPureQuaternion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d v{getRandomVector(-PI, PI)};
+
+        Eigen::Vector4d q1{Quaternion<double>::hat(v)}, q2;
+        q2 << 0.0, v;
+
+        EXPECT_TRUE(q1.isApprox(q2));
+    }
+}
