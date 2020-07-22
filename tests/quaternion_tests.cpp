@@ -153,6 +153,7 @@ TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
         fixQuat(q_true);
 
         EXPECT_TRUE(q_true.isApprox(q.q()));
+        EXPECT_TRUE(q.isValidQuaternion());
     }
 }
 
@@ -182,5 +183,22 @@ TEST(FromRotationMatrix, RotationMatrix_ReturnValidQuaternion)
         Quaternion<double> q2{Quaternion<double>::fromRotationMatrix(R)};
 
         EXPECT_TRUE(q == q2);
+        EXPECT_TRUE(q2.isValidQuaternion());
+    }
+}
+
+TEST(FromRPYAngles, RPYEulerAngles_ReturnQuaternion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d rpy{getRandomVector(-PI, PI)};
+        
+        Quaternion<double> q{Quaternion<double>::fromRPY(rpy)};
+
+        SO3<double> R{SO3<double>::fromRPY(rpy)};
+        Quaternion<double> q_true{Quaternion<double>::fromRotationMatrix(R.R())};
+
+        EXPECT_TRUE(q_true == q);
+        EXPECT_TRUE(q.isValidQuaternion());
     }
 }

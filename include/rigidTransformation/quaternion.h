@@ -162,6 +162,30 @@ public:
         return Quaternion(q);
     }
 
+    static Quaternion fromRPY(T &phi, T &theta, T &psi)
+    {
+        Vec3T rpy;
+        rpy << phi, theta, psi;
+        return Quaternion::fromRPY(rpy);
+    }
+
+    static Quaternion fromRPY(const Vec3T &rpy)
+    {
+        T phi{rpy(0)/2.0}, theta{rpy(1)/2.0}, psi{rpy(2)/2.0};
+
+        T cp{cos(phi)}, sp{sin(phi)};
+        T ct{cos(theta)}, st{sin(theta)};
+        T cpsi{cos(psi)}, spsi{sin(psi)};
+
+        QuatT q;
+        q << cpsi * ct * cp + spsi * st * sp, 
+             cpsi * ct * sp - spsi * st * cp, 
+             cpsi * st * cp + spsi * ct * sp,
+             spsi * ct * cp - cpsi * st * sp;
+        
+        return Quaternion(q);
+    }
+
 private:
     QuatT _arr;
 };
