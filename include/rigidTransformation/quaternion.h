@@ -114,6 +114,12 @@ public:
         return Quaternion(q);
     }
 
+    static Quaternion fromAxisAngle(const Eigen::AngleAxis<T> &mat)
+    {
+        Mat3T mat_{mat};
+        return Quaternion::fromRotationMatrix(mat_);
+    }
+
     static Quaternion fromAxisAngle(const Vec3T &vec)
     {
         T ang{vec.norm()};

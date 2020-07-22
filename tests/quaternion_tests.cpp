@@ -187,6 +187,24 @@ TEST(FromRotationMatrix, RotationMatrix_ReturnValidQuaternion)
     }
 }
 
+TEST(FromAxisAngleEigen, EigenAngleAxis_ReturnQuaternion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{randomDouble(0, PI)};
+        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+        vec /= vec.norm();
+        Eigen::AngleAxisd v{ang, vec};
+        vec *= ang;
+
+        Quaternion<double> q{Quaternion<double>::fromAxisAngle(v)};
+        Quaternion<double> q2{Quaternion<double>::fromAxisAngle(vec)};
+
+        EXPECT_TRUE(q == q2);
+        EXPECT_TRUE(q.isValidQuaternion());
+    }
+}
+
 TEST(FromRPYAngles, RPYEulerAngles_ReturnQuaternion)
 {
     for(int i{0}; i != 100; ++i)
