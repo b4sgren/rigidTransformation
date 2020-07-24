@@ -204,6 +204,55 @@ public:
         return q;
     }
 
+    static Quaternion exp(const QuatT &log_q) //Possibly think about changing this to just accept the 3 vector...
+    {
+        Vec3T v{Quaternion::vee(log_q)};
+        return Quaternion::fromAxisAngle(v);
+    }
+
+    static Quaternion Exp(const Vec3T &v)
+    {
+        return Quaternion::exp(Quaternion::hat(v));
+    }
+
+    static QuatT log(const Quaternion &q)
+    {
+        return q.log();
+    }
+
+    QuatT log() const 
+    {
+        T qw{this->qw()};
+        Vec3T qv{this->qv()};
+
+        T theta{qv.norm()};
+        Vec3T w;
+        if(abs(theta) > 1e-6)
+        {
+            w = 2 * atan(theta/qw) * qv/theta;
+        }
+        else 
+        {
+            T temp{1.0/qw - pow(theta,2) / (3 * pow(qw,3)) + pow(theta,4)/(5 * pow(qw,5))};
+            w = 2 * temp * qv;
+        }
+
+        QuatT log_q;
+        log_q << T(0.0), w;
+        return log_q;
+    }
+
+    static Vec3T Log(const Quaternion &q)
+    {
+        return q.Log();
+    }
+
+    Vec3T Log() const 
+    {
+        QuatT log_q{this->log()};
+        return Quaternion::vee(log_q);
+    }
+
 private:
     QuatT _arr;
 };

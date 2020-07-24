@@ -246,3 +246,52 @@ TEST(HatOperator, 3Vector_ReturnPureQuaternion)
         EXPECT_TRUE(q1.isApprox(q2));
     }
 }
+
+TEST(QuaternionExponential, 3Vector_ReturnQuaternion) //No need to test Taylor Series b/c done in fromAxisAngle
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d vec{getRandomVector(-PI, PI)};
+        
+        Quaternion<double> q{Quaternion<double>::Exp(vec)};
+        SO3<double> R{SO3<double>::Exp(vec)};
+        Quaternion<double> q_true{Quaternion<double>::fromRotationMatrix(R.R())};
+
+        // EXPECT_EQ(q_true, q); //Doesn't like this
+        EXPECT_TRUE(q_true == q);
+    }
+}
+
+TEST(QuaternionLogarithm, Quaternion_Return3Vector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+
+        Eigen::Vector3d log_q1{q.Log()};
+        Eigen::Vector3d log_q2{Quaternion<double>::Log(q)};
+
+        Quaternion<double> q1{Quaternion<double>::Exp(log_q1)};
+        Quaternion<double> q2{Quaternion<double>::Exp(log_q2)};
+
+        EXPECT_TRUE(q == q1);
+        EXPECT_TRUE (q == q2);
+    }
+}
+
+TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{randomDouble(0, 1e-6)};
+        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+        vec = vec / vec.norm() * ang;
+
+        Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
+
+        Eigen::Vector3d log_q{q.Log()};
+        Quaternion<double> q2{Quaternion<double>::Exp(log_q)};
+
+        EXPECT_TRUE(q == q2);
+    }
+}
