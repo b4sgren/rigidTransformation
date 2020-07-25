@@ -221,6 +221,18 @@ TEST(FromRPYAngles, RPYEulerAngles_ReturnQuaternion)
     }
 }
 
+TEST(FromPointer, Pointer_ReturnValidQuaternion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+        double * data{q.data()};
+        Quaternion<double> q2{data};
+
+        EXPECT_TRUE(q == q2);
+    }
+}
+
 TEST(VeeOperator, PureQuaternion_ReturnTheVectorPortion)
 {
     for(int i{0}; i != 100; ++i)

@@ -14,9 +14,11 @@ class Quaternion
     using QuatT = Eigen::Matrix<T,4,1>;
     using Mat3T = Eigen::Matrix<T,3,3>;
     using Vec3T = Eigen::Matrix<T,3,1>;
+    using Map4T = Eigen::Map<QuatT>;
 public:
     Quaternion() = default;
     Quaternion(const QuatT &q): _arr{q} { rectifyQuat(); } 
+    Quaternion(T *q): _arr{Map4T(q)} { rectifyQuat(); }
 
     Quaternion operator*(const Quaternion &rhs) const
     {
@@ -107,6 +109,16 @@ public:
     void normalize()
     {
         _arr /= _arr.norm();
+    }
+
+    T* data()
+    {
+        return _arr.data();
+    }
+
+    const T* data() const 
+    {
+        return _arr.data();
     }
 
     static Quaternion random()
