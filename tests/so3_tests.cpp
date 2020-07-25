@@ -424,7 +424,7 @@ TEST(BoxPlus, SO3AndVector_ReturnsConcatenationOfTheTwo)
     }
 }
 
-TEST(BoxMinus, SO3Elements_ReturnDifferenceBetweenTheTwo)
+TEST(BoxMinus, DISABLED_SO3Elements_ReturnDifferenceBetweenTheTwo)
 {
     for(int i{0}; i != 100; ++i)
     {

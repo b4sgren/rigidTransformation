@@ -119,9 +119,11 @@ TEST(ActiveRotation, QuaternionAndVector_ReturnRotatedVector)
         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
 
         Eigen::Vector3d vp{q.rota(v)};
+        Eigen::Vector3d vp2{q*v};
         Eigen::Vector3d res{q.R() * v};
 
         EXPECT_TRUE(res.isApprox(vp));
+        EXPECT_TRUE(res.isApprox(vp2));
     }
 }
 

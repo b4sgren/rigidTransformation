@@ -25,6 +25,11 @@ public:
         return this->otimes(rhs);
     }
 
+    Vec3T operator *(const Vec3T &rhs) const 
+    {
+        return this->rota(rhs);
+    }
+
     bool operator==(const Quaternion &rhs)
     {
         return this->q().isApprox(rhs.q());
