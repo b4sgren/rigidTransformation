@@ -104,6 +104,11 @@ public:
         return Quaternion::Log(q.inv() * (*this));
     }
 
+    void normalize()
+    {
+        _arr /= _arr.norm();
+    }
+
     static Quaternion random()
     {
         std::random_device rd;

@@ -324,3 +324,14 @@ TEST(BoxMinus, TwoQuaternions_ReturnDifferenceAs3Vector)
         EXPECT_TRUE(q1 == res);
     }
 }
+
+TEST(Normalize, Quaternion_QuaternionUnitNorm)
+{
+    for(int i{0}; i != 10; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+        q.normalize();
+
+        EXPECT_TRUE(q.isValidQuaternion());
+    }
+}
