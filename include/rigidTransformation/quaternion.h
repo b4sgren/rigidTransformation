@@ -99,6 +99,11 @@ public:
         return (*this) * Quaternion::Exp(v);
     }
 
+    Vec3T boxminus(const Quaternion &q) const 
+    {
+        return Quaternion::Log(q.inv() * (*this));
+    }
+
     static Quaternion random()
     {
         std::random_device rd;

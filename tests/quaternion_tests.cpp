@@ -311,3 +311,16 @@ TEST(BoxPlus, QuaternionAnd3Vector_ReturnsNewQuaternion)
         EXPECT_TRUE(q_true == q2);
     }
 }
+
+TEST(BoxMinus, TwoQuaternions_ReturnDifferenceAs3Vector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q1{Quaternion<double>::random()}, q2{Quaternion<double>::random()};
+        
+        Eigen::Vector3d w{q1.boxminus(q2)};
+        Quaternion<double> res{q2.boxplus(w)};
+
+        EXPECT_TRUE(q1 == res);
+    }
+}
