@@ -18,7 +18,7 @@ public:
     Quaternion() = default;
     Quaternion(const QuatT &q): _arr{q} { rectifyQuat(); } 
 
-    Quaternion operator*(const Quaternion &rhs)
+    Quaternion operator*(const Quaternion &rhs) const
     {
         return this->otimes(rhs);
     }
@@ -54,7 +54,7 @@ public:
         return (2 * pow(qw(),2) - 1.0) * I + 2 * qw() * skew3(q_v) + 2 * q_v * q_v.transpose();
     }
 
-    Quaternion otimes(const Quaternion &rhs)
+    Quaternion otimes(const Quaternion &rhs) const
     {
         Vec3T q_v{qv()};
         Mat3T I{Mat3T::Identity()};
@@ -92,6 +92,11 @@ public:
     Vec3T rotp(const Vec3T &v) const
     {
         return this->inv().rota(v);
+    }
+
+    Quaternion boxplus(const Vec3T &v) const 
+    {
+        return (*this) * Quaternion::Exp(v);
     }
 
     static Quaternion random()

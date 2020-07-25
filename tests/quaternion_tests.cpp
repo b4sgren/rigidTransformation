@@ -295,3 +295,19 @@ TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
         EXPECT_TRUE(q == q2);
     }
 }
+
+TEST(BoxPlus, QuaternionAnd3Vector_ReturnsNewQuaternion)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quaternion<double> q{Quaternion<double>::random()};
+        SO3<double> Rq{q.R()};
+        Eigen::Vector3d v{getRandomVector(-PI, PI)};
+
+        SO3<double> R{Rq.boxplus(v)};
+        Quaternion<double>q_true{Quaternion<double>::fromRotationMatrix(R.R())};
+        Quaternion<double> q2{q.boxplus(v)};
+
+        EXPECT_TRUE(q_true == q2);
+    }
+}
