@@ -6,7 +6,10 @@
 
 #include "se3.h"
 
-TEST(Blah, Blah)
+TEST(Constructor, SE3Element_Returns4by4Matrix)
 {
-    EXPECT_TRUE(true);
+    Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
+    SE3<double> Td{T};
+
+    EXPECT_TRUE(T.isApprox(Td.T()));
 }
