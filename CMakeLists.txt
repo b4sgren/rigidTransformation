@@ -22,3 +22,6 @@ target_link_libraries(se2_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtes
 
 add_executable(quaternion_tests tests/quaternion_tests.cpp)
 target_link_libraries(quaternion_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
+
+add_executable(se3_tests tests/se3_tests.cpp)
+target_link_libraries(se3_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
