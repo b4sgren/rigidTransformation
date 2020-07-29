@@ -361,7 +361,7 @@ TEST(MatrixExponential, SkewSymmetricMatrix_ReturnSO3Element)
     }
 }
 
-TEST(MatrixExponentialTaylor, SkewSymmetricMatrix_ReturnsSO3Element)
+TEST(MatrixExponential, SkewSymmetricMatrix_ReturnsSO3ElementUsingTaylorSeries)
 {
     for(int i{0}; i != 100; ++i)
     {
@@ -432,7 +432,6 @@ TEST(BoxMinus, SO3Elements_ReturnDifferenceBetweenTheTwo)
 
         double norm{(R1.R() - R3.R()).norm()};
 
-        // EXPECT_EQ(R1, R3);
         EXPECT_LE(norm, 1e-8);
     }
 }
