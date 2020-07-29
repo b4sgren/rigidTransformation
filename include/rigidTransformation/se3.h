@@ -22,6 +22,8 @@ public:
     SE3(const Mat4F &mat): _arr{mat} {}
 
     Mat4F T() { return _arr; }
+    Mat3F R() { return _arr.template block<3,3>(0,0); }
+    Vec3F t() { return _arr.template block<3,1>(0,3); }
 
 private:
     Mat4F _arr;
