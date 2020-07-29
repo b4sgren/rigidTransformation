@@ -31,3 +31,14 @@ TEST(GetTranslation, SE3Element_Returns3x1TranslationVector)
     Eigen::Vector3d t{T.block<3,1>(0,3)};
     EXPECT_TRUE(t.isApprox(Td.t()));
 }
+
+TEST(RandomGeneration, RandomSE3Element_VerifyThatElementIsValidTransformation)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T{SE3<double>::random()};
+        if(!T.isValidTransformation())
+            std::cout << "T:\n" << T.T() << std::endl;
+        EXPECT_TRUE(T.isValidTransformation());
+    }
+}
