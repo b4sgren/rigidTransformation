@@ -94,6 +94,31 @@ public:
         return SE3(R, t);
     }
 
+    static SE3 fromAxisAngleAndVector(const Eigen::AngleAxis<F> &v, const Vec3F &t)
+    {
+        Mat3F R(v);
+        return SE3(R, t);
+    }
+
+    static SE3 fromRPYAndVector(const F &phi, const F &theta, const F &psi, const Vec3F &t)
+    {
+        F cp{cos(phi)}, sp{sin(phi)};
+        F ct{cos(theta)}, st{sin(theta)};
+        F cpsi{cos(psi)}, spsi{sin(psi)};
+
+        Mat3F Rx, Ry, Rz;
+        Rx << F(1.0), F(0.0), F(0.0), F(0.0), cp, -sp, F(0.0), sp, cp;
+        Ry << ct, F(0.0), st, F(0.0), F(1.0), F(0.0), -st, F(0.0), ct;
+        Rz << cpsi, -spsi, F(0.0), spsi, cpsi, F(0.0), F(0.0), F(0.0), F(1.0);
+
+        return SE3(Rz * Ry * Rx, t);
+    }
+
+    static SE3 fromRPYAndVector(const Vec3F &rpy, const Vec3F &t)
+    {
+        return SE3::fromRPYAndVector(rpy(0), rpy(1), rpy(2), t);
+    }
+
 private:
     Mat4F _arr;
 };
