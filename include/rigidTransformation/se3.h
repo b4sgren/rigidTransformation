@@ -29,9 +29,14 @@ public:
 
     SE3(F *p): _arr{Eigen::Map<Mat4F>(p)} {}
 
-    bool operator==(const SE3 &T)
+    bool operator==(const SE3 &rhs)
     {
-        return this->T().isApprox(T.T());
+        return this->T().isApprox(rhs.T());
+    }
+
+    SE3 operator*(const SE3 &rhs) const
+    {
+        return SE3(this->T() * rhs.T());
     }
 
     Mat4F T() const { return _arr; }
