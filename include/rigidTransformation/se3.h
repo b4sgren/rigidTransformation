@@ -27,6 +27,8 @@ public:
         _arr.template block<3,1>(0,3) = t;
     }
 
+    SE3(F *p): _arr{Eigen::Map<Mat4F>(p)} {}
+
     bool operator==(const SE3 &T)
     {
         return this->T().isApprox(T.T());
@@ -45,6 +47,9 @@ public:
 
         return one && homogeneous;
     }
+
+    F* data() { return _arr.data(); }
+    const F* data() const { return _arr.data(); }
 
     static SE3 random()
     {

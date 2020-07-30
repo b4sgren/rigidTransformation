@@ -212,3 +212,16 @@ TEST(FromQuaternion, EigenQuaternion_ReturnValidTransformationMatrix)
         EXPECT_TRUE(T_true == T);
     }
 }
+
+TEST(FromPointer, PointerInColumnMajorOrder_ReturnValidTransformation)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T_true{SE3<double>::random()};
+        double *p{T_true.data()};
+
+        SE3<double> T(p);
+        EXPECT_TRUE(T_true == T);
+        EXPECT_TRUE(T.isValidTransformation());
+    }
+}
