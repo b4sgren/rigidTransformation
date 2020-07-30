@@ -27,11 +27,16 @@ public:
         _arr.template block<3,1>(0,3) = t;
     }
 
-    Mat4F T() { return _arr; }
-    Mat3F R() { return _arr.template block<3,3>(0,0); }
-    Vec3F t() { return _arr.template block<3,1>(0,3); }
+    bool operator==(const SE3 &T)
+    {
+        return this->T().isApprox(T.T());
+    }
 
-    bool isValidTransformation()
+    Mat4F T() const { return _arr; }
+    Mat3F R() const { return _arr.template block<3,3>(0,0); }
+    Vec3F t() const { return _arr.template block<3,1>(0,3); }
+
+    bool isValidTransformation() const
     {
         F det{this->R().determinant()};
         bool homogeneous(_arr(3,3) == F(1.0));
@@ -63,6 +68,28 @@ public:
 
         Mat3F H{Mat3F::Identity() - 2 * v * v.transpose()};
         R = -H * R;
+
+        return SE3(R, t);
+    }
+
+    static SE3 fromAxisAngleAndVector(const Vec3F &vec, const Vec3F &t)
+    {
+        F theta{vec.norm()};
+
+        F A, B;
+        if(theta > 1e-6)
+        {
+            A = sin(theta)/theta;
+            B = (1 - cos(theta))/pow(theta,2);
+        }
+        else 
+        {
+            A = 1 - pow(theta,2)/6.0 + pow(theta,4)/120.0;
+            B = 0.5 - pow(theta,2)/24.0 + pow(theta,4)/720.0;
+        }
+        
+        Mat3F skew_v{skew3(vec)};
+        Mat3F R{Mat3F::Identity() + A * skew_v + B * skew_v * skew_v};
 
         return SE3(R, t);
     }

@@ -73,3 +73,42 @@ TEST(FromRotationMatrixAndVector, RotationMatrixAndVector_ValidTransformationMat
         EXPECT_TRUE(T.isValidTransformation());
     }
 }
+
+TEST(FromAxisAngleAndVector, AxisAngle_ReturnValidTransformationMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{getRandomDouble(0, PI)};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        v /= v.norm();
+        Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
+
+        SE3<double> T{SE3<double>::fromAxisAngleAndVector(v * ang, t)};
+
+        Eigen::Matrix3d R(Eigen::AngleAxisd(ang, v));
+        SE3<double> T_true{R, t};
+
+        EXPECT_TRUE(T_true == T);
+        EXPECT_TRUE(T.isValidTransformation());
+    }
+}
+
+TEST(FromAxisAngleAndVector, AxisAngle_ReturnValidTransformationMatrixUsingTaylorSeries)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{getRandomDouble(0, 1e-6)};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        v /= v.norm();
+        Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
+
+        SE3<double> T{SE3<double>::fromAxisAngleAndVector(v * ang, t)};
+
+        Eigen::Matrix3d R(Eigen::AngleAxisd(ang, v));
+        SE3<double> T_true{R, t};
+
+        EXPECT_TRUE(T_true == T);
+        EXPECT_TRUE(T.isValidTransformation());
+    }
+
+}
