@@ -119,6 +119,22 @@ public:
         return SE3::fromRPYAndVector(rpy(0), rpy(1), rpy(2), t);
     }
 
+    static SE3 fromQuaternionAndVector(const Eigen::Matrix<F,4,1> &q, const Vec3F &t)
+    {
+        F qw{q(0)};
+        Vec3F qv{q.template tail<3>()};
+        Mat3F qv_x{skew3(qv)};
+
+        Mat3F R{(2 * pow(qw,2) - 1.0) * Mat3F::Identity() + 2 * qw * qv_x + 2 * qv * qv.transpose()}; //Active rotation
+        return SE3(R, t);
+    }
+
+    static SE3 fromQuaternionAndVector(const Eigen::Quaternion<F> &q, const Vec3F &t)
+    {
+        Mat3F R(q);
+        return SE3(R, t);
+    }
+
 private:
     Mat4F _arr;
 };

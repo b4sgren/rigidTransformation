@@ -168,3 +168,47 @@ TEST(FromRPYAnglesAndVector, RPYAnglesAndVector_ReturnValidTransformationMatrix)
         EXPECT_TRUE(T.isValidTransformation());
     }
 }
+
+TEST(FromQuaternion, Quaternion_ReturnValidTransformationMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        v /= v.norm();
+        double ang{getRandomDouble(0, PI)};
+        Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
+
+        Eigen::Vector4d q;
+        double st = sin(ang/2);
+        // q << cos(ang/2), st * v(0), st * v(1), st * v(2);
+        q << cos(ang/2), st * v;
+
+        SE3<double> T{SE3<double>::fromQuaternionAndVector(q, t)};
+        
+        Eigen::Matrix3d R{Eigen::AngleAxisd(ang, v)};
+        SE3<double> T_true{R, t};
+
+        EXPECT_TRUE(T.isValidTransformation());
+        EXPECT_TRUE(T_true == T);
+    }
+}
+
+TEST(FromQuaternion, EigenQuaternion_ReturnValidTransformationMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        v /= v.norm();
+        double ang{getRandomDouble(0, PI)};
+        Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
+
+        
+        Eigen::Quaterniond q{Eigen::AngleAxisd(ang, v)};
+        Eigen::Matrix3d R{Eigen::AngleAxisd(ang, v)};
+        SE3<double> T{SE3<double>::fromQuaternionAndVector(q, t)};
+        SE3<double> T_true{R, t};
+
+        EXPECT_TRUE(T.isValidTransformation());
+        EXPECT_TRUE(T_true == T);
+    }
+}
