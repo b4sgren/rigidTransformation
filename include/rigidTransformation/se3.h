@@ -56,6 +56,22 @@ public:
     F* data() { return _arr.data(); }
     const F* data() const { return _arr.data(); }
 
+    SE3 inv() const 
+    {
+        Mat4F mat{Mat4F::Identity()};
+        Mat3F R_inv{this->R().transpose()};
+        mat.template block<3,3>(0,0) = R_inv;
+        mat.template block<3,1>(0,3) = -R_inv * this->t();
+        return SE3(mat);
+    }
+
+    void selfInv()
+    {
+        Eigen::Matrix3d R_inv(this->R().transpose());
+        _arr.template block<3,3>(0,0) = R_inv;
+        _arr.template block<3,1>(0,3) = -R_inv * this->t();
+    }
+
     static SE3 random()
     {
         static std::random_device rd;

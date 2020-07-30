@@ -238,3 +238,27 @@ TEST(GroupMultiplication, 2SE3Elements_ReturnNewSE3Element)
         EXPECT_TRUE(T3_true.isApprox(T3.T()));
     }
 }
+
+TEST(Inverse, SE3Element_ReturnInverseElement)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T{SE3<double>::random()};
+        SE3<double> T_inv{T.inv()};
+        SE3<double> res{T * T_inv};
+
+        EXPECT_TRUE(Eigen::Matrix4d::Identity().isApprox(res.T()));
+    }
+}
+
+TEST(Inverse, SE3Element_DoesInverseInPlace)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T{SE3<double>::random()};
+        Eigen::Matrix4d T_inv{T.T().inverse()};
+        T.selfInv();
+
+        EXPECT_TRUE(T_inv.isApprox(T.T()));
+    }
+}
