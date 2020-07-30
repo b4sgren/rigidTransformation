@@ -20,6 +20,12 @@ class SE3
 public:
     SE3(): _arr{Mat4F::Identity()} {}
     SE3(const Mat4F &mat): _arr{mat} {}
+    SE3(const Mat3F &R, const Vec3F &t)
+    {
+        _arr = Mat4F::Identity();
+        _arr.template block<3,3>(0,0) = R;
+        _arr.template block<3,1>(0,3) = t;
+    }
 
     Mat4F T() { return _arr; }
     Mat3F R() { return _arr.template block<3,3>(0,0); }
@@ -58,10 +64,7 @@ public:
         Mat3F H{Mat3F::Identity() - 2 * v * v.transpose()};
         R = -H * R;
 
-        Mat4F T;
-        T << R, t, Vec3F::Zero().transpose(), F(1);
-
-        return SE3(T);
+        return SE3(R, t);
     }
 
 private:
