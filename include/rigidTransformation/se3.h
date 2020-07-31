@@ -17,6 +17,7 @@ class SE3
     using Mat3F = Eigen::Matrix<F,3,3>;
     using Vec3F = Eigen::Matrix<F,3,1>;
     using Vec6F = Eigen::Matrix<F,6,1>;
+    using Vec4F = Eigen::Matrix<F,4,1>;
 public:
     SE3(): _arr{Mat4F::Identity()} {}
     SE3(const Mat4F &mat): _arr{mat} {}
@@ -70,6 +71,21 @@ public:
         Eigen::Matrix3d R_inv(this->R().transpose());
         _arr.template block<3,3>(0,0) = R_inv;
         _arr.template block<3,1>(0,3) = -R_inv * this->t();
+    }
+
+    Vec3F transa(const Vec3F &v) const
+    {
+        return this->R() * v + this->t();
+    }
+
+    Vec4F transa(const Vec4F &v) const 
+    {
+        Vec3F temp{v.template head<3>()};
+        // Vec3F res{this->transa(v.template head<3>())};
+        Vec3F res{this->transa(temp)};
+        Vec4F h_res;
+        h_res << res, F(1.0);
+        return h_res;
     }
 
     static SE3 random()
@@ -145,7 +161,7 @@ public:
         return SE3::fromRPYAndVector(rpy(0), rpy(1), rpy(2), t);
     }
 
-    static SE3 fromQuaternionAndVector(const Eigen::Matrix<F,4,1> &q, const Vec3F &t)
+    static SE3 fromQuaternionAndVector(const Vec4F &q, const Vec3F &t)
     {
         F qw{q(0)};
         Vec3F qv{q.template tail<3>()};
