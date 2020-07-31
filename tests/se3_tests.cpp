@@ -295,3 +295,36 @@ TEST(TransformAVector, SE3ElementAndHomogeneousVector_ReturnActivelyTransformedH
         EXPECT_TRUE(res_true.isApprox(res));
     }
 }
+
+TEST(TransformAVector, SE3ElementAnd3Vector_ReturnPasivelyTransformedVector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T{SE3<double>::random()};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        Eigen::Vector4d vec;
+        vec << v, 1.0;
+
+        Eigen::Vector3d res{T.transp(v)};
+        Eigen::Vector3d res_true((T.T().inverse() * vec).head<3>());
+
+        EXPECT_TRUE(res_true.isApprox(res));
+    }
+}
+
+TEST(TransformAVector, SE3ElementAndHomogeneousVector_ReturnPassivelyTransformedHomogeneousVector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T{SE3<double>::random()};
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+
+        Eigen::Vector4d vec;
+        vec << v, 1.0;
+
+        Eigen::Vector4d res{T.transp(vec)};
+        Eigen::Vector4d res_true{T.T().inverse() * vec};
+
+        EXPECT_TRUE(res_true.isApprox(res));
+    }
+}

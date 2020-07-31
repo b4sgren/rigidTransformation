@@ -81,8 +81,21 @@ public:
     Vec4F transa(const Vec4F &v) const 
     {
         Vec3F temp{v.template head<3>()};
-        // Vec3F res{this->transa(v.template head<3>())};
         Vec3F res{this->transa(temp)};
+        Vec4F h_res;
+        h_res << res, F(1.0);
+        return h_res;
+    }
+
+    Vec3F transp(const Vec3F &v) const 
+    {
+        return this->inv().transa(v);
+    }
+
+    Vec4F transp(const Vec4F &v) const 
+    {
+        Vec3F temp{v.template head<3>()};
+        Vec3F res{this->inv().transa(temp)};
         Vec4F h_res;
         h_res << res, F(1.0);
         return h_res;
