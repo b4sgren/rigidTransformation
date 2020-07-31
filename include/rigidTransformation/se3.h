@@ -40,6 +40,16 @@ public:
         return SE3(this->T() * rhs.T());
     }
 
+    Vec3F operator*(const Vec3F &v) const 
+    {
+        return this->transa(v);
+    }
+
+    Vec4F operator*(const Vec4F &v) const 
+    {
+        return this->transa(v);
+    }
+
     Mat4F T() const { return _arr; }
     Mat3F R() const { return _arr.template block<3,3>(0,0); }
     Vec3F t() const { return _arr.template block<3,1>(0,3); }

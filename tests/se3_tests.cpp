@@ -273,9 +273,11 @@ TEST(TransformAVector, SE3ElementAnd3Vector_ReturnActivelyTransformedVector)
         vec << v, 1.0;
 
         Eigen::Vector3d res{T.transa(v)};
+        Eigen::Vector3d res2{T * v};
         Eigen::Vector3d res_true((T.T() * vec).head<3>());
 
         EXPECT_TRUE(res_true.isApprox(res));
+        EXPECT_TRUE(res_true.isApprox(res2));
     }
 }
 
@@ -290,9 +292,11 @@ TEST(TransformAVector, SE3ElementAndHomogeneousVector_ReturnActivelyTransformedH
         vec << v, 1.0;
 
         Eigen::Vector4d res{T.transa(vec)};
+        Eigen::Vector4d res2{T*vec};
         Eigen::Vector4d res_true{T.T() * vec};
 
         EXPECT_TRUE(res_true.isApprox(res));
+        EXPECT_TRUE(res_true.isApprox(res2));
     }
 }
 
