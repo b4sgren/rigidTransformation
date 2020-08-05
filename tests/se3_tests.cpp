@@ -412,3 +412,36 @@ TEST(MatrixLogarithm, DISABLED_SE3Element_ReturnsMatInLieAlgebraUsingTaylorSerie
         EXPECT_LE(norm, 1e-8); //Haven't worked this out in python either
     }
 }
+
+TEST(MatrixExponential, ElementOfSE3LieAlgebra_ReturnSE3Element)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d w{getRandomVector(-PI, PI)}, t{getRandomVector(-10.0, 10.0)};
+        Eigen::Matrix4d logT;
+        logT << skew3(w), t, Eigen::RowVector4d::Zero();
+
+        Eigen::Matrix4d T_true{logT.exp()};
+        SE3<double> T{SE3<double>::exp(logT)};
+
+        EXPECT_TRUE(T_true.isApprox(T.T()));
+    }
+}
+
+TEST(MatrixExponential, ElementOfSE3LieAlgebra_ReturnsSE3ElementUsingTaylorSeriesAobut0)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{getRandomDouble(0.0, 1e-6)};
+        Eigen::Vector3d w{getRandomVector(-10.0, 10.0)}, t{getRandomVector(-10.0, 10.0)};
+        w = w / w.norm() * ang;
+
+        Eigen::Matrix4d logT;
+        logT << skew3(w), t, Eigen::RowVector4d::Zero();
+
+        Eigen::Matrix4d T_true{logT.exp()};
+        SE3<double> T{SE3<double>::exp(logT)};
+
+        EXPECT_TRUE(T_true.isApprox(T.T()));
+    }
+}

@@ -251,6 +251,35 @@ public:
         return logT;
     }
 
+    static SE3 exp(const Mat4F &logT)
+    {
+        Vec3F u{logT.template block<3,1>(0,3)};
+        Mat3F logR(logT.template block<3,3>(0,0));
+        Vec3F w(logR(2,1), logR(0,2), logR(1,0));
+        F theta{w.norm()};
+
+        F A, B, C;
+        if(abs(theta) > 1e-6)
+        {
+            A = sin(theta) / theta;
+            B = (1.0 - cos(theta)) / pow(theta, 2);
+            C = (1 - A) / pow(theta, 2);
+        }
+        else
+        {
+            A = 1.0 - pow(theta,2)/6.0 + pow(theta,4)/120.0;
+            B = 0.5 - pow(theta,2) / 24.0 + pow(theta,4) / 720.0;
+            C = 1/6.0 - pow(theta,2)/120.0 + pow(theta,4) / 5040.0;
+        }
+        
+
+        Mat3F R{Mat3F::Identity() + A * logR + B * logR * logR};
+        Mat3F V{Mat3F::Identity() + B * logR + C * logR * logR};
+        Vec3F t{V * u};
+
+        return SE3(R, t);
+    }
+
 private:
     Mat4F _arr;
 };
