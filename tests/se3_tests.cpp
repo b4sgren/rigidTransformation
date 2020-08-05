@@ -332,3 +332,83 @@ TEST(TransformAVector, SE3ElementAndHomogeneousVector_ReturnPassivelyTransformed
         EXPECT_TRUE(res_true.isApprox(res));
     }
 }
+
+TEST(MatrixLogarithm, SE3Element_Returns4by4MatrixInLieAlgebra)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T{SE3<double>::random()};
+
+        Eigen::Matrix4d log_T_true{T.T().log()};
+        Eigen::Matrix4d log_T{T.log()};
+        Eigen::Matrix4d log_T2{SE3<double>::log(T)};
+        Eigen::Matrix4d log_T3{SE3<double>::log(T.T())}; //Can call on not elements of the class
+
+        double norm{(log_T_true - log_T).norm()};
+        if(norm > 1e-8)
+        {
+            std::cout << "\n\n" << log_T_true << std::endl;
+            std::cout << log_T << std::endl;
+            std::cout << norm << std::endl;
+        }
+
+        EXPECT_TRUE(log_T2.isApprox(log_T));
+        EXPECT_TRUE(log_T3.isApprox(log_T2));
+        EXPECT_LE(norm, 1e-8);
+    }
+}
+
+TEST(MatrixLogarithm, SE3Element_ReturnsMatInLieAlgebraUsingTaylorSeriesAbout0)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{getRandomDouble(0.0, 1e-6)};
+        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+        vec  = vec / vec.norm() * ang;
+        Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
+
+        SE3<double> T{SE3<double>::fromAxisAngleAndVector(vec, t)};
+
+        Eigen::Matrix4d log_T_true{T.T().log()};
+        Eigen::Matrix4d log_T{T.log()};
+
+        double norm{(log_T_true - log_T).norm()};
+
+        if(norm > 1e-6 || std::isnan(norm))
+        {
+            std::cout << "\n\n" << log_T_true << std::endl;
+            std::cout << log_T << std::endl;
+            std::cout << norm << std::endl;
+            Eigen::Matrix4d temp{T.log()};
+        }
+
+        EXPECT_LE(norm, 1e-6);
+    }
+}
+
+TEST(MatrixLogarithm, DISABLED_SE3Element_ReturnsMatInLieAlgebraUsingTaylorSeriesAboutPI)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang{PI - getRandomDouble(0.0, 1e-6)};
+        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+        vec  = vec / vec.norm() * ang;
+        Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
+
+        SE3<double> T{SE3<double>::fromAxisAngleAndVector(vec, t)};
+
+        Eigen::Matrix4d log_T_true{T.T().log()};
+        Eigen::Matrix4d log_T{T.log()};
+
+        double norm{(log_T_true - log_T).norm()};
+
+        if(norm > 1e-8)
+        {
+            std::cout << "\n\n" << log_T_true << std::endl;
+            std::cout << log_T << std::endl;
+            std::cout << norm << std::endl;
+        }
+
+        EXPECT_LE(norm, 1e-8); //Haven't worked this out in python either
+    }
+}

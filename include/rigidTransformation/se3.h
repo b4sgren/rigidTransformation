@@ -200,6 +200,57 @@ public:
         return SE3(R, t);
     }
 
+    Mat4F log() const 
+    {
+        return SE3::log(this->T());
+    }
+
+    static Mat4F log(const SE3 &T)
+    {
+        return SE3::log(T.T());
+    }
+
+    static Mat4F log(const Mat4F &T)
+    {
+        Mat3F R{T.template block<3,3>(0,0)};
+        Vec3F t{T.template block<3,1>(0,3)};
+        F theta{acos((R.trace() - 1.0)/2.0)};
+
+        Mat3F log_R;
+        if(abs(theta) < 1e-6)
+        {
+            F a{0.5 * (1.0 + pow(theta, 2)/6.0 + 7 * pow(theta,4)/360.0)};
+            log_R = a * (R - R.transpose());
+        }
+        else if(abs(PI - theta) < 1e-6)
+        {
+            F tmp{theta - PI};
+            F a{-PI/tmp - 1.0 - PI/6.0 * tmp - pow(tmp,2)/6.0 - 7 * PI/360.0 * pow(tmp, 3) - 7/360.0 * pow(tmp,4)};
+            log_R = a/2.0 * (R - R.transpose());
+        }
+        else
+            log_R = theta / (2 * sin(theta)) * (R - R.transpose());
+
+        F b;
+        if(abs(theta) > 1e-6)
+            b = sin(theta) / (theta * (1.0 - cos(theta)));
+        else 
+            b = 2.0 / pow(theta,2) - 1/6.0 - pow(theta,2)/360.0 - pow(theta,4)/15120.0;
+
+        Vec3F u;
+        if(std::isinf(b)) //case where theta = 0
+            u = t;
+        else
+        {
+            Mat3F V_inv{Mat3F::Identity() - 0.5 * log_R + (1.0/pow(theta,2) - b/2.0)* log_R * log_R};
+            u = V_inv * t;
+        }
+
+        Mat4F logT;
+        logT << log_R, u, Vec4F::Zero().transpose();
+        return logT;
+    }
+
 private:
     Mat4F _arr;
 };
