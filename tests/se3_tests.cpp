@@ -445,3 +445,34 @@ TEST(MatrixExponential, ElementOfSE3LieAlgebra_ReturnsSE3ElementUsingTaylorSerie
         EXPECT_TRUE(T_true.isApprox(T.T()));
     }
 }
+
+TEST(HatOperator, SixVector_Returns4x4MatrixOfLieAlgebra)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d w{getRandomVector(-PI, PI)}, u{getRandomVector(-10.0, 10.0)};
+        Eigen::Matrix<double, 6, 1> xci;
+        xci << u, w;
+
+        Eigen::Matrix4d logT{SE3<double>::hat(xci)};
+        Eigen::Matrix4d log_T_true;
+        log_T_true << 0, -w(2), w(1), u(0), w(2), 0, -w(0), u(1), -w(1), w(0), 0, u(2), 0, 0, 0, 0;
+
+        EXPECT_TRUE(log_T_true.isApprox(logT));
+    }
+}
+
+TEST(VeeOperator, 4x4Matrix_Returns6Vector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d w{getRandomVector(-PI, PI)}, u{getRandomVector(-10.0, 10.0)};
+        Eigen::Matrix<double,6,1> xci_true;
+        xci_true << u, w;
+
+        Eigen::Matrix4d logT{SE3<double>::hat(xci_true)};
+        Eigen::Matrix<double,6,1> xci{SE3<double>::vee(logT)};
+
+        EXPECT_TRUE(xci_true.isApprox(xci));
+    }
+}

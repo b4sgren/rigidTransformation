@@ -280,6 +280,21 @@ public:
         return SE3(R, t);
     }
 
+    static Mat4F hat(const Vec6F &xci)
+    {
+        Vec3F w{xci.template tail<3>()}, u{xci.template head<3>()};
+        Mat4F logT;
+        logT << skew3(w), u, Vec4F::Zero().transpose();
+        return logT;
+    }
+
+    static Vec6F vee(const Mat4F &logT)
+    {
+        Vec6F xci;
+        xci << logT.template block<3,1>(0,3), logT(2,1), logT(0,2), logT(1,0);
+        return xci;
+    }
+
 private:
     Mat4F _arr;
 };
