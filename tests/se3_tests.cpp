@@ -510,3 +510,37 @@ TEST(MatrixExponential, 6Vector_ReturnElementOfSE3)
         EXPECT_TRUE(T_true.isApprox(T.T()));
     }
 }
+
+TEST(BoxPlus, SE3ElementAnd6Vector_ReturnsSE3ElementWhenAdded)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T{SE3<double>::random()};
+        Eigen::Vector3d w{getRandomVector(-PI, PI)}, t{getRandomVector(-10.0, 10.0)};
+        Eigen::Matrix<double,6,1> xci;
+        xci << t, w;
+
+        SE3<double> T_res{T.boxplus(xci)};
+        Eigen::Matrix4d T_true{T.T() * SE3<double>::hat(xci).exp()};
+    }
+}
+
+TEST(BoxMinus, ElementsOfSE3_6VectorRepresentingTheDifference)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T1{SE3<double>::random()}, T2{SE3<double>::random()};
+
+        Eigen::Matrix<double,6,1>xci{T1.boxminus(T2)};
+
+        SE3<double> T{T2.boxplus(xci)};
+
+        if(!(T == T1))
+        {
+            std::cout << "T1:\n" << T1.T() << std::endl;
+            std::cout << "T2:\n" << T.T() << std::endl;
+        }
+
+        EXPECT_TRUE(T == T1);
+    }
+}

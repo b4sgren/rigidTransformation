@@ -111,6 +111,16 @@ public:
         return h_res;
     }
 
+    SE3 boxplus(const Vec6F &xci)
+    {
+        return (*this) * SE3::Exp(xci);
+    }
+
+    Vec6F boxminus(const SE3 &T)
+    {
+        return SE3::Log(T.inv() * (*this));
+    }
+
     static SE3 random()
     {
         static std::random_device rd;
