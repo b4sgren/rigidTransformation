@@ -476,3 +476,37 @@ TEST(VeeOperator, 4x4Matrix_Returns6Vector)
         EXPECT_TRUE(xci_true.isApprox(xci));
     }
 }
+
+TEST(MatrixLogarithm, ElementOfSE3_ReturnsA6Vector)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T{SE3<double>::random()};
+
+        Eigen::Matrix<double,6,1> xci{T.Log()}, xci_true; //Same 3 calls as other log method
+        Eigen::Matrix4d logT{T.T().log()};
+
+        xci_true << logT.block<3,1>(0,3), logT(2,1), logT(0,2), logT(1,0);
+
+        double norm{(xci_true - xci).norm()};
+
+        EXPECT_LT(norm, 1e-8);
+    }
+}
+
+TEST(MatrixExponential, 6Vector_ReturnElementOfSE3)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d w{getRandomVector(-PI, PI)}, t{getRandomVector(-10.0, 10.0)};
+        Eigen::Matrix<double,6,1> xci;
+        xci << t, w;
+        Eigen::Matrix4d logT;
+        logT << 0, -w(2), w(1), t(0), w(2), 0, -w(0), t(1), -w(1), w(0), 0, t(2), 0, 0, 0, 0;
+
+        Eigen::Matrix4d T_true{logT.exp()};
+        SE3<double> T{SE3<double>::Exp(xci)};
+
+        EXPECT_TRUE(T_true.isApprox(T.T()));
+    }
+}

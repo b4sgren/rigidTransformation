@@ -251,6 +251,22 @@ public:
         return logT;
     }
 
+    Vec6F Log() const 
+    {
+        return SE3::Log(this->T());
+    }
+
+    static Vec6F Log(const SE3 &T)
+    {
+        return SE3::Log(T.T());
+    }
+
+    static Vec6F Log(const Mat4F &T)
+    {
+        Mat4F logT{SE3::log(T)};
+        return SE3::vee(logT);
+    }
+
     static SE3 exp(const Mat4F &logT)
     {
         Vec3F u{logT.template block<3,1>(0,3)};
@@ -278,6 +294,11 @@ public:
         Vec3F t{V * u};
 
         return SE3(R, t);
+    }
+
+    static SE3 Exp(const Vec6F &xci)
+    {
+        return SE3::exp(SE3::hat(xci));
     }
 
     static Mat4F hat(const Vec6F &xci)
