@@ -121,6 +121,16 @@ public:
         return SE3::Log(T.inv() * (*this));
     }
 
+    Eigen::Matrix<F,6,6> Adj() const 
+    {
+        Vec3F t{this->t()};
+        Mat3F R{this->R()};
+
+        Eigen::Matrix<F,6,6> adj;
+        adj << R, skew3(t) * R, Mat3F::Zero(), R;
+        return adj;
+    }
+
     static SE3 random()
     {
         static std::random_device rd;

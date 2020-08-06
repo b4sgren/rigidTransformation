@@ -544,3 +544,19 @@ TEST(BoxMinus, ElementsOfSE3_6VectorRepresentingTheDifference)
         EXPECT_TRUE(T == T1);
     }
 }
+
+TEST(Adjoint, ElementOfSE3And6Vector_MultipliedOnLeftEqualsMultipliedOnRight)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3<double> T1{SE3<double>::random()};
+        Eigen::Vector3d w{getRandomVector(-PI, PI)}, t{getRandomVector(-10.0, 10.0)};
+        Eigen::Matrix<double,6,1> xci;
+        xci << t, w;
+
+        SE3<double> T2{T1.boxplus(xci)};
+        SE3<double> T3{SE3<double>::Exp(T1.Adj() * xci) * T1};
+
+        EXPECT_TRUE(T2 == T3);
+    }
+}
