@@ -447,3 +447,11 @@ TEST(Normalize, GivenSO3ElementWithDetNotEq1_NormalizeElement)
 
     EXPECT_TRUE(R1.isValidRotation());
 }
+
+TEST(Identity, AskedForIdentity_ReturnsIdentity)
+{
+    Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
+    SO3<double> R{SO3<double>::Identity()};
+
+    EXPECT_TRUE(I.isApprox(R.R()));
+}

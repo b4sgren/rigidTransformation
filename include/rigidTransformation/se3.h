@@ -336,6 +336,11 @@ public:
         return xci;
     }
 
+    static SE3 Identity()
+    {
+        return SE3(Mat4F::Identity());
+    }
+
 private:
     Mat4F _arr;
 };

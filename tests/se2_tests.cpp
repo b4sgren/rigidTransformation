@@ -355,3 +355,11 @@ TEST(BoxMinus, 2SE2Elements_ReturnsDifference)
         EXPECT_TRUE(T == T1);
     }
 }
+
+TEST(Identity, AskedForIdentity_ReturnsIdentity)
+{
+    Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
+    SE2<double> T{SE2<double>::Identity()};
+
+    EXPECT_TRUE(I.isApprox(T.T()));
+}

@@ -285,6 +285,11 @@ public:
         return Quaternion::vee(log_q);
     }
 
+    static Quaternion Identity()
+    {
+        return Quaternion{ei<4>(0)};
+    }
+
 private:
     QuatT _arr;
 };

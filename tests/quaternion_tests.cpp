@@ -349,3 +349,12 @@ TEST(Normalize, Quaternion_QuaternionUnitNorm)
         EXPECT_TRUE(q.isValidQuaternion());
     }
 }
+
+TEST(Identity, AskedForIdentity_ReturnsIdentity)
+{
+    Eigen::Vector4d I;
+    I << 1.0, 0.0, 0.0, 0.0;
+    Quaternion<double> q{Quaternion<double>::Identity()};
+
+    EXPECT_TRUE(I.isApprox(q.q()));
+}

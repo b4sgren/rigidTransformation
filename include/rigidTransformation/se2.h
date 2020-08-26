@@ -246,6 +246,11 @@ public:
         return SE2::exp(log_T);
     }
 
+    static SE2 Identity()
+    {
+        return SE2{Mat3F::Identity()};
+    }
+
 private:
     Mat3F _arr;
 };

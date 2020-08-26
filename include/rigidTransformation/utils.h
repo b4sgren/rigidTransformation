@@ -25,7 +25,7 @@ template<int n>
 Eigen::Matrix<double,n,1> ei(const int i)
 {
     Eigen::Matrix<double,n,1> arr{Eigen::Matrix<double,n,1>::Zero()};
-    if(i < n)
+    if(i > n || i < 0)
         return arr;
 
     arr(i) = 1.0;    

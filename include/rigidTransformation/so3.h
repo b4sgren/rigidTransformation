@@ -262,6 +262,11 @@ public:
         return skew3(w);
     }
 
+    static SO3 Identity()
+    {
+        return SO3{Mat3T::Identity()};
+    }
+
 private:
     Mat3T _arr;
 };

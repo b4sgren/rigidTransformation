@@ -560,3 +560,11 @@ TEST(Adjoint, ElementOfSE3And6Vector_MultipliedOnLeftEqualsMultipliedOnRight)
         EXPECT_TRUE(T2 == T3);
     }
 }
+
+TEST(Identity, AskedForIdentity_ReturnsIdentity)
+{
+    Eigen::Matrix4d I{Eigen::Matrix4d::Identity()};
+    SE3<double> T{SE3<double>::Identity()};
+
+    EXPECT_TRUE(I.isApprox(T.T()));
+}
