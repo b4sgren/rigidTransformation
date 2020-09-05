@@ -7,7 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(GTest REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(Ceres REQUIRED)
+# find_package(Ceres REQUIRED)
 
 include_directories(${EIGEN3_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${CERES_INCLUDE_DIRS} include/rigidTransformation)
 
