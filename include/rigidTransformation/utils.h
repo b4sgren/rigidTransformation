@@ -2,8 +2,10 @@
 #define UTILS_H
 
 #include <Eigen/Core>
+#include <random>
 
-namespace rigidTransform{
+namespace rigidTransform
+{
 constexpr double PI = 3.141592653589793238462643383279;
 
 template<typename T>
@@ -31,6 +33,15 @@ Eigen::Matrix<double,n,1> ei(const int i)
 
     arr(i) = 1.0;
     return arr;
+}
+
+template<typename T>
+T randomScalar(T min, T max)
+{
+   static std::random_device rd;
+   static std::mt19937 generator(rd());
+   static std::uniform_real_distribution<T> dist(min, max);
+   return dist(generator);
 }
 
 }
