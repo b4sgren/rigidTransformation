@@ -43,7 +43,7 @@ class SO2_Fixture : public ::testing::Test
 public:
     SO2_Fixture()
     {
-        for(int i{0}; i != 1; ++i)
+        for(int i{0}; i != 100; ++i)
         {
             transforms_.push_back(rt::SO2<double>::random());
         }
@@ -64,7 +64,6 @@ TEST_F(SO2_Fixture, TestDefaultInitialization)
     Eigen::Matrix2d R_default{Eigen::Matrix2d::Identity()};
 
     EXPECT_TRUE(R_default.isApprox(R.R()));
-    EXPECT_EQ(1, R.det());
 }
 
 TEST_F(SO2_Fixture, TestPointerInitialization)
@@ -77,7 +76,6 @@ TEST_F(SO2_Fixture, TestPointerInitialization)
     R_true << ct, -st, st, ct;
 
     EXPECT_TRUE(R_true.isApprox(R.R()));
-    EXPECT_EQ(1, R.det());
 }
 
 TEST_F(SO2_Fixture, TestEigenMatrixInitializtion)
@@ -89,7 +87,6 @@ TEST_F(SO2_Fixture, TestEigenMatrixInitializtion)
     rt::SO2<double> R{R_true};
 
     EXPECT_TRUE(R_true.isApprox(R.R()));
-    EXPECT_EQ(1, R.det());
 }
 
 TEST_F(SO2_Fixture, TestAngleInitialization)
@@ -101,7 +98,6 @@ TEST_F(SO2_Fixture, TestAngleInitialization)
     R_true << ct, -st, st, ct;
 
     EXPECT_TRUE(R_true.isApprox(R.R()));
-    EXPECT_EQ(1, R.det());
 }
 
 TEST_F(SO2_Fixture, InitializeFromSO2)
@@ -113,16 +109,21 @@ TEST_F(SO2_Fixture, InitializeFromSO2)
     EXPECT_TRUE(R.R().isApprox(R2.R()));
 }
 
-TEST_F(SO2_Fixture, DISABLED_RandomInitialization)
-// TEST_F(SO2_Fixture, RandomInitialization)
+TEST_F(SO2_Fixture, InitialzeWithAssingmentOperator)
 {
-    // Something is broken in the random initialization
+    double theta{getRandomDouble(-rt::PI, rt::PI)};
+    rt::SO2<double> R(theta);
+    rt::SO2<double> R2 = R;
+
+    EXPECT_TRUE(R.R().isApprox(R2.R()));
+}
+
+// TEST_F(SO2_Fixture, DISABLED_RandomInitialization)
+TEST_F(SO2_Fixture, RandomInitialization)
+{
+    // Sometimes it still fails randomly
     for(auto R : transforms_)
-    {
-        std::cout << "------------\n" << R << std::endl;
-        std::cout << "\n" << R << std::endl; // It looks like its messing with the order of the memory
-        EXPECT_EQ(1, R.det());
-    }
+        EXPECT_FLOAT_EQ(1, R.det());
 }
 
 

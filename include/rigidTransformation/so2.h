@@ -36,7 +36,13 @@ public:
 
     SO2(const SO2 &R): arr_(data_)
     {
-        arr_ = R.R(); // Is this okay or does it need to be arr_
+        arr_ = R.R();
+    }
+
+    SO2& operator=(const SO2 &rhs)
+    {
+        arr_ = rhs.R();
+        return *this;
     }
 
     Mat2T R() const { return arr_; }
