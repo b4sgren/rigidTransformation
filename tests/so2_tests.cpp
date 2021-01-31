@@ -4,8 +4,6 @@
 #include <iostream>
 #include <random>
 
-#include <ceres/ceres.h>
-
 #include "so2.h"
 
 //The SO2 class is templated but I mostly care that it works with doubles and ceres jet
@@ -45,7 +43,7 @@ TEST(AskForTheRotationMatrix, ReturnsTheRotationMatrix)
     R_true << 1, 0, 0, 1;
 
     SO2<double> R(R_true);
-    
+
     EXPECT_TRUE(R_true.isApprox(R.R()));
 }
 
@@ -76,7 +74,7 @@ TEST(AskForMatrixFromArray, ReturnsRotationMatrix)
         SO2<double> R{SO2<double>::random()};
         double ang(getAngle(R.R()));
         double ct{cos(ang)}, st{sin(ang)};
-        // double *arr{new double[4]}; 
+        // double *arr{new double[4]};
         double arr[4]{ct, st, -st, ct}; //Order this way because column major order
         SO2<double> R2{arr};
 
@@ -132,7 +130,7 @@ TEST(ActiveRotation, RotatedVector)
     {
         SO2<double> R{SO2<double>::random()};
         Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
-        
+
         Eigen::Vector2d res{R.rota(vec)};
 
         double ang{getAngle(R.R())};
@@ -151,7 +149,7 @@ TEST(PassiveRotation, RotatedVector)
     {
         SO2<double> R{SO2<double>::random()};
         Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
-        
+
         Eigen::Vector2d res{R.rotp(vec)};
 
         double ang{getAngle(R.R())};
