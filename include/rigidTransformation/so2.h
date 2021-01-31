@@ -38,9 +38,7 @@ public:
 
     T det() const
     {
-        std::cout << arr_ << std::endl; // Get rid of this eventually
-        return arr_.determinant();  //The memory is getting messed with. The two columns are the same
-        // return data_[0] * data_[3] - data_[1] * data_[2];
+        return arr_.determinant();
     }
 
     static SO2 random()
@@ -50,9 +48,9 @@ public:
         return SO2(ang);
     }
 
-    Eigen::Map<Mat2T> arr_;
 private:
     T data_[4];
+    Eigen::Map<Mat2T> arr_;
 };
 
 template<typename T>
