@@ -26,6 +26,8 @@ public:
 
     SO2(const T *data) : arr_(const_cast<T*>(data)) {}
 
+    SO2(const Mat2T &R) : arr_(const_cast<T*>(R.data())) {}
+
     Mat2T R() const { return arr_; }
 
 private:

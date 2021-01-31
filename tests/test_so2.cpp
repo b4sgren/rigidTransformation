@@ -59,12 +59,23 @@ TEST_F(SO2_Fixture, TestDefaultInitialization)
 
 TEST_F(SO2_Fixture, TestPointerInitialization)
 {
-    double theta = rt::PI/2;
+    double theta = rt::PI/4;
     double ct{cos(theta)}, st{sin(theta)};
     double data[]{ct, st, -st, ct};
     rt::SO2<double> R(data);
     Eigen::Matrix2d R_true;
     R_true << ct, -st, st, ct;
+
+    EXPECT_TRUE(R_true.isApprox(R.R()));
+}
+
+TEST_F(SO2_Fixture, TestEigenMatrixInitializtion)
+{
+    double theta{rt::PI/4};
+    double ct{cos(theta)}, st{sin(theta)};
+    Eigen::Matrix2d R_true;
+    R_true << ct, -st, st, ct;
+    rt::SO2<double> R{R_true};
 
     EXPECT_TRUE(R_true.isApprox(R.R()));
 }
