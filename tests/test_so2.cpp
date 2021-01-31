@@ -104,7 +104,17 @@ TEST_F(SO2_Fixture, TestAngleInitialization)
     EXPECT_EQ(1, R.det());
 }
 
+TEST_F(SO2_Fixture, InitializeFromSO2)
+{
+    double theta{getRandomDouble(-rt::PI, rt::PI)};
+    rt::SO2<double> R(theta);
+    rt::SO2<double> R2(R);
+
+    EXPECT_TRUE(R.R().isApprox(R2.R()));
+}
+
 TEST_F(SO2_Fixture, DISABLED_RandomInitialization)
+// TEST_F(SO2_Fixture, RandomInitialization)
 {
     // Something is broken in the random initialization
     for(auto R : transforms_)

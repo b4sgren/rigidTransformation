@@ -34,6 +34,11 @@ public:
         arr_ << ct, -st, st, ct;
     }
 
+    SO2(const SO2 &R): arr_(data_)
+    {
+        arr_ = R.R(); // Is this okay or does it need to be arr_
+    }
+
     Mat2T R() const { return arr_; }
 
     T det() const
