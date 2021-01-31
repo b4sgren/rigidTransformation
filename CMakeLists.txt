@@ -5,13 +5,13 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED 1)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(GTest REQUIRED)
+add_subdirectory(external_libs/googletest)
 find_package(Eigen3 REQUIRED)
 
-include_directories(${EIGEN3_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${CERES_INCLUDE_DIRS} include/rigidTransformation)
+include_directories(${EIGEN3_INCLUDE_DIRS} ${CERES_INCLUDE_DIRS} include/rigidTransformation)
 
 add_executable(test_so2 tests/test_so2.cpp)
-target_link_libraries(test_so2 ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
+target_link_libraries(test_so2 ${CERES_LIBRARIES} gtest gtest_main)
 
 # add_executable(so3_tests tests/so3_tests.cpp)
 # target_link_libraries(so3_tests ${GTEST_LIBRARIES} ${CERES_LIBRARIES} gtest gtest_main pthread)
