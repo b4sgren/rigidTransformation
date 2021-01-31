@@ -28,6 +28,15 @@ public:
 
     SO2(const Mat2T &R) : arr_(const_cast<T*>(R.data())) {}
 
+    SO2(const T& ang): arr_(data_)
+    {
+        T ct{cos(ang)}, st{sin(ang)};
+        data_[0] = ct;
+        data_[1] = st; // column major
+        data_[2] = -st;
+        data_[3] = ct;
+    }
+
     Mat2T R() const { return arr_; }
 
 private:
