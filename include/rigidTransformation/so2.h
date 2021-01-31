@@ -24,6 +24,8 @@ public:
         arr_.setIdentity();
     }
 
+    SO2(const T *data) : arr_(const_cast<T*>(data)) {}
+
     Mat2T R() const { return arr_; }
 
 private:

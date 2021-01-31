@@ -3,6 +3,7 @@
 
 #include <Eigen/Core>
 
+namespace rigidTransform{
 constexpr double PI = 3.141592653589793238462643383279;
 
 template<typename T>
@@ -28,8 +29,10 @@ Eigen::Matrix<double,n,1> ei(const int i)
     if(i > n || i < 0)
         return arr;
 
-    arr(i) = 1.0;    
+    arr(i) = 1.0;
     return arr;
+}
+
 }
 
 #endif

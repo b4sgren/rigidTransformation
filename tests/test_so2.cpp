@@ -57,6 +57,18 @@ TEST_F(SO2_Fixture, TestDefaultInitialization)
     EXPECT_TRUE(R_default.isApprox(R.R()));
 }
 
+TEST_F(SO2_Fixture, TestPointerInitialization)
+{
+    double theta = rt::PI/2;
+    double ct{cos(theta)}, st{sin(theta)};
+    double data[]{ct, st, -st, ct};
+    rt::SO2<double> R(data);
+    Eigen::Matrix2d R_true;
+    R_true << ct, -st, st, ct;
+
+    EXPECT_TRUE(R_true.isApprox(R.R()));
+}
+
 
 // TEST(AskForTheRotationMatrix, ReturnsTheRotationMatrix)
 // {
