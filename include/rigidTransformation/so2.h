@@ -8,20 +8,29 @@
 
 #include "utils.h"
 
+namespace rigidTransform
+{
 
 template<typename T>
 class SO2
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    // May need to make these RowMajor instead of Column Major
     using Mat2T = Eigen::Matrix<T,2,2>;
     using Vec2T = Eigen::Matrix<T,2,1>;
     using Map2T = Eigen::Map<Mat2T>;
 public:
+    SO2() : arr_(data_)
+    {
+        arr_.setIdentity();
+    }
+
+    Mat2T R() const { return arr_; }
 
 private:
     T data_[4];
     Eigen::Map<Mat2T> arr_;
 };
+
+}
 
 #endif

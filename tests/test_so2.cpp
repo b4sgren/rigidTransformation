@@ -6,6 +6,8 @@
 
 #include "so2.h"
 
+namespace rt = rigidTransform;
+
 //The SO2 class is templated but I mostly care that it works with doubles and ceres jet
 double getAngle(const Eigen::Matrix2d &mat)
 {
@@ -34,6 +36,25 @@ Eigen::Vector2d randVec2d(double min, double max)
     Eigen::Vector2d vec;
     vec << getRandomDouble(min, max), getRandomDouble(min, max);
     return vec;
+}
+
+class SO2_Fixture : public ::testing::Test
+{
+public:
+    SO2_Fixture()
+    {
+    }
+
+private:
+    std::vector<rt::SO2<double>> transforms_;
+};
+
+TEST_F(SO2_Fixture, TestDefaultInitialization)
+{
+    rt::SO2<double> R = rt::SO2<double>();
+    Eigen::Matrix2d R_default{Eigen::Matrix2d::Identity()};
+
+    EXPECT_TRUE(R_default.isApprox(R.R()));
 }
 
 
