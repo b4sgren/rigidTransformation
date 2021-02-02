@@ -72,6 +72,12 @@ public:
         return temp;
     }
 
+    // operations with _ at the end are in place
+    SO2 inverse_()
+    {
+        arr_.transposeInPlace();
+    }
+
     static SO2 random()
     {
         T ang{randomScalar(T(-PI), T(PI))};
