@@ -26,6 +26,7 @@ public:
 
     SO2(const T *data) : arr_(const_cast<T*>(data)) {}
 
+    // I might need to be careful that what is passed in doesn't go out of scope and get destroyed. I might want to wrap arr_ around data_ like in the SO2 constructor
     SO2(const Mat2T &R) : arr_(const_cast<T*>(R.data())) {}
 
     SO2(const T& ang): arr_(data_)
@@ -73,9 +74,14 @@ public:
     }
 
     // operations with _ at the end are in place
-    SO2 inverse_()
+    void inverse_()
     {
         arr_.transposeInPlace();
+    }
+
+    Vec2T rota(const Vec2T& v)
+    {
+        return R() * v;
     }
 
     static SO2 random()

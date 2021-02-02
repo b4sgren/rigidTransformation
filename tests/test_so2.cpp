@@ -166,30 +166,22 @@ TEST_F(SO2_Fixture, InverseInPlace)
     }
 }
 
-// TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse) //FIX THIS ONE
-// {
-//     for(int i{0}; i != 100; i++)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         SO2<double> R_inv{R.inv()};
+TEST_F(SO2_Fixture, ActiveRotationOfAVector)
+{
+    for(auto R : transforms_)
+    {
+        Eigen::Vector2d v{randVec2d(-10, 10)};
+        Eigen::Vector2d vp{R.rota(v)};
 
-//         SO2<double> I = R * R_inv;
+        double ang{getAngle(R.R())};
+        double ct{cos(ang)}, st{sin(ang)};
+        Eigen::Vector2d vp_true;
+        vp_true(0) = ct * v(0) - st * v(1);
+        vp_true(1) = st * v(0) + ct * v(1);
 
-//         EXPECT_TRUE(I.R().isApprox(Eigen::Matrix2d::Identity()));
-//     }
-// }
-
-// TEST(InverseInPlace, InvertsObject)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         Eigen::Matrix2d inv = R.R().transpose();
-//         R.selfInv();
-
-//         EXPECT_TRUE(inv.isApprox(R.R()));
-//     }
-// }
+        EXPECT_TRUE(vp_true.isApprox(vp));
+    }
+}
 
 // TEST(ActiveRotation, RotatedVector)
 // {
