@@ -270,3 +270,19 @@ TEST_F(SO2_Fixture, RightBoxMinus)
         EXPECT_TRUE(R1.R().isApprox(R.R()));
     }
 }
+
+TEST_F(SO2_Fixture, LeftBoxPlus)
+{
+    for(auto R : transforms_)
+    {
+        double delta{getRandomDouble(-rt::PI, rt::PI)};
+
+        rt::SO2<double> R2{R.boxplusl(delta)};
+        double phi(getAngle(R.R()));
+        phi += delta;
+        phi = wrap(phi);
+        rt::SO2<double> R2_true(phi);
+
+        EXPECT_TRUE(R2_true.R().isApprox(R2.R(), 1e-8));
+    }
+}

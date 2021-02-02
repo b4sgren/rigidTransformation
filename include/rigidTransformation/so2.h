@@ -115,6 +115,12 @@ public:
         return SO2::Log(R.inverse() * (*this));
     }
 
+    // should I add an inplace operation of this?
+    SO2 boxplusl(double ang) const
+    {
+        return SO2::Exp(ang) * (*this);
+    }
+
     static SO2 random()
     {
         T ang{randomScalar(T(-PI), T(PI))};
