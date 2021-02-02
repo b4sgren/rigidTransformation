@@ -230,94 +230,18 @@ TEST_F(SO2_Fixture, ExponentialMap)
     }
 }
 
-// TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         double angle{getAngle(R.R())};
+TEST_F(SO2_Fixture, AdjointOperator)
+{
+    for(auto R : transforms_)
+    {
+        double delta{getRandomDouble(-rt::PI, rt::PI)};
 
-//         Eigen::Matrix2d r{SO2<double>::hat(angle)};
-//         Eigen::Matrix2d r_true;
-//         r_true << 0.0, -angle, angle, 0.0;
+        rt::SO2<double> R1{R * rt::SO2<double>::Exp(delta)};
+        rt::SO2<double> R2{rt::SO2<double>::Exp(R.Adj() * delta) * R};
 
-//         EXPECT_TRUE(r_true.isApprox(r));
-//     }
-// }
-
-// TEST(VeeOperator, GivenSkewSymmetricMatrixReturnAngle)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         double angle{getAngle(R.R())};
-
-//         Eigen::Matrix2d tmp{SO2<double>::hat(angle)};
-//         double ang{SO2<double>::vee(tmp)};
-
-//         EXPECT_TRUE(ang==angle);
-//     }
-// }
-
-// TEST(MatrixLogarithm, GivenSO2Element_ReturnMatrixLog)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-
-//         Eigen::Matrix2d log_R{SO2<double>::log(R)};
-//         Eigen::Matrix2d log_R2(SO2<double>::log(R.R()));
-//         Eigen::Matrix2d log_R3(R.log());
-//         Eigen::Matrix2d log_R_true{R.R().log()};
-
-//         EXPECT_TRUE(log_R_true.isApprox(log_R));
-//         EXPECT_TRUE(log_R_true.isApprox(log_R2));
-//         EXPECT_TRUE(log_R_true.isApprox(log_R3));
-//     }
-// }
-
-// TEST(MatrixLogarithm, GivenSO2Element_ReturnsDouble)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-
-//         double phi(SO2<double>::Log(R));
-//         double phi2(SO2<double>::Log(R.R()));
-//         double phi3(R.Log());
-//         double phi_true{getAngle(R.R())};
-
-//         EXPECT_TRUE(phi_true == phi);
-//         EXPECT_TRUE(phi_true == phi2);
-//         EXPECT_TRUE(phi_true == phi3);
-//     }
-// }
-
-// TEST(MatrixExponential, GivenSkewSymetricMatrix_ReturnsSO2Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-
-//         Eigen::Matrix2d log_R{R.log()};
-//         SO2<double> R2{SO2<double>::exp(log_R)};
-
-//         EXPECT_TRUE(R == R2);
-//     }
-// }
-
-// TEST(MatrixExponential, GivenDouble_ReturnSO2Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-
-//         double phi{R.Log()};
-//         SO2<double> R2{SO2<double>::Exp(phi)};
-
-//         EXPECT_TRUE(R == R2);
-//     }
-// }
+        EXPECT_TRUE(R1.R().isApprox(R2.R()));
+    }
+}
 
 // TEST(Ajoint, GivenSO2ElementAndAngle_TestAdjoint)
 // {

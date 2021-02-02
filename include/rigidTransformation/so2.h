@@ -99,6 +99,11 @@ public:
         return SO2::Log(*this);
     }
 
+    double Adj() const
+    {
+        return 1.0;
+    }
+
     static SO2 random()
     {
         T ang{randomScalar(T(-PI), T(PI))};
