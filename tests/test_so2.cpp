@@ -286,3 +286,15 @@ TEST_F(SO2_Fixture, LeftBoxPlus)
         EXPECT_TRUE(R2_true.R().isApprox(R2.R(), 1e-8));
     }
 }
+
+TEST_F(SO2_Fixture, LeftBoxMinus)
+{
+    for(auto R : transforms_)
+    {
+        rt::SO2<double> R2{rt::SO2<double>::random()};
+        double delta{R.boxminusl(R2)};
+        rt::SO2<double> R3{R2.boxplusl(delta)};
+
+        EXPECT_TRUE(R.R().isApprox(R3.R(), 1e-8));
+    }
+}
