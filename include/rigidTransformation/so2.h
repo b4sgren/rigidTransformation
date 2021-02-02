@@ -59,6 +59,11 @@ public:
         return (*this);
     }
 
+    double operator()(int i, int j) const
+    {
+        return arr_(i,j);
+    }
+
     Mat2T R() const { return arr_; }
 
     T det() const
@@ -89,6 +94,11 @@ public:
         return inverse().R() * v;
     }
 
+    double Log() const
+    {
+        return SO2::Log(*this);
+    }
+
     static SO2 random()
     {
         T ang{randomScalar(T(-PI), T(PI))};
@@ -100,7 +110,22 @@ public:
         return SO2();
     }
 
+    static double Log(const SO2 &R)
+    {
+        return atan2(R(1,0), R(0,0));
+    }
+
 private:
+    Mat2T hat(double ang) const
+    {
+        return skew2<T>(ang);
+    }
+
+    double vee(const Mat2T &mat) const
+    {
+        return mat(1,0);
+    }
+
     T data_[4];
 public:
     Eigen::Map<Mat2T> arr_;

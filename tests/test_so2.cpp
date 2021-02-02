@@ -208,6 +208,17 @@ TEST_F(SO2_Fixture, IdentityFunction)
     EXPECT_TRUE(I.isApprox(R.R()));
 }
 
+TEST_F(SO2_Fixture, LogarithmicMap)
+{
+    for(auto R : transforms_)
+    {
+        double logR{R.Log()};
+        double ang{getAngle(R.R())};
+
+        EXPECT_FLOAT_EQ(ang, logR);
+    }
+}
+
 // TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
 // {
 //     for(int i{0}; i != 100; ++i)
