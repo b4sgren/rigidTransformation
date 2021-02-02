@@ -110,6 +110,11 @@ public:
         return (*this) * SO2::Exp(ang);
     }
 
+    double boxminusr(const SO2 &R) const
+    {
+        return SO2::Log(R.inverse() * (*this));
+    }
+
     static SO2 random()
     {
         T ang{randomScalar(T(-PI), T(PI))};

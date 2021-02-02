@@ -259,6 +259,18 @@ TEST_F(SO2_Fixture, RightBoxPlus)
     }
 }
 
+TEST_F(SO2_Fixture, RightBoxMinus)
+{
+    for(auto R1 : transforms_)
+    {
+        rt::SO2<double> R2{rt::SO2<double>::random()};
+        double delta{R1.boxminusr(R2)};
+        rt::SO2<double> R{R2.boxplusr(delta)};
+
+        EXPECT_TRUE(R1.R().isApprox(R.R()));
+    }
+}
+
 // TEST(BoxPlus, GivenSO2AndDelta_ReturnNewSO2)
 // {
 //     for(int i{0}; i!=100; ++i)
