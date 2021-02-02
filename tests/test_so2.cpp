@@ -183,6 +183,23 @@ TEST_F(SO2_Fixture, ActiveRotationOfAVector)
     }
 }
 
+TEST_F(SO2_Fixture, PassiveRotationOfAVector)
+{
+    for(auto R : transforms_)
+    {
+        Eigen::Vector2d v{randVec2d(-10, 10)};
+        Eigen::Vector2d vp{R.rotp(v)};
+
+        double ang{getAngle(R.R())};
+        double ct{cos(ang)}, st{sin(ang)};
+        Eigen::Vector2d vp_true;
+        vp_true(0) = ct * v(0) + st * v(1);
+        vp_true(1) = -st * v(0) + ct * v(1);
+
+        EXPECT_TRUE(vp_true.isApprox(vp));
+    }
+}
+
 // TEST(ActiveRotation, RotatedVector)
 // {
 //     for(int i{0}; i != 100; ++i)

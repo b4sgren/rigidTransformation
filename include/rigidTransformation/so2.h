@@ -79,9 +79,14 @@ public:
         arr_.transposeInPlace();
     }
 
-    Vec2T rota(const Vec2T& v)
+    Vec2T rota(const Vec2T& v) const
     {
         return R() * v;
+    }
+
+    Vec2T rotp(const Vec2T &v) const
+    {
+        return inverse().R() * v;
     }
 
     static SO2 random()
