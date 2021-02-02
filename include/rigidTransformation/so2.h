@@ -115,17 +115,12 @@ public:
         return atan2(R(1,0), R(0,0));
     }
 
+    static SO2 Exp(double ang)
+    {
+        return SO2(ang);
+    }
+
 private:
-    Mat2T hat(double ang) const
-    {
-        return skew2<T>(ang);
-    }
-
-    double vee(const Mat2T &mat) const
-    {
-        return mat(1,0);
-    }
-
     T data_[4];
 public:
     Eigen::Map<Mat2T> arr_;

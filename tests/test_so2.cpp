@@ -219,6 +219,17 @@ TEST_F(SO2_Fixture, LogarithmicMap)
     }
 }
 
+TEST_F(SO2_Fixture, ExponentialMap)
+{
+    for(auto R : transforms_)
+    {
+        double logR{R.Log()};
+        rt::SO2<double> R2{rt::SO2<double>::Exp(logR)};
+
+        EXPECT_TRUE(R.R().isApprox(R2.R()));
+    }
+}
+
 // TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
 // {
 //     for(int i{0}; i != 100; ++i)
