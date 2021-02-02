@@ -200,43 +200,13 @@ TEST_F(SO2_Fixture, PassiveRotationOfAVector)
     }
 }
 
-// TEST(ActiveRotation, RotatedVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
+TEST_F(SO2_Fixture, IdentityFunction)
+{
+    rt::SO2<double> R{rt::SO2<double>::identity()};
+    Eigen::Matrix2d I{Eigen::Matrix2d::Identity()};
 
-//         Eigen::Vector2d res{R.rota(vec)};
-
-//         double ang{getAngle(R.R())};
-//         double ct{cos(ang)}, st{sin(ang)};
-//         Eigen::Vector2d res_true{Eigen::Vector2d::Zero()};
-//         res_true(0) = ct * vec(0) - st * vec(1);
-//         res_true(1) = st * vec(0) + ct * vec(1);
-
-//         EXPECT_TRUE(res_true.isApprox(res));
-//     }
-// }
-
-// TEST(PassiveRotation, RotatedVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         Eigen::Vector2d vec{randVec2d(-10.0, 10.0)};
-
-//         Eigen::Vector2d res{R.rotp(vec)};
-
-//         double ang{getAngle(R.R())};
-//         double ct{cos(ang)}, st{sin(ang)};
-//         Eigen::Vector2d res_true{Eigen::Vector2d::Zero()};
-//         res_true(0) = ct * vec(0) + st * vec(1);
-//         res_true(1) = -st * vec(0) + ct * vec(1);
-
-//         EXPECT_TRUE(res_true.isApprox(res));
-//     }
-// }
+    EXPECT_TRUE(I.isApprox(R.R()));
+}
 
 // TEST(HatOperator, GivenAnAngleReturnSkewSymmetricMatrix)
 // {

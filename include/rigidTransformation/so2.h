@@ -95,6 +95,11 @@ public:
         return SO2(ang);
     }
 
+    static SO2 identity()
+    {
+        return SO2();
+    }
+
 private:
     T data_[4];
 public:
