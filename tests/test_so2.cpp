@@ -141,6 +141,18 @@ TEST_F(SO2_Fixture, GroupMultiplication)
     }
 }
 
+TEST_F(SO2_Fixture, InverseOfGroupElement)
+{
+    for(auto R : transforms_)
+    {
+        rt::SO2<double> R_inv{R.inverse()};
+        Eigen::Matrix2d res{(R * R_inv).R()};
+        Eigen::Matrix2d I{Eigen::Matrix2d::Identity()};
+
+        EXPECT_TRUE(I.isApprox(res));
+    }
+}
+
 // TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse) //FIX THIS ONE
 // {
 //     for(int i{0}; i != 100; i++)

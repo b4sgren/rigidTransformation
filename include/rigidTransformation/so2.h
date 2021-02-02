@@ -65,6 +65,13 @@ public:
         return arr_.determinant();
     }
 
+    SO2 inverse() const
+    {
+        SO2 temp;
+        temp.arr_ = R().transpose();
+        return temp;
+    }
+
     static SO2 random()
     {
         T ang{randomScalar(T(-PI), T(PI))};
