@@ -126,23 +126,20 @@ TEST_F(SO2_Fixture, RandomInitialization)
         EXPECT_FLOAT_EQ(1, R.det());
 }
 
+TEST_F(SO2_Fixture, GroupMultiplication)
+{
+    for(auto R1 : transforms_)
+    {
+        rt::SO2<double> R2{rt::SO2<double>::random()};
+        rt::SO2<double> R3{R1 * R2};
+        double ang1{getAngle(R1.R())}, ang2{getAngle(R2.R())};
+        double ang3{ang1+ang2};
+        ang3 = wrap(ang3);
+        rt::SO2<double> R3_true{ang3};
 
-// TEST(ResultOfGroupMultiplication, ReturnsNewMemberOfGroup)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R1 = SO2<double>::random();
-//         SO2<double> R2 = SO2<double>::random();
-
-//         SO2<double> R3 = R1 * R2;
-//         double ang1{getAngle(R1.R())}, ang2{getAngle(R2.R())};
-//         double ang3{ang1 + ang2};
-//         ang3 = wrap(ang3);
-//         SO2<double> R3_true = SO2<double>::fromAngle(ang3);
-
-//         EXPECT_TRUE(R3_true.R().isApprox(R3.R(), 1e-8));
-//     }
-// }
+        EXPECT_TRUE(R3_true.R().isApprox(R3.R(), 1e-8));
+    }
+}
 
 // TEST(InverseOfSO2Object, ReturnsIdentityWhenMultipliedByInverse) //FIX THIS ONE
 // {

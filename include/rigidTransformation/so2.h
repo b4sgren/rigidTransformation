@@ -45,6 +45,19 @@ public:
         return *this;
     }
 
+    SO2 operator*(const SO2 &rhs) const
+    {
+        SO2 temp;
+        temp.arr_ = R() * rhs.R();
+        return temp;
+    }
+
+    SO2& operator*=(const SO2 &rhs)
+    {
+        (*this) = (*this) * rhs;
+        return (*this);
+    }
+
     Mat2T R() const { return arr_; }
 
     T det() const
@@ -54,13 +67,13 @@ public:
 
     static SO2 random()
     {
-        // Stuff that uses this function is currently broken
         T ang{randomScalar(T(-PI), T(PI))};
         return SO2(ang);
     }
 
 private:
     T data_[4];
+public:
     Eigen::Map<Mat2T> arr_;
 };
 
