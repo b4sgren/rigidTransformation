@@ -243,19 +243,21 @@ TEST_F(SO2_Fixture, AdjointOperator)
     }
 }
 
-// TEST(Ajoint, GivenSO2ElementAndAngle_TestAdjoint)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO2<double> R{SO2<double>::random()};
-//         double phi{R.Log()};
+TEST_F(SO2_Fixture, RightBoxPlus)
+{
+    for(auto R : transforms_)
+    {
+        double delta{getRandomDouble(-rt::PI, rt::PI)};
 
-//         SO2<double> R1{R * SO2<double>::Exp(phi)};
-//         SO2<double> R2{SO2<double>::Exp(phi) * R}; //Adj is identity
+        rt::SO2<double> R2{R.boxplusr(delta)};
+        double phi(getAngle(R.R()));
+        phi += delta;
+        phi = wrap(phi);
+        rt::SO2<double> R2_true(phi);
 
-//         EXPECT_TRUE(R1 == R2);
-//     }
-// }
+        EXPECT_TRUE(R2_true.R().isApprox(R2.R(), 1e-8));
+    }
+}
 
 // TEST(BoxPlus, GivenSO2AndDelta_ReturnNewSO2)
 // {

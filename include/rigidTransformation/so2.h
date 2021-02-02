@@ -104,6 +104,12 @@ public:
         return 1.0;
     }
 
+    // should I add an inplace operation of this?
+    SO2 boxplusr(double ang) const
+    {
+        return (*this) * SO2::Exp(ang);
+    }
+
     static SO2 random()
     {
         T ang{randomScalar(T(-PI), T(PI))};
