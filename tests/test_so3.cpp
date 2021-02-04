@@ -28,7 +28,18 @@ Eigen::Vector3d getRandomVector(double min, double max)
 class SO3_Fixture : public ::testing::Test
 {
 public:
-    SO3_Fixture() {}
+    SO3_Fixture()
+    {
+        for(int i{0}; i != 100; ++i)
+        {
+            transforms_.push_back(rt::SO3<double>::random());
+        }
+    }
+
+    ~SO3_Fixture()
+    {
+        transforms_.clear();
+    }
 
 protected:
     std::vector<rt::SO3<double>> transforms_;
@@ -127,6 +138,19 @@ TEST_F(SO3_Fixture, TestIdentityFunction)
     rt::SO3<double> R{rt::SO3<double>::Identity()};
     Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
     EXPECT_TRUE(I.isApprox(R.R()));
+}
+
+TEST_F(SO3_Fixture, TestGroupMultiplication)
+{
+    for(auto R : transforms_)
+    {
+        rt::SO3<double> R2{rt::SO3<double>::random()};
+        rt::SO3<double> R3{R * R2};
+
+        Eigen::Matrix3d R3_true = R.R() * R2.R();
+
+        EXPECT_TRUE(R3_true.isApprox(R3.R()));
+    }
 }
 
 // TEST(Inverse, AskedForInverse_InverseTimesOriginalGivesIdentity)

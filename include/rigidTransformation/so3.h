@@ -72,6 +72,13 @@ public:
         return (*this);
     }
 
+    SO3 operator*(const SO3 &rhs)
+    {
+        SO3 temp;
+        temp.arr_ = R() * rhs.R();
+        return temp;
+    }
+
     static SO3 random()
     {
         std::random_device rd;
