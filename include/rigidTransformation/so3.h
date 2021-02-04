@@ -91,6 +91,11 @@ public:
         return SO3(res);
     }
 
+    static SO3 Identity()
+    {
+        return SO3();
+    }
+
 private:
     T data_[9];
 public:
