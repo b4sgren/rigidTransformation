@@ -92,6 +92,11 @@ public:
         return temp;
     }
 
+    SO3 inverse_()
+    {
+        arr_.transposeInPlace();
+    }
+
     static SO3 random()
     {
         std::random_device rd;

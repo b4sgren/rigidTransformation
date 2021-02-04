@@ -164,6 +164,19 @@ TEST_F(SO3_Fixture, TestInverse)
     }
 }
 
+TEST_F(SO3_Fixture, TestInPlaceInverse)
+{
+    Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
+    for(auto R : transforms_)
+    {
+        rt::SO3<double> R_orig{R};
+        R.inverse_();
+        rt::SO3<double> res{R * R_orig};
+        EXPECT_TRUE(I.isApprox(res.R()));
+    }
+
+}
+
 // TEST(Inverse, AskedForInverse_InverseTimesOriginalGivesIdentity)
 // {
 //     for(int i{0}; i != 100; ++i)
