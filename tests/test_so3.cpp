@@ -5,6 +5,7 @@
 #include <random>
 
 #include "so3.h"
+#include "utils.h"
 
 namespace rt = rigidTransform;
 
@@ -58,6 +59,25 @@ TEST_F(SO3_Fixture, TestInitializationFromMatrix)
     rt::SO3<double> R{M};
 
     EXPECT_TRUE(M.isApprox(R.R()));
+}
+
+TEST_F(SO3_Fixture, TestFromRPYAngles)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double roll{getRandomDouble(-rt::PI, rt::PI)};
+        double pitch{getRandomDouble(-rt::PI, rt::PI)};
+        double yaw{getRandomDouble(-rt::PI, rt::PI)};
+        rt::SO3<double> R{roll, pitch, yaw};
+
+        Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
+        Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
+        Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
+
+        Eigen::Matrix3d R_true = yawAngle.matrix() * pitchAngle.matrix() * rollAngle.matrix();
+
+        EXPECT_TRUE(R_true.isApprox(R.R()));
+    }
 }
 
 // TEST(GivenSO3Element, Return3By3Matrix)

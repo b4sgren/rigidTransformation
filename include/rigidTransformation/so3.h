@@ -30,6 +30,20 @@ public:
     // This may lead to memory errors if the matrix R goes out of scope. May want to wrap arr_ around data. See so2
     SO3(const Mat3T & R) : arr_(const_cast<T*>(R.data())) {}
 
+    SO3(T phi, T theta, T psi) : arr_(data_)
+    {
+        T cphi{cos(phi)}, sphi(sin(phi));
+        T ct{cos(theta)}, st{sin(theta)};
+        T cpsi{cos(psi)}, spsi{sin(psi)};
+
+        Mat3T Rpsi, Rtheta, Rphi;
+        Rpsi << cpsi, -spsi, 0, spsi, cpsi, 0, 0, 0, 1;
+        Rtheta << ct, 0, st, 0, 1, 0, -st, 0, ct;
+        Rphi << 1, 0, 0 , 0, cphi, -sphi, 0, sphi, cphi;
+
+        arr_ = Rpsi * Rtheta * Rphi;
+    }
+
     Mat3T R() const { return arr_; }
 
 private:
