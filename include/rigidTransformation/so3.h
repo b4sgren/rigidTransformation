@@ -85,6 +85,13 @@ public:
         return (*this);
     }
 
+    SO3 inverse() const
+    {
+        SO3 temp;
+        temp.arr_ = R().transpose();
+        return temp;
+    }
+
     static SO3 random()
     {
         std::random_device rd;
