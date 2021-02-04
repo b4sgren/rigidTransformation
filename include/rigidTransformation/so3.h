@@ -97,6 +97,11 @@ public:
         arr_.transposeInPlace();
     }
 
+    Vec3T rota(const Eigen::Ref<const Vec3T>& v)
+    {
+        return R() * v;
+    }
+
     static SO3 random()
     {
         std::random_device rd;
