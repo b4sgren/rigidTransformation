@@ -41,6 +41,25 @@ TEST_F(SO3_Fixture, TestDefaultInitialization)
     EXPECT_TRUE(I.isApprox(R.R()));
 }
 
+TEST_F(SO3_Fixture, TestPointerInitialization)
+{
+    double vals[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    rt::SO3<double> R{vals};
+    Eigen::Matrix3d M;
+    M << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+    M.transposeInPlace();
+
+    EXPECT_TRUE(M.isApprox(R.R()));
+}
+
+TEST_F(SO3_Fixture, TestInitializationFromMatrix)
+{
+    Eigen::Matrix3d M{Eigen::Matrix3d::Random()};
+    rt::SO3<double> R{M};
+
+    EXPECT_TRUE(M.isApprox(R.R()));
+}
+
 // TEST(GivenSO3Element, Return3By3Matrix)
 // {
 //    Eigen::Matrix3d R_true;

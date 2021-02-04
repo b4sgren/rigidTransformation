@@ -25,6 +25,11 @@ public:
         arr_.setIdentity();
     }
 
+    SO3(const T* data) : arr_(const_cast<T*>(data)) {}
+
+    // This may lead to memory errors if the matrix R goes out of scope. May want to wrap arr_ around data. See so2
+    SO3(const Mat3T & R) : arr_(const_cast<T*>(R.data())) {}
+
     Mat3T R() const { return arr_; }
 
 private:
