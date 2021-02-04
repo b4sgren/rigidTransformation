@@ -177,45 +177,6 @@ TEST_F(SO3_Fixture, TestInPlaceInverse)
 
 }
 
-// TEST(Inverse, AskedForInverse_InverseTimesOriginalGivesIdentity)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO3<double> R{SO3<double>::random()};
-//         SO3<double> R_inv{R.inv()};
-
-//         EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(R_inv.R() * R.R()));
-//     }
-// }
-
-// TEST(SelfInverse, SO3Element_InvertsInPlace)
-// {
-//     for(int i{0}; i!=100; ++i)
-//     {
-//         SO3<double> R{SO3<double>::random()};
-//         Eigen::Matrix3d R_inv{R.R()};
-//         R.selfInv();
-
-//         EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(R_inv * R.R()));
-//     }
-// }
-
-// TEST(GroupOperator, TwoSO3ElementsMultiplied_ReturnsValidRotation)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO3<double> R1{SO3<double>::random()};
-//         SO3<double> R2{SO3<double>::random()};
-
-//         SO3<double> R3{R1 * R2};
-
-//         Eigen::Matrix3d R_true{R1.R() * R2.R()};
-
-//         EXPECT_TRUE(R_true.isApprox(R3.R()));
-//         EXPECT_TRUE(R3.isValidRotation());
-//     }
-// }
-
 // TEST(ActiveRotation, SO3ElementAnd3Vector_ReturnActivelyRotatedVector)
 // {
 //     for(int i{0}; i != 100; ++i)
@@ -339,31 +300,6 @@ TEST_F(SO3_Fixture, TestInPlaceInverse)
 //     }
 // }
 
-// TEST(VeeOperator, SkewSymmetrixMatrix_Return3Vector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d w_true{getRandomVector(-10.0, 10.0)};
-//         Eigen::Matrix3d log_R{skew3(w_true)};
-//         Eigen::Vector3d w{SO3<double>::vee(log_R)};
-
-//         EXPECT_TRUE(w_true.isApprox(w));
-//     }
-// }
-
-// TEST(HatOperator, Vector_ReturnsSkewSymmetricMatrix)
-// {
-//     for(int i{0}; i!= 100; ++i)
-//     {
-//         Eigen::Vector3d w{getRandomVector(-10.0, 10.0)};
-//         Eigen::Matrix3d log_R{SO3<double>::hat(w)};
-//         Eigen::Matrix3d log_R_true;
-//         log_R_true << 0.0, -w(2), w(1), w(2), 0.0, -w(0), -w(1), w(0), 0.0;
-
-//         EXPECT_TRUE(log_R_true.isApprox(log_R));
-//     }
-// }
-
 // TEST(MatrixExponential, SkewSymmetricMatrix_ReturnSO3Element)
 // {
 //     for(int i{0}; i != 100; ++i)
@@ -463,12 +399,4 @@ TEST_F(SO3_Fixture, TestInPlaceInverse)
 //     R1.normalize();
 
 //     EXPECT_TRUE(R1.isValidRotation());
-// }
-
-// TEST(Identity, AskedForIdentity_ReturnsIdentity)
-// {
-//     Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
-//     SO3<double> R{SO3<double>::Identity()};
-
-//     EXPECT_TRUE(I.isApprox(R.R()));
 // }
