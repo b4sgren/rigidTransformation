@@ -28,7 +28,12 @@ public:
     SO3(const T* data) : arr_(const_cast<T*>(data)) {}
 
     // This may lead to memory errors if the matrix R goes out of scope. May want to wrap arr_ around data. See so2
-    SO3(const Mat3T & R) : arr_(const_cast<T*>(R.data())) {}
+    SO3(const Mat3T &R) : arr_(const_cast<T*>(R.data())) {}
+
+    SO3(const SO3 &R) : arr_(data_)
+    {
+        arr_ = R.R();
+    }
 
     SO3(T phi, T theta, T psi) : arr_(data_)
     {

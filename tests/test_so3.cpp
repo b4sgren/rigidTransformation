@@ -95,6 +95,15 @@ TEST_F(SO3_Fixture, TestFromAxisAngle)
     }
 }
 
+TEST_F(SO3_Fixture, InitializeFromSO3)
+{
+    Eigen::Matrix3d M{Eigen::Matrix3d::Random()};
+    rt::SO3<double> R{M};
+    rt::SO3<double> R2{R};
+
+    EXPECT_TRUE(R.R().isApprox(R2.R()));
+}
+
 // TEST(GivenSO3Element, Return3By3Matrix)
 // {
 //    Eigen::Matrix3d R_true;
