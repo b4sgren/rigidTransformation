@@ -8,6 +8,9 @@
 
 #include "utils.h"
 
+namespace rigidTransform
+{
+
 template <typename T>
 class SO3
 {
@@ -16,6 +19,20 @@ public:
     using Mat3T = Eigen::Matrix<T,3,3>;
     using Vec3T = Eigen::Matrix<T,3,1>;
     using Map3T = Eigen::Map<Mat3T>;
+
+    SO3(): arr_(data_)
+    {
+        arr_.setIdentity();
+    }
+
+    Mat3T R() const { return arr_; }
+
+private:
+    T data_[9];
+public:
+    Eigen::Map<Mat3T> arr_;
 };
+
+}
 
 #endif
