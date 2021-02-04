@@ -80,6 +80,21 @@ TEST_F(SO3_Fixture, TestFromRPYAngles)
     }
 }
 
+TEST_F(SO3_Fixture, TestFromAxisAngle)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double phi{getRandomDouble(0, rt::PI)};
+        Eigen::Vector3d vec{Eigen::Vector3d::Random()};
+        Eigen::Vector3d v = vec / vec.norm() * phi;
+
+        rt::SO3<double> R{v};
+        Eigen::Matrix3d R_true = Eigen::AngleAxisd(phi, vec/vec.norm()).matrix();
+
+        EXPECT_TRUE(R_true.isApprox(R.R()));
+    }
+}
+
 // TEST(GivenSO3Element, Return3By3Matrix)
 // {
 //    Eigen::Matrix3d R_true;

@@ -44,6 +44,21 @@ public:
         arr_ = Rpsi * Rtheta * Rphi;
     }
 
+    SO3(const Vec3T &v) : arr_{data_}
+    {
+        T theta = v.norm();
+        Mat3T vx{skew3<T>(v)};
+
+        T A{1.0}, B{0.5};
+        if(abs(theta) > 1e-8)
+        {
+            A = sin(theta) / theta;
+            B = (1 - cos(theta)) / (theta * theta);
+        }
+
+        arr_ = Mat3T::Identity() + A * vx + B * vx * vx;
+    }
+
     Mat3T R() const { return arr_; }
 
 private:
