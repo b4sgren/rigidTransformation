@@ -189,6 +189,18 @@ TEST_F(SO3_Fixture, TestActiveRotation)
     }
 }
 
+TEST_F(SO3_Fixture, TestPassiveRotation)
+{
+    for(auto R : transforms_)
+    {
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+        Eigen::Vector3d vp{R.rotp(v)};
+        Eigen::Vector3d vpp{R.rota(vp)};
+
+        EXPECT_TRUE(v.isApprox(vpp));
+    }
+}
+
 // TEST(ActiveRotation, SO3ElementAnd3Vector_ReturnActivelyRotatedVector)
 // {
 //     for(int i{0}; i != 100; ++i)

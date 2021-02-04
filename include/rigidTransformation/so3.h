@@ -102,6 +102,11 @@ public:
         return R() * v;
     }
 
+    Vec3T rotp(const Eigen::Ref<const Vec3T>& v)
+    {
+        return inverse().R() * v;
+    }
+
     static SO3 random()
     {
         std::random_device rd;
