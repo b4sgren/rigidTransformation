@@ -66,6 +66,31 @@ public:
 
     Mat3T R() const { return arr_; }
 
+    SO3& operator=(const SO3& rhs)
+    {
+        arr_ = rhs.R();
+        return (*this);
+    }
+
+    static SO3 random()
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<T> dist(0,1);
+
+        Vec3T x;
+        x << dist(gen), dist(gen), dist(gen);
+        T psi{2 * PI * x(0)};
+        Mat3T Rpsi;
+        Rpsi << cos(psi), sin(psi), 0, -sin(psi), cos(psi), 0, 0, 0, 1;
+
+        Vec3T v;
+        v << cos(2*PI*x(1)) * sqrt(x(2)), sin(2*PI*x(1)) * sqrt(x(2)), sqrt(1 - x(2));
+        Mat3T H = Mat3T::Identity() - 2 * v * v.transpose();
+        Mat3T res = -H * Rpsi;
+        return SO3(res);
+    }
+
 private:
     T data_[9];
 public:
