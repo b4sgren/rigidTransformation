@@ -27,8 +27,7 @@ public:
 
     SO3(const T* data) : arr_(const_cast<T*>(data)) {}
 
-    // This may lead to memory errors if the matrix R goes out of scope. May want to wrap arr_ around data. See so2
-    SO3(const Mat3T &R) : arr_(const_cast<T*>(R.data())) {}
+    SO3(const Mat3T &R) : arr_(data_) { arr_ = R; }
 
     SO3(const SO3 &R) : arr_(data_)
     {
@@ -156,6 +155,18 @@ public:
         return SO3::vee(logR);
     }
 
+    static SO3 Exp(const Eigen::Ref<const Vec3T> &logR)
+    {
+        Mat3T logRx{skew3<T>(logR)};
+        T theta{logR.norm()};
+        Mat3T R{Mat3T::Identity()};
+        if(abs(theta) > 1e-8)
+        {
+            R = Mat3T::Identity() + sin(theta)/theta * logRx + (1 - cos(theta))/pow(theta,2) * logRx * logRx;
+        }
+        return SO3(R);
+    }
+
     static Vec3T vee(const Eigen::Ref<const Mat3T>& M)
     {
         Vec3T v;
@@ -169,6 +180,12 @@ public:
     Eigen::Map<Mat3T> arr_;
 };
 
+template<typename T>
+std::ostream& operator <<(std::ostream &os, const SO3<T> &R)
+{
+    os << R.R();
+    return os;
+}
 }
 
 #endif

@@ -214,100 +214,15 @@ TEST_F(SO3_Fixture, TestLogarithmicMap)
     }
 }
 
-// TEST(MatrixLogarithm, SO3Element_ReturnsMatrixLogarithm)
-// {
-//     for(int i{0}; i!=100; ++i)
-//     {
-//         SO3<double> R{SO3<double>::random()};
-
-//         Eigen::Matrix3d log_R{R.log()};
-//         Eigen::Matrix3d log_R_true{R.R().log()};
-
-//         auto norm{(log_R_true.array() - log_R.array()).matrix().norm()};
-//         if(norm >= 1e-8)
-//         {
-//             std::cout << "Truth\n" << log_R_true << std::endl;
-//             std::cout << "Mine\n" << log_R << std::endl;
-//             std::cout << "Diff:\t" << (log_R_true.array() - log_R.array()).matrix().norm() << std::endl;
-//             Eigen::Matrix3d temp{R.log()};
-//             int x{3};
-//         }
-
-//         EXPECT_LE(norm, 1e-8);
-//     }
-// }
-
-// TEST(MatrixLogarithm, SO3Element_ReturnsMatrixLogarithmUsingTaylorSeriesAboutZero)
-// {
-//     for(int i{0}; i!=100; ++i)
-//     {
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-//         double ang{getRandomDouble(0.0, 1e-6)};
-
-//         Eigen::Matrix3d R{Eigen::AngleAxisd(ang, v)};
-//         SO3<double> R1{R};
-
-//         Eigen::Matrix3d log_R_true{R.log()};
-//         Eigen::Matrix3d log_R{R1.log()};
-
-//         auto norm{(log_R_true.array() - log_R.array()).matrix().norm()};
-//         if(!(norm <= 1e-8))
-//         {
-//             std::cout << "Truth\n" << log_R_true << std::endl;
-//             std::cout << "Mine\n" << log_R << std::endl;
-//             std::cout << norm << std::endl;
-//             int x{3};
-//         }
-
-//         EXPECT_LE(norm, 1e-8);
-//     }
-// }
-
-// TEST(MatrixLogarithm, SO3Element_ReturnsMatrixLogarithmUsingTaylorSeriesAboutPI) //Issues with this one in python also
-// {
-//     for(int i{0}; i!=100; ++i)
-//     {
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-//         double ang{PI - getRandomDouble(0, 1e-6)};
-
-//         SO3<double> R1{SO3<double>::fromAxisAngle(ang * v)};
-//         Eigen::Matrix3d R{R1.R()};
-
-//         Eigen::Matrix3d log_R_true{R.log()};
-//         Eigen::Matrix3d log_R{R1.log()};
-
-//         auto norm{(log_R_true.array() - log_R.array()).matrix().norm()};
-//         if(norm > 1e-8)
-//         {
-//             std::cout << "\nTruth\n" << log_R_true << std::endl;
-//             std::cout << "Mine\n" << log_R << std::endl;
-//             std::cout << norm << std::endl;
-//             Eigen::Matrix3d temp{R1.log()};
-//         }
-
-//         EXPECT_LT(norm, 1e-8);
-//     }
-// }
-
-// TEST(MatrixLogarithm, GivenSO3Element_Returns3Vector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO3<double> R{SO3<double>::random()};
-
-//         Eigen::Vector3d w1{R.Log()}, w2{SO3<double>::Log(R)}, w3{SO3<double>::Log(R.R())};
-//         Eigen::Matrix3d log_R{R.R().log()};
-//         Eigen::Vector3d w{SO3<double>::vee(log_R)};
-
-//         auto norm1{(w - w1).norm()}, norm2{(w - w2).norm()}, norm3{(w - w3).norm()};
-
-//         EXPECT_LT(norm1, 1e-8);
-//         EXPECT_LT(norm2, 1e-8);
-//         EXPECT_LT(norm3, 1e-8);
-//     }
-// }
+TEST_F(SO3_Fixture, ExponentialMap)
+{
+    for(auto R : transforms_)
+    {
+        Eigen::Vector3d logR{R.Log()};
+        rt::SO3<double> R2{rt::SO3<double>::Exp(logR)};
+        EXPECT_TRUE(R.R().isApprox(R2.R()));
+    }
+}
 
 // TEST(MatrixExponential, SkewSymmetricMatrix_ReturnSO3Element)
 // {

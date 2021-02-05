@@ -26,8 +26,7 @@ public:
 
     SO2(const T *data) : arr_(const_cast<T*>(data)) {}
 
-    // I might need to be careful that what is passed in doesn't go out of scope and get destroyed. I might want to wrap arr_ around data_ like in the SO2 constructor
-    SO2(const Mat2T &R) : arr_(const_cast<T*>(R.data())) {}
+    SO2(const Mat2T &R) : arr_(data_) { arr_ = R; }
 
     SO2(const T& ang): arr_(data_)
     {
