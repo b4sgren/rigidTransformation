@@ -224,50 +224,6 @@ TEST_F(SO3_Fixture, ExponentialMap)
     }
 }
 
-// TEST(MatrixExponential, SkewSymmetricMatrix_ReturnSO3Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)};
-//         Eigen::Matrix3d log_R{SO3<double>::hat(w)};
-
-//         SO3<double> R{SO3<double>::exp(log_R)};
-//         Eigen::Matrix3d R_true{log_R.exp()};
-
-//         EXPECT_TRUE(R_true.isApprox(R.R()));
-//     }
-// }
-
-// TEST(MatrixExponential, SkewSymmetricMatrix_ReturnsSO3ElementUsingTaylorSeries)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d w{getRandomVector(-10.0, 10.0)};
-//         double ang{getRandomDouble(0, 1e-6)};
-//         w = w / w.norm() * ang;
-//         Eigen::Matrix3d log_R{SO3<double>::hat(w)};
-
-//         SO3<double> R{SO3<double>::exp(log_R)};
-//         Eigen::Matrix3d R_true{log_R.exp()};
-
-//         EXPECT_TRUE(R_true.isApprox(R.R()));
-//     }
-// }
-
-// TEST(MatrixExponential, Vector_ReturnSO3Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)};
-
-//         SO3<double> R{SO3<double>::Exp(w)};
-//         Eigen::Matrix3d log_R{SO3<double>::hat(w)};
-//         Eigen::Matrix3d R_true{log_R.exp()};
-
-//         EXPECT_TRUE(R_true.isApprox(R.R()));
-//     }
-// }
-
 // TEST(Adjoint, SO3ElementAnd3Vector_ComposeWithAdjoint)
 // {
 //     for(int i{0}; i != 100; ++i)
