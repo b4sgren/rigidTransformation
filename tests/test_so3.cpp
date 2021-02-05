@@ -210,7 +210,7 @@ TEST_F(SO3_Fixture, TestLogarithmicMap)
         Eigen::Vector3d logR_true;
         logR_true << temp(2,1), temp(0,2), temp(1,0);
 
-        EXPECT_TRUE(logR_true.isApprox(logR));
+        EXPECT_TRUE(logR_true.isApprox(logR, 1e-8));
     }
 }
 
@@ -220,7 +220,7 @@ TEST_F(SO3_Fixture, ExponentialMap)
     {
         Eigen::Vector3d logR{R.Log()};
         rt::SO3<double> R2{rt::SO3<double>::Exp(logR)};
-        EXPECT_TRUE(R.R().isApprox(R2.R()));
+        EXPECT_TRUE(R.R().isApprox(R2.R(), 1e-8));
     }
 }
 
@@ -247,6 +247,18 @@ TEST_F(SO3_Fixture, Boxplusr)
         rt::SO3<double> R3{R * rt::SO3<double>(v)};
 
         EXPECT_TRUE(R2.R().isApprox(R3.R()));
+    }
+}
+
+TEST_F(SO3_Fixture, Boxminusr)
+{
+    for(auto R : transforms_)
+    {
+        rt::SO3<double> R2{rt::SO3<double>::random()};
+        Eigen::Vector3d diff{R.boxminusr(R2)};
+        rt::SO3<double> R3{R2.boxplusr(diff)};
+
+        EXPECT_TRUE(R.R().isApprox(R3.R(), 1e-8));
     }
 }
 

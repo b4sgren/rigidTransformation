@@ -113,6 +113,11 @@ public:
         return (*this) * SO3::Exp(v);
     }
 
+    Vec3T boxminusr(const SO3 &R2)
+    {
+        return SO3::Log(R2.inverse() * (*this));
+    }
+
     static SO3 random()
     {
         std::random_device rd;

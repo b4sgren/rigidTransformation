@@ -58,7 +58,7 @@ public:
         return (*this);
     }
 
-    double operator()(int i, int j) const
+    T operator()(int i, int j) const
     {
         return arr_(i,j);
     }
@@ -93,34 +93,34 @@ public:
         return inverse().R() * v;
     }
 
-    double Log() const
+    T Log() const
     {
         return SO2::Log(*this);
     }
 
-    double Adj() const
+    T Adj() const
     {
         return 1.0;
     }
 
     // should I add an inplace operation of this?
-    SO2 boxplusr(double ang) const
+    SO2 boxplusr(T ang) const
     {
         return (*this) * SO2::Exp(ang);
     }
 
-    double boxminusr(const SO2 &R) const
+    T boxminusr(const SO2 &R) const
     {
         return SO2::Log(R.inverse() * (*this));
     }
 
     // should I add an inplace operation of this?
-    SO2 boxplusl(double ang) const
+    SO2 boxplusl(T ang) const
     {
         return SO2::Exp(ang) * (*this);
     }
 
-    double boxminusl(const SO2 &R) const
+    T boxminusl(const SO2 &R) const
     {
         return SO2::Log((*this) * R.inverse());
     }
@@ -136,12 +136,12 @@ public:
         return SO2();
     }
 
-    static double Log(const SO2 &R)
+    static T Log(const SO2 &R)
     {
         return atan2(R(1,0), R(0,0));
     }
 
-    static SO2 Exp(double ang)
+    static SO2 Exp(T ang)
     {
         return SO2(ang);
     }
