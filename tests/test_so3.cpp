@@ -224,19 +224,31 @@ TEST_F(SO3_Fixture, ExponentialMap)
     }
 }
 
-// TEST(Adjoint, SO3ElementAnd3Vector_ComposeWithAdjoint)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO3<double> R{SO3<double>::random()};
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)};
+TEST_F(SO3_Fixture, TestAdjoint)
+{
+    for(auto R : transforms_)
+    {
+        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
 
-//         SO3<double> R2{R * SO3<double>::Exp(w)};
-//         SO3<double> R3{SO3<double>::Exp(R.Adj() * w) * R};
+        rt::SO3<double> R2{R * rt::SO3<double>::Exp(v)};
+        rt::SO3<double> R3{rt::SO3<double>::Exp(R.Adj() * v) * R};
+        EXPECT_TRUE(R2.R().isApprox(R3.R()));
+    }
+}
 
-//         EXPECT_TRUE(R2 == R3);
-//     }
-// }
+TEST_F(SO3_Fixture, Boxplusr)
+{
+    for(auto R : transforms_)
+    {
+        double theta{getRandomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector3d v{getRandomVector(-10, 10)};
+        v = v/v.norm() * theta;
+        rt::SO3<double> R2{R.boxplusr(v)};
+        rt::SO3<double> R3{R * rt::SO3<double>(v)};
+
+        EXPECT_TRUE(R2.R().isApprox(R3.R()));
+    }
+}
 
 // TEST(BoxPlus, SO3AndVector_ReturnsConcatenationOfTheTwo)
 // {

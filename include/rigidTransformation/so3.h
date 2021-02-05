@@ -65,6 +65,8 @@ public:
 
     Mat3T R() const { return arr_; }
 
+    Mat3T Adj() const { return arr_; }
+
     SO3& operator=(const SO3& rhs)
     {
         arr_ = rhs.R();
@@ -91,7 +93,7 @@ public:
         return temp;
     }
 
-    SO3 inverse_()
+    void inverse_()
     {
         arr_.transposeInPlace();
     }
@@ -104,6 +106,11 @@ public:
     Vec3T rotp(const Eigen::Ref<const Vec3T>& v)
     {
         return inverse().R() * v;
+    }
+
+    SO3 boxplusr(const Eigen::Ref<const Vec3T> &v)
+    {
+        return (*this) * SO3::Exp(v);
     }
 
     static SO3 random()
