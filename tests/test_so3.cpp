@@ -262,36 +262,32 @@ TEST_F(SO3_Fixture, Boxminusr)
     }
 }
 
-// TEST(BoxPlus, SO3AndVector_ReturnsConcatenationOfTheTwo)
-// {
-//     for(int i{0}; i!=100; ++i)
-//     {
-//         SO3<double> R{SO3<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-//         double ang{getRandomDouble(0.0, PI)};
+TEST_F(SO3_Fixture, Boxplusl)
+{
+    for(auto R : transforms_)
+    {
+        double theta{getRandomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector3d v{getRandomVector(-10, 10)};
+        v = v/v.norm() * theta;
+        rt::SO3<double> R2{R.boxplusl(v)};
+        rt::SO3<double> R3{rt::SO3<double>(v) * R};
 
-//         SO3<double> R2{R.boxplus(v*ang)};
-//         SO3<double> R2_true{R * SO3<double>::fromAxisAngle(v*ang)};
+        EXPECT_TRUE(R2.R().isApprox(R3.R()));
+    }
 
-//         EXPECT_EQ(R2_true, R2);
-//     }
-// }
+}
 
-// TEST(BoxMinus, SO3Elements_ReturnDifferenceBetweenTheTwo)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO3<double> R1{SO3<double>::random()}, R2{SO3<double>::random()};
+TEST_F(SO3_Fixture, Boxminusl)
+{
+    for(auto R : transforms_)
+    {
+        rt::SO3<double> R2{rt::SO3<double>::random()};
+        Eigen::Vector3d diff{R.boxminusl(R2)};
+        rt::SO3<double> R3{R2.boxplusl(diff)};
 
-//         Eigen::Vector3d w{R1.boxminus(R2)};
-//         SO3<double> R3{R2.boxplus(w)};
-
-//         double norm{(R1.R() - R3.R()).norm()};
-
-//         EXPECT_LE(norm, 1e-8);
-//     }
-// }
+        EXPECT_TRUE(R.R().isApprox(R3.R(), 1e-8));
+    }
+}
 
 // TEST(Normalize, GivenSO3ElementWithDetNotEq1_NormalizeElement)
 // {
