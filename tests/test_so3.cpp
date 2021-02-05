@@ -201,33 +201,18 @@ TEST_F(SO3_Fixture, TestPassiveRotation)
     }
 }
 
-// TEST(ActiveRotation, SO3ElementAnd3Vector_ReturnActivelyRotatedVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SO3<double> R{SO3<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+TEST_F(SO3_Fixture, TestLogarithmicMap)
+{
+    for(auto R : transforms_)
+    {
+        Eigen::Vector3d logR{R.Log()};
+        Eigen::Matrix3d temp{R.R().log()};
+        Eigen::Vector3d logR_true;
+        logR_true << temp(2,1), temp(0,2), temp(1,0);
 
-//         Eigen::Vector3d vp{R.rota(v)};
-//         Eigen::Vector3d vp_true{R.R() * v};
-
-//         EXPECT_TRUE(vp_true.isApprox(vp));
-//     }
-// }
-
-// TEST(PassiveRotation, SO3ElementAnd3Vector_ReturnPassivelyRotatedVector)
-// {
-//     for(int i{0}; i!=100; ++i)
-//     {
-//         SO3<double> R{SO3<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-
-//         Eigen::Vector3d vp{R.rotp(v)};
-//         Eigen::Vector3d vp_true{R.inv().R() * v};
-
-//         EXPECT_TRUE(vp_true.isApprox(vp));
-//     }
-// }
+        EXPECT_TRUE(logR_true.isApprox(logR));
+    }
+}
 
 // TEST(MatrixLogarithm, SO3Element_ReturnsMatrixLogarithm)
 // {

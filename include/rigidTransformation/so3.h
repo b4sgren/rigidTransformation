@@ -131,6 +131,38 @@ public:
         return SO3();
     }
 
+    Vec3T Log() const
+    {
+        return SO3::Log(*this);
+    }
+
+    static Vec3T Log(const SO3& R)
+    {
+        T theta = acos((R.R().trace() - 1)/2.0);
+        Mat3T logR{Mat3T::Zero()};
+        if(abs(theta) < 1e-8)
+        {
+            logR = 0.5 * (R.R() - R.R().transpose());
+        }
+        else if(abs(theta - PI) < 1e-8)
+        {
+            // Find a way to simplify this
+        }
+        else
+        {
+            logR = theta / (2 * sin(theta)) * (R.R() - R.R().transpose());
+        }
+
+        return SO3::vee(logR);
+    }
+
+    static Vec3T vee(const Eigen::Ref<const Mat3T>& M)
+    {
+        Vec3T v;
+        v << M(2,1), M(0,2), M(1,0);
+        return v;
+    }
+
 private:
     T data_[9];
 public:
