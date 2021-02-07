@@ -8,6 +8,9 @@
 
 #include "utils.h"
 
+namespace rigidTransform
+{
+
 template<typename T>
 class Quaternion
 {
@@ -17,7 +20,7 @@ class Quaternion
     using Map4T = Eigen::Map<QuatT>;
 public:
     Quaternion() = default;
-    Quaternion(const QuatT &q): _arr{q} { rectifyQuat(); } 
+    Quaternion(const QuatT &q): _arr{q} { rectifyQuat(); }
     Quaternion(T *q): _arr{Map4T(q)} { rectifyQuat(); }
 
     Quaternion operator*(const Quaternion &rhs) const
@@ -25,7 +28,7 @@ public:
         return this->otimes(rhs);
     }
 
-    Vec3T operator *(const Vec3T &rhs) const 
+    Vec3T operator *(const Vec3T &rhs) const
     {
         return this->rota(rhs);
     }
@@ -42,7 +45,7 @@ public:
     inline Vec3T qv() const { return _arr.template segment<3>(1); }
     inline QuatT q() const { return _arr; }
 
-    bool isValidQuaternion() const 
+    bool isValidQuaternion() const
     {
         T norm{_arr.norm()};
         return abs(1.0 - norm) < 1e-8 && _arr(0) >= 0.0;
@@ -54,7 +57,7 @@ public:
             _arr *= -1.0;
     }
 
-    Mat3T R() const 
+    Mat3T R() const
     {
         Mat3T I{Mat3T::Identity()};
         Vec3T q_v{qv()};
@@ -74,7 +77,7 @@ public:
         return Quaternion(Q * rhs.q());
     }
 
-    Quaternion inv() const 
+    Quaternion inv() const
     {
         QuatT q_inv;
         q_inv << qw(), -qv();
@@ -101,12 +104,12 @@ public:
         return this->inv().rota(v);
     }
 
-    Quaternion boxplus(const Vec3T &v) const 
+    Quaternion boxplus(const Vec3T &v) const
     {
         return (*this) * Quaternion::Exp(v);
     }
 
-    Vec3T boxminus(const Quaternion &q) const 
+    Vec3T boxminus(const Quaternion &q) const
     {
         return Quaternion::Log(q.inv() * (*this));
     }
@@ -121,7 +124,7 @@ public:
         return _arr.data();
     }
 
-    const T* data() const 
+    const T* data() const
     {
         return _arr.data();
     }
@@ -160,7 +163,7 @@ public:
         QuatT q;
         if(abs(ang) > 1e-6)
             q << cos(ang/2.0), v * sin(ang/2.0);
-        else 
+        else
         {
             T qw{1.0 - pow(ang,2)/8.0 + pow(ang,4)/46080.0};
             T temp{0.5 - pow(ang,2)/48.0 + pow(ang,4)/3840};
@@ -174,7 +177,7 @@ public:
     {
         T d{R.trace()}, s;
         QuatT q;
-        
+
         if(d > 0)
         {
             s = 2.0 * sqrt(d + 1.0);
@@ -190,7 +193,7 @@ public:
             s = 2 * sqrt(1 + R(1,1) - R(0,0) - R(2,2));
             q << 1/s * (R(2,0) - R(0,2)), 1/s * (R(1,0) + R(0,1)), s/4, 1/s * (R(2,1) + R(1,2));
         }
-        else 
+        else
         {
             s = 2 * sqrt(1 + R(2,2) - R(0,0) - R(1,1));
             q << 1/s * (R(0,1) - R(1,0)), 1/s * (R(2,0) + R(0,2)), 1/s * (R(2,1) + R(1,2)), s/4;
@@ -216,11 +219,11 @@ public:
         T cpsi{cos(psi)}, spsi{sin(psi)};
 
         QuatT q;
-        q << cpsi * ct * cp + spsi * st * sp, 
-             cpsi * ct * sp - spsi * st * cp, 
+        q << cpsi * ct * cp + spsi * st * sp,
+             cpsi * ct * sp - spsi * st * cp,
              cpsi * st * cp + spsi * ct * sp,
              spsi * ct * cp - cpsi * st * sp;
-        
+
         return Quaternion(q);
     }
 
@@ -252,7 +255,7 @@ public:
         return q.log();
     }
 
-    QuatT log() const 
+    QuatT log() const
     {
         T qw{this->qw()};
         Vec3T qv{this->qv()};
@@ -263,7 +266,7 @@ public:
         {
             w = 2 * atan(theta/qw) * qv/theta;
         }
-        else 
+        else
         {
             T temp{1.0/qw - pow(theta,2) / (3 * pow(qw,3)) + pow(theta,4)/(5 * pow(qw,5))};
             w = 2 * temp * qv;
@@ -279,7 +282,7 @@ public:
         return q.Log();
     }
 
-    Vec3T Log() const 
+    Vec3T Log() const
     {
         QuatT log_q{this->log()};
         return Quaternion::vee(log_q);
@@ -293,5 +296,6 @@ public:
 private:
     QuatT _arr;
 };
+}
 
 #endif
