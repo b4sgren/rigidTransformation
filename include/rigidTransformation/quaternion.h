@@ -126,6 +126,11 @@ public:
         return Quaternion(q);
     }
 
+    static Quaternion Identity()
+    {
+        return Quaternion();
+    }
+
 private:
     T data_[4];
 public:

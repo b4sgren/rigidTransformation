@@ -133,36 +133,13 @@ TEST_F(Quat_Fixture, RandomInitialization)
         EXPECT_FLOAT_EQ(1.0, q.norm());
 }
 
-// TEST(Quaternion, Returns4Vector)
-// {
-//     Eigen::Vector4d q_true;
-//     q_true << 1.0, 0.0, 0.0, 0.0;
-
-//     Quaternion<double> q{q_true};
-
-//     EXPECT_TRUE(q_true.isApprox(q.q()));
-// }
-
-// TEST(RandomGeneration, RandomQuaternion_ReturnsValidQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         EXPECT_TRUE(q.isValidQuaternion());
-//     }
-// }
-
-// TEST(GetRotationMatrix, RandomQuaternion_ReturnsCorrectRotationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         SO3<double> R_true{SO3<double>::fromQuaternion(q.q())};
-//         Eigen::Matrix3d R{q.R()};
-
-//         EXPECT_TRUE(R_true.R().isApprox(R));
-//     }
-// }
+TEST_F(Quat_Fixture, IdentityInitialization)
+{
+    Quatd q{Quatd::Identity()};
+    Eigen::Vector4d I;
+    I << 1, 0, 0, 0;
+    EXPECT_TRUE(I.isApprox(q.q()));
+}
 
 // TEST(Inverse, QuaternionInverse_QuaternionInverse)
 // {
@@ -240,100 +217,6 @@ TEST_F(Quat_Fixture, RandomInitialization)
 //         Eigen::Vector3d res{q.inv().R() * v};
 
 //         EXPECT_TRUE(res.isApprox(vp));
-//     }
-// }
-
-// TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{randomDouble(0, PI)};
-//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-//         vec = vec / vec.norm() * ang;
-
-//         Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
-//         Eigen::Vector4d q_true;
-//         q_true << cos(ang/2.0), vec / ang * sin(ang/2.0);
-//         fixQuat(q_true);
-
-//         EXPECT_TRUE(q_true.isApprox(q.q()));
-//         EXPECT_TRUE(q.isValidQuaternion());
-//     }
-// }
-
-// TEST(FromAxisAngleTaylorSeries, AxisAngle_ReturnValidQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{randomDouble(0, 1e-6)};
-//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-//         vec = vec / vec.norm() * ang;
-
-//         Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
-//         SO3<double> R_true{SO3<double>::fromAxisAngle(vec)};
-
-//         EXPECT_TRUE(R_true.R().isApprox(q.R()));
-//         EXPECT_TRUE(q.isValidQuaternion());
-//     }
-// }
-
-// TEST(FromRotationMatrix, RotationMatrix_ReturnValidQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         Eigen::Matrix3d R{q.R()};
-
-//         Quaternion<double> q2{Quaternion<double>::fromRotationMatrix(R)};
-
-//         EXPECT_TRUE(q == q2);
-//         EXPECT_TRUE(q2.isValidQuaternion());
-//     }
-// }
-
-// TEST(FromAxisAngleEigen, EigenAngleAxis_ReturnQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{randomDouble(0, PI)};
-//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-//         vec /= vec.norm();
-//         Eigen::AngleAxisd v{ang, vec};
-//         vec *= ang;
-
-//         Quaternion<double> q{Quaternion<double>::fromAxisAngle(v)};
-//         Quaternion<double> q2{Quaternion<double>::fromAxisAngle(vec)};
-
-//         EXPECT_TRUE(q == q2);
-//         EXPECT_TRUE(q.isValidQuaternion());
-//     }
-// }
-
-// TEST(FromRPYAngles, RPYEulerAngles_ReturnQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d rpy{getRandomVector(-PI, PI)};
-
-//         Quaternion<double> q{Quaternion<double>::fromRPY(rpy)};
-
-//         SO3<double> R{SO3<double>::fromRPY(rpy)};
-//         Quaternion<double> q_true{Quaternion<double>::fromRotationMatrix(R.R())};
-
-//         EXPECT_TRUE(q_true == q);
-//         EXPECT_TRUE(q.isValidQuaternion());
-//     }
-// }
-
-// TEST(FromPointer, Pointer_ReturnValidQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         double * data{q.data()};
-//         Quaternion<double> q2{data};
-
-//         EXPECT_TRUE(q == q2);
 //     }
 // }
 
