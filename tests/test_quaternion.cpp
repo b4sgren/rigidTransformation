@@ -8,6 +8,9 @@
 #include "so3.h"
 #include "utils.h"
 
+namespace rt = rigidTransform;
+using Quatd = rt::Quaternion<double>;
+
 void fixQuat(Eigen::Vector4d &q)
 {
     if(q(0) < 0.0)
@@ -31,330 +34,344 @@ Eigen::Vector3d getRandomVector(double min, double max)
     return v;
 }
 
-TEST(Quaternion, Returns4Vector)
+class Quat_Fixture : public ::testing::Test
 {
-    Eigen::Vector4d q_true;
-    q_true << 1.0, 0.0, 0.0, 0.0;
+public:
+    Quat_Fixture()
+    {}
+};
 
-    Quaternion<double> q{q_true};
-
+TEST_F(Quat_Fixture, DefaultInitialization)
+{
+    Quatd q{};
+    Eigen::Vector4d q_true(1, 0, 0, 0);
     EXPECT_TRUE(q_true.isApprox(q.q()));
 }
 
-TEST(RandomGeneration, RandomQuaternion_ReturnsValidQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        EXPECT_TRUE(q.isValidQuaternion());
-    }
-}
+// TEST(Quaternion, Returns4Vector)
+// {
+//     Eigen::Vector4d q_true;
+//     q_true << 1.0, 0.0, 0.0, 0.0;
 
-TEST(GetRotationMatrix, RandomQuaternion_ReturnsCorrectRotationMatrix)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        SO3<double> R_true{SO3<double>::fromQuaternion(q.q())};
-        Eigen::Matrix3d R{q.R()};
+//     Quaternion<double> q{q_true};
 
-        EXPECT_TRUE(R_true.R().isApprox(R));
-    }
-}
+//     EXPECT_TRUE(q_true.isApprox(q.q()));
+// }
 
-TEST(Inverse, QuaternionInverse_QuaternionInverse)
-{
-    Eigen::Vector4d qi;
-    qi << 1.0, 0.0, 0.0, 0.0;
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
+// TEST(RandomGeneration, RandomQuaternion_ReturnsValidQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         EXPECT_TRUE(q.isValidQuaternion());
+//     }
+// }
 
-        Quaternion<double> q_inv{q.inv()};
-        Quaternion<double> res{q * q_inv};
+// TEST(GetRotationMatrix, RandomQuaternion_ReturnsCorrectRotationMatrix)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         SO3<double> R_true{SO3<double>::fromQuaternion(q.q())};
+//         Eigen::Matrix3d R{q.R()};
 
-        EXPECT_TRUE(qi.isApprox(res.q()));
-    }
-}
+//         EXPECT_TRUE(R_true.R().isApprox(R));
+//     }
+// }
 
-TEST(SelfInverse, Quaternion_QuaternionInverse)
-{
-    Eigen::Vector4d qi;
-    qi << 1.0, 0.0, 0.0, 0.0;
-    for(int i{0}; i!= 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        Quaternion<double> q2{q};
+// TEST(Inverse, QuaternionInverse_QuaternionInverse)
+// {
+//     Eigen::Vector4d qi;
+//     qi << 1.0, 0.0, 0.0, 0.0;
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
 
-        q.selfInv();
-        Quaternion<double> res{q * q2};
+//         Quaternion<double> q_inv{q.inv()};
+//         Quaternion<double> res{q * q_inv};
 
-        EXPECT_TRUE(qi.isApprox(res.q()));
-    }
-}
+//         EXPECT_TRUE(qi.isApprox(res.q()));
+//     }
+// }
 
-TEST(QuaternionMultiply, RandomQuaternions_ReturnsConcatenatedRotation)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q1{Quaternion<double>::random()}, q2{Quaternion<double>::random()};
-        Quaternion<double> q3{q1 * q2};
+// TEST(SelfInverse, Quaternion_QuaternionInverse)
+// {
+//     Eigen::Vector4d qi;
+//     qi << 1.0, 0.0, 0.0, 0.0;
+//     for(int i{0}; i!= 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         Quaternion<double> q2{q};
 
-        Eigen::Vector4d q_true;
-        q_true << q1.qw() * q2.qw() - q1.qx() * q2.qx() - q1.qy() * q2.qy() - q1.qz() * q2.qz(),
-                  q1.qw() * q2.qx() + q1.qx() * q2.qw() + q1.qy() * q2.qz() - q1.qz() * q2.qy(),
-                  q1.qw() * q2.qy() - q1.qx() * q2.qz() + q1.qy() * q2.qw() + q1.qz() * q2.qx(),
-                  q1.qw() * q2.qz() + q1.qx() * q2.qy() - q1.qy() * q2.qx() + q1.qz() * q2.qw();
-        fixQuat(q_true);
-        
-        EXPECT_TRUE(q_true.isApprox(q3.q())); 
-    }
-}
+//         q.selfInv();
+//         Quaternion<double> res{q * q2};
 
-TEST(ActiveRotation, QuaternionAndVector_ReturnRotatedVector)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+//         EXPECT_TRUE(qi.isApprox(res.q()));
+//     }
+// }
 
-        Eigen::Vector3d vp{q.rota(v)};
-        Eigen::Vector3d vp2{q*v};
-        Eigen::Vector3d res{q.R() * v};
+// TEST(QuaternionMultiply, RandomQuaternions_ReturnsConcatenatedRotation)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q1{Quaternion<double>::random()}, q2{Quaternion<double>::random()};
+//         Quaternion<double> q3{q1 * q2};
 
-        EXPECT_TRUE(res.isApprox(vp));
-        EXPECT_TRUE(res.isApprox(vp2));
-    }
-}
+//         Eigen::Vector4d q_true;
+//         q_true << q1.qw() * q2.qw() - q1.qx() * q2.qx() - q1.qy() * q2.qy() - q1.qz() * q2.qz(),
+//                   q1.qw() * q2.qx() + q1.qx() * q2.qw() + q1.qy() * q2.qz() - q1.qz() * q2.qy(),
+//                   q1.qw() * q2.qy() - q1.qx() * q2.qz() + q1.qy() * q2.qw() + q1.qz() * q2.qx(),
+//                   q1.qw() * q2.qz() + q1.qx() * q2.qy() - q1.qy() * q2.qx() + q1.qz() * q2.qw();
+//         fixQuat(q_true);
 
-TEST(PassiveRotation, QuaternionAndVector_ReturnRotatedVector)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+//         EXPECT_TRUE(q_true.isApprox(q3.q()));
+//     }
+// }
 
-        Eigen::Vector3d vp{q.rotp(v)};
-        Eigen::Vector3d res{q.inv().R() * v};
+// TEST(ActiveRotation, QuaternionAndVector_ReturnRotatedVector)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
 
-        EXPECT_TRUE(res.isApprox(vp));
-    }
-}
+//         Eigen::Vector3d vp{q.rota(v)};
+//         Eigen::Vector3d vp2{q*v};
+//         Eigen::Vector3d res{q.R() * v};
 
-TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        double ang{randomDouble(0, PI)};
-        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-        vec = vec / vec.norm() * ang;
+//         EXPECT_TRUE(res.isApprox(vp));
+//         EXPECT_TRUE(res.isApprox(vp2));
+//     }
+// }
 
-        Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
-        Eigen::Vector4d q_true;
-        q_true << cos(ang/2.0), vec / ang * sin(ang/2.0);
-        fixQuat(q_true);
+// TEST(PassiveRotation, QuaternionAndVector_ReturnRotatedVector)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
 
-        EXPECT_TRUE(q_true.isApprox(q.q()));
-        EXPECT_TRUE(q.isValidQuaternion());
-    }
-}
+//         Eigen::Vector3d vp{q.rotp(v)};
+//         Eigen::Vector3d res{q.inv().R() * v};
 
-TEST(FromAxisAngleTaylorSeries, AxisAngle_ReturnValidQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        double ang{randomDouble(0, 1e-6)};
-        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-        vec = vec / vec.norm() * ang;
+//         EXPECT_TRUE(res.isApprox(vp));
+//     }
+// }
 
-        Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
-        SO3<double> R_true{SO3<double>::fromAxisAngle(vec)};
+// TEST(FromAxisAngle, AxisAngle_ReturnValidQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         double ang{randomDouble(0, PI)};
+//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+//         vec = vec / vec.norm() * ang;
 
-        EXPECT_TRUE(R_true.R().isApprox(q.R()));
-        EXPECT_TRUE(q.isValidQuaternion());
-    }
-}
+//         Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
+//         Eigen::Vector4d q_true;
+//         q_true << cos(ang/2.0), vec / ang * sin(ang/2.0);
+//         fixQuat(q_true);
 
-TEST(FromRotationMatrix, RotationMatrix_ReturnValidQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        Eigen::Matrix3d R{q.R()};
+//         EXPECT_TRUE(q_true.isApprox(q.q()));
+//         EXPECT_TRUE(q.isValidQuaternion());
+//     }
+// }
 
-        Quaternion<double> q2{Quaternion<double>::fromRotationMatrix(R)};
+// TEST(FromAxisAngleTaylorSeries, AxisAngle_ReturnValidQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         double ang{randomDouble(0, 1e-6)};
+//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+//         vec = vec / vec.norm() * ang;
 
-        EXPECT_TRUE(q == q2);
-        EXPECT_TRUE(q2.isValidQuaternion());
-    }
-}
+//         Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
+//         SO3<double> R_true{SO3<double>::fromAxisAngle(vec)};
 
-TEST(FromAxisAngleEigen, EigenAngleAxis_ReturnQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        double ang{randomDouble(0, PI)};
-        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-        vec /= vec.norm();
-        Eigen::AngleAxisd v{ang, vec};
-        vec *= ang;
+//         EXPECT_TRUE(R_true.R().isApprox(q.R()));
+//         EXPECT_TRUE(q.isValidQuaternion());
+//     }
+// }
 
-        Quaternion<double> q{Quaternion<double>::fromAxisAngle(v)};
-        Quaternion<double> q2{Quaternion<double>::fromAxisAngle(vec)};
+// TEST(FromRotationMatrix, RotationMatrix_ReturnValidQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         Eigen::Matrix3d R{q.R()};
 
-        EXPECT_TRUE(q == q2);
-        EXPECT_TRUE(q.isValidQuaternion());
-    }
-}
+//         Quaternion<double> q2{Quaternion<double>::fromRotationMatrix(R)};
 
-TEST(FromRPYAngles, RPYEulerAngles_ReturnQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Eigen::Vector3d rpy{getRandomVector(-PI, PI)};
-        
-        Quaternion<double> q{Quaternion<double>::fromRPY(rpy)};
+//         EXPECT_TRUE(q == q2);
+//         EXPECT_TRUE(q2.isValidQuaternion());
+//     }
+// }
 
-        SO3<double> R{SO3<double>::fromRPY(rpy)};
-        Quaternion<double> q_true{Quaternion<double>::fromRotationMatrix(R.R())};
+// TEST(FromAxisAngleEigen, EigenAngleAxis_ReturnQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         double ang{randomDouble(0, PI)};
+//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+//         vec /= vec.norm();
+//         Eigen::AngleAxisd v{ang, vec};
+//         vec *= ang;
 
-        EXPECT_TRUE(q_true == q);
-        EXPECT_TRUE(q.isValidQuaternion());
-    }
-}
+//         Quaternion<double> q{Quaternion<double>::fromAxisAngle(v)};
+//         Quaternion<double> q2{Quaternion<double>::fromAxisAngle(vec)};
 
-TEST(FromPointer, Pointer_ReturnValidQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        double * data{q.data()};
-        Quaternion<double> q2{data};
+//         EXPECT_TRUE(q == q2);
+//         EXPECT_TRUE(q.isValidQuaternion());
+//     }
+// }
 
-        EXPECT_TRUE(q == q2);
-    }
-}
+// TEST(FromRPYAngles, RPYEulerAngles_ReturnQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Eigen::Vector3d rpy{getRandomVector(-PI, PI)};
 
-TEST(VeeOperator, PureQuaternion_ReturnTheVectorPortion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
+//         Quaternion<double> q{Quaternion<double>::fromRPY(rpy)};
 
-        Eigen::Vector3d v1{Quaternion<double>::vee(q.q())}, v2;
-        v2 << q.qx(), q.qy(), q.qz();
+//         SO3<double> R{SO3<double>::fromRPY(rpy)};
+//         Quaternion<double> q_true{Quaternion<double>::fromRotationMatrix(R.R())};
 
-        EXPECT_TRUE(v1.isApprox(v2));
-    }
-}
+//         EXPECT_TRUE(q_true == q);
+//         EXPECT_TRUE(q.isValidQuaternion());
+//     }
+// }
 
-TEST(HatOperator, 3Vector_ReturnPureQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Eigen::Vector3d v{getRandomVector(-PI, PI)};
+// TEST(FromPointer, Pointer_ReturnValidQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         double * data{q.data()};
+//         Quaternion<double> q2{data};
 
-        Eigen::Vector4d q1{Quaternion<double>::hat(v)}, q2;
-        q2 << 0.0, v;
+//         EXPECT_TRUE(q == q2);
+//     }
+// }
 
-        EXPECT_TRUE(q1.isApprox(q2));
-    }
-}
+// TEST(VeeOperator, PureQuaternion_ReturnTheVectorPortion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
 
-TEST(QuaternionExponential, 3Vector_ReturnQuaternion) //No need to test Taylor Series b/c done in fromAxisAngle
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Eigen::Vector3d vec{getRandomVector(-PI, PI)};
-        
-        Quaternion<double> q{Quaternion<double>::Exp(vec)};
-        SO3<double> R{SO3<double>::Exp(vec)};
-        Quaternion<double> q_true{Quaternion<double>::fromRotationMatrix(R.R())};
+//         Eigen::Vector3d v1{Quaternion<double>::vee(q.q())}, v2;
+//         v2 << q.qx(), q.qy(), q.qz();
 
-        // EXPECT_EQ(q_true, q); //Doesn't like this
-        EXPECT_TRUE(q_true == q);
-    }
-}
+//         EXPECT_TRUE(v1.isApprox(v2));
+//     }
+// }
 
-TEST(QuaternionLogarithm, Quaternion_Return3Vector)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
+// TEST(HatOperator, 3Vector_ReturnPureQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Eigen::Vector3d v{getRandomVector(-PI, PI)};
 
-        Eigen::Vector3d log_q1{q.Log()};
-        Eigen::Vector3d log_q2{Quaternion<double>::Log(q)};
+//         Eigen::Vector4d q1{Quaternion<double>::hat(v)}, q2;
+//         q2 << 0.0, v;
 
-        Quaternion<double> q1{Quaternion<double>::Exp(log_q1)};
-        Quaternion<double> q2{Quaternion<double>::Exp(log_q2)};
+//         EXPECT_TRUE(q1.isApprox(q2));
+//     }
+// }
 
-        EXPECT_TRUE(q == q1);
-        EXPECT_TRUE (q == q2);
-    }
-}
+// TEST(QuaternionExponential, 3Vector_ReturnQuaternion) //No need to test Taylor Series b/c done in fromAxisAngle
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Eigen::Vector3d vec{getRandomVector(-PI, PI)};
 
-TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        double ang{randomDouble(0, 1e-6)};
-        Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-        vec = vec / vec.norm() * ang;
+//         Quaternion<double> q{Quaternion<double>::Exp(vec)};
+//         SO3<double> R{SO3<double>::Exp(vec)};
+//         Quaternion<double> q_true{Quaternion<double>::fromRotationMatrix(R.R())};
 
-        Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
+//         // EXPECT_EQ(q_true, q); //Doesn't like this
+//         EXPECT_TRUE(q_true == q);
+//     }
+// }
 
-        Eigen::Vector3d log_q{q.Log()};
-        Quaternion<double> q2{Quaternion<double>::Exp(log_q)};
+// TEST(QuaternionLogarithm, Quaternion_Return3Vector)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
 
-        EXPECT_TRUE(q == q2);
-    }
-}
+//         Eigen::Vector3d log_q1{q.Log()};
+//         Eigen::Vector3d log_q2{Quaternion<double>::Log(q)};
 
-TEST(BoxPlus, QuaternionAnd3Vector_ReturnsNewQuaternion)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        SO3<double> Rq{q.R()};
-        Eigen::Vector3d v{getRandomVector(-PI, PI)};
+//         Quaternion<double> q1{Quaternion<double>::Exp(log_q1)};
+//         Quaternion<double> q2{Quaternion<double>::Exp(log_q2)};
 
-        SO3<double> R{Rq.boxplus(v)};
-        Quaternion<double>q_true{Quaternion<double>::fromRotationMatrix(R.R())};
-        Quaternion<double> q2{q.boxplus(v)};
+//         EXPECT_TRUE(q == q1);
+//         EXPECT_TRUE (q == q2);
+//     }
+// }
 
-        EXPECT_TRUE(q_true == q2);
-    }
-}
+// TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         double ang{randomDouble(0, 1e-6)};
+//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
+//         vec = vec / vec.norm() * ang;
 
-TEST(BoxMinus, TwoQuaternions_ReturnDifferenceAs3Vector)
-{
-    for(int i{0}; i != 100; ++i)
-    {
-        Quaternion<double> q1{Quaternion<double>::random()}, q2{Quaternion<double>::random()};
-        
-        Eigen::Vector3d w{q1.boxminus(q2)};
-        Quaternion<double> res{q2.boxplus(w)};
+//         Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
 
-        EXPECT_TRUE(q1 == res);
-    }
-}
+//         Eigen::Vector3d log_q{q.Log()};
+//         Quaternion<double> q2{Quaternion<double>::Exp(log_q)};
 
-TEST(Normalize, Quaternion_QuaternionUnitNorm)
-{
-    for(int i{0}; i != 10; ++i)
-    {
-        Quaternion<double> q{Quaternion<double>::random()};
-        q.normalize();
+//         EXPECT_TRUE(q == q2);
+//     }
+// }
 
-        EXPECT_TRUE(q.isValidQuaternion());
-    }
-}
+// TEST(BoxPlus, QuaternionAnd3Vector_ReturnsNewQuaternion)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         SO3<double> Rq{q.R()};
+//         Eigen::Vector3d v{getRandomVector(-PI, PI)};
 
-TEST(Identity, AskedForIdentity_ReturnsIdentity)
-{
-    Eigen::Vector4d I;
-    I << 1.0, 0.0, 0.0, 0.0;
-    Quaternion<double> q{Quaternion<double>::Identity()};
+//         SO3<double> R{Rq.boxplus(v)};
+//         Quaternion<double>q_true{Quaternion<double>::fromRotationMatrix(R.R())};
+//         Quaternion<double> q2{q.boxplus(v)};
 
-    EXPECT_TRUE(I.isApprox(q.q()));
-}
+//         EXPECT_TRUE(q_true == q2);
+//     }
+// }
+
+// TEST(BoxMinus, TwoQuaternions_ReturnDifferenceAs3Vector)
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         Quaternion<double> q1{Quaternion<double>::random()}, q2{Quaternion<double>::random()};
+
+//         Eigen::Vector3d w{q1.boxminus(q2)};
+//         Quaternion<double> res{q2.boxplus(w)};
+
+//         EXPECT_TRUE(q1 == res);
+//     }
+// }
+
+// TEST(Normalize, Quaternion_QuaternionUnitNorm)
+// {
+//     for(int i{0}; i != 10; ++i)
+//     {
+//         Quaternion<double> q{Quaternion<double>::random()};
+//         q.normalize();
+
+//         EXPECT_TRUE(q.isValidQuaternion());
+//     }
+// }
+
+// TEST(Identity, AskedForIdentity_ReturnsIdentity)
+// {
+//     Eigen::Vector4d I;
+//     I << 1.0, 0.0, 0.0, 0.0;
+//     Quaternion<double> q{Quaternion<double>::Identity()};
+
+//     EXPECT_TRUE(I.isApprox(q.q()));
+// }
