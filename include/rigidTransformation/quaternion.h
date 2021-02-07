@@ -83,6 +83,11 @@ public:
         arr_ = q;
     }
 
+    Quaternion(const Quaternion &q) : arr_(data_)
+    {
+        arr_ = q.q();
+    }
+
     Vec4T q() const { return arr_; }
 
     T qw() const { return arr_(0); }
