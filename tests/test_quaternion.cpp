@@ -78,6 +78,18 @@ TEST_F(Quat_Fixture, InitializeFromRPY)
     }
 }
 
+TEST_F(Quat_Fixture, InitializeFromRotationMatrix)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        rt::SO3<double> R{rt::SO3<double>::random()};
+        Quatd q{R.R()};
+        if(!R.R().isApprox(q.R().transpose()))
+            std::cout << "------------\n" << R << std::endl;
+        EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
+    }
+}
+
 // TEST(Quaternion, Returns4Vector)
 // {
 //     Eigen::Vector4d q_true;

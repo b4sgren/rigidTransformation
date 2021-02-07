@@ -43,6 +43,35 @@ public:
         arr_ = q;
     }
 
+    Quaternion(const Mat3T &R) : arr_(data_)
+    {
+        T d{R.trace()};
+        Vec4T q;
+        if(d > 0)
+        {
+            T s{2 * sqrt(d + 1)};
+            q << s/4, (R(1,2) - R(2,1))/s, (R(2,0) - R(0,2))/s, (R(0,1) - R(1,0))/s;
+        }
+        else if(R(0,0) > R(1,1) && R(0,0) > R(2,2))
+        {
+            T s{2 * sqrt(1 + R(0,0) - R(1,1) - R(2,2))};
+            q << (R(1,2) - R(2,1))/s , s/4, (R(1,0) + R(0,1))/s, (R(2,0) + R(0,2))/s;
+        }
+        else if(R(1,1) > R(2,2))
+        {
+            T s{2 * sqrt(1 + R(1,1) - R(0,0) - R(2,2))};
+            q << (R(2,0) - R(0,2))/s, (R(1,0) + R(0,1))/s, s/4, (R(2,1) + R(1,2))/s;
+        }
+        else
+        {
+            T s{2 * sqrt(1 + R(2,2) - R(0,0) - R(1,1))};
+            q << (R(0,1) - R(1,0))/s, (R(2,0) + R(0,2))/s, (R(2,1) + R(1,2))/s, s/4;
+        }
+        q.template tail<3>() *= -1;
+
+        arr_ = q;
+    }
+
     Vec4T q() const { return arr_; }
 
     T qw() const { return arr_(0); }
