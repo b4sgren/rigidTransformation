@@ -24,6 +24,8 @@ public:
         arr_(0) = T(1.0);
     }
 
+    Quaternion(const T* data) : arr_(const_cast<T*>(data)) {}
+
     Vec4T q() const { return arr_; }
 
 private:

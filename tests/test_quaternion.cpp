@@ -48,6 +48,14 @@ TEST_F(Quat_Fixture, DefaultInitialization)
     EXPECT_TRUE(q_true.isApprox(q.q()));
 }
 
+TEST_F(Quat_Fixture, InitializeFromPointer)
+{
+    double data[]{1, 0, 0, 0};
+    Quatd q{data};
+    Eigen::Map<Eigen::Vector4d> q_true(data);
+    EXPECT_TRUE(q_true.isApprox(q.q()));
+}
+
 // TEST(Quaternion, Returns4Vector)
 // {
 //     Eigen::Vector4d q_true;
