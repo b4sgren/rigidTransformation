@@ -84,8 +84,21 @@ TEST_F(Quat_Fixture, InitializeFromRotationMatrix)
     {
         rt::SO3<double> R{rt::SO3<double>::random()};
         Quatd q{R.R()};
-        if(!R.R().isApprox(q.R().transpose()))
-            std::cout << "------------\n" << R << std::endl;
+        EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
+    }
+}
+
+TEST_F(Quat_Fixture, InitializeFromAxisAngle)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double theta{randomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector3d vec{getRandomVector(-10, 10)};
+        vec = vec / vec.norm() * theta;
+
+        Quatd q{vec};
+        rt::SO3<double> R{vec};
+
         EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
     }
 }

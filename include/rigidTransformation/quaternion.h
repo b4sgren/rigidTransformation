@@ -72,6 +72,17 @@ public:
         arr_ = q;
     }
 
+    Quaternion(const Vec3T &v) : arr_(data_)
+    {
+        T theta{v.norm()};
+        Vec3T vec{v/theta};
+        Vec4T q{Vec4T::Zero()};
+        q(0) = cos(theta/2);
+        q.template tail<3>() = vec * sin(theta/2);
+
+        arr_ = q;
+    }
+
     Vec4T q() const { return arr_; }
 
     T qw() const { return arr_(0); }
