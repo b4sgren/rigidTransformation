@@ -88,6 +88,12 @@ public:
         arr_ = q.q();
     }
 
+    Quaternion& operator=(const Quaternion &rhs)
+    {
+        arr_ = rhs.q();
+        return (*this);
+    }
+
     Vec4T q() const { return arr_; }
 
     T qw() const { return arr_(0); }

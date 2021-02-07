@@ -112,6 +112,16 @@ TEST_F(Quat_Fixture, InitializeFromQuaternion)
     EXPECT_TRUE(q2.q().isApprox(q.q()));
 }
 
+TEST_F(Quat_Fixture, AssignmentOperator)
+{
+    Eigen::Vector4d vec;
+    vec << sqrt(2), 0, sqrt(2), 0;
+    Quatd q{vec};
+    Quatd q2 = q;
+    EXPECT_TRUE(q2.q().isApprox(q.q()));
+
+}
+
 // TEST(Quaternion, Returns4Vector)
 // {
 //     Eigen::Vector4d q_true;
