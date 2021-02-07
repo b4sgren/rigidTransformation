@@ -38,7 +38,12 @@ class Quat_Fixture : public ::testing::Test
 {
 public:
     Quat_Fixture()
-    {}
+    {
+        for(int i{0}; i != 100; ++i)
+            transforms_.push_back(Quatd::random());
+    }
+
+    std::vector<Quatd> transforms_;
 };
 
 TEST_F(Quat_Fixture, DefaultInitialization)
@@ -120,6 +125,12 @@ TEST_F(Quat_Fixture, AssignmentOperator)
     Quatd q2 = q;
     EXPECT_TRUE(q2.q().isApprox(q.q()));
 
+}
+
+TEST_F(Quat_Fixture, RandomInitialization)
+{
+    for(auto q : transforms_)
+        EXPECT_FLOAT_EQ(1.0, q.norm());
 }
 
 // TEST(Quaternion, Returns4Vector)

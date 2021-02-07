@@ -109,6 +109,23 @@ public:
         return R;
     }
 
+    T norm() const
+    {
+        return arr_.norm();
+    }
+
+    static Quaternion random()
+    {
+        Vec3T u;
+        u << randomScalar<T>(0, 1), randomScalar<T>(0,1), randomScalar<T>(0,1);
+        Vec4T q;
+        q << sin(2 * PI * u(1)) * sqrt(1 - u(0)),
+             cos(2 * PI * u(1)) * sqrt(1 - u(0)),
+             sin(2 * PI * u(2)) * sqrt(u(0)),
+             cos(2 * PI * u(2)) * sqrt(u(0));
+        return Quaternion(q);
+    }
+
 private:
     T data_[4];
 public:
