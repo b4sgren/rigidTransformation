@@ -64,6 +64,20 @@ TEST_F(Quat_Fixture, InitializeFromVector)
     EXPECT_TRUE(q_true.isApprox(q.q()));
 }
 
+TEST_F(Quat_Fixture, InitializeFromRPY)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double r{randomDouble(-rt::PI, rt::PI)};
+        double p{randomDouble(-rt::PI, rt::PI)};
+        double y{randomDouble(-rt::PI, rt::PI)};
+        Quatd q{r, p, y};
+        rt::SO3<double> R{r, p, y};
+
+        EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
+    }
+}
+
 // TEST(Quaternion, Returns4Vector)
 // {
 //     Eigen::Vector4d q_true;
