@@ -141,6 +141,31 @@ TEST_F(Quat_Fixture, IdentityInitialization)
     EXPECT_TRUE(I.isApprox(q.q()));
 }
 
+TEST_F(Quat_Fixture, GroupMultiplication)
+{
+    for(Quatd q : transforms_)
+    {
+        Quatd q2{Quatd::random()};
+
+        Quatd q3{q*q2};
+        Eigen::Vector4d q3_true{Eigen::Vector4d::Zero()};
+        q3_true(0) = q.qw()*q2.qw() - q.qx()*q2.qx() - q.qy()*q2.qy() - q.qz()*q2.qz();
+        q3_true(1) = q.qw()*q2.qx() + q.qx()*q2.qw() + q.qy()*q2.qz() - q.qz()*q2.qy();
+        q3_true(2) = q.qw()*q2.qy() - q.qx()*q2.qz() + q.qy()*q2.qw() + q.qz()*q2.qx();
+        q3_true(3) = q.qw()*q2.qz() + q.qx()*q2.qy() - q.qy()*q2.qx() + q.qz()*q2.qw();
+
+        if(q3_true(0) < 0)
+            q3_true *= -1;
+
+        Eigen::Matrix3d R1(q.R().transpose()), R2(q2.R().transpose());
+        Eigen::Matrix3d R3 = (R1 * R2).transpose();
+
+        // The way the multiplication is setup means we don't have to do it in the reverse order.
+        EXPECT_TRUE(q3_true.isApprox(q3.q()));
+        EXPECT_TRUE(R3.isApprox(q3.R()));
+    }
+}
+
 // TEST(Inverse, QuaternionInverse_QuaternionInverse)
 // {
 //     Eigen::Vector4d qi;

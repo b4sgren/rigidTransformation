@@ -40,6 +40,9 @@ public:
         q(2) = cps * st * cp + sps * ct * sp;
         q(3) = sps * ct * cp - cps * st * sp;
 
+        if(q(0) < T(0.0))
+            q *= -1;
+
         arr_ = q;
     }
 
@@ -69,6 +72,9 @@ public:
         }
         q.template tail<3>() *= -1;
 
+        if(q(0) < T(0.0))
+            q *= -1;
+
         arr_ = q;
     }
 
@@ -92,6 +98,21 @@ public:
     {
         arr_ = rhs.q();
         return (*this);
+    }
+
+    Quaternion operator*(const Quaternion &rhs)
+    {
+        Eigen::Matrix<T,4,4> Q;
+        Q(0,0) = qw();
+        Q.template block<1,3>(0,1) = -qv().transpose();
+        Q.template block<3,1>(1,0) = qv();
+        Q.template block<3,3>(1,1) = qw() * Mat3T::Identity() + skew3<T>(qv());
+        Vec4T qp = Q * rhs.q();
+
+        if(qp(0) < T(0))
+            qp *= -1;
+
+        return Quaternion(qp);
     }
 
     Vec4T q() const { return arr_; }
@@ -136,6 +157,13 @@ private:
 public:
     Eigen::Map<Vec4T> arr_;
 };
+
+template<typename T>
+std::ostream& operator <<(std::ostream &os, const Quaternion<T> &q)
+{
+    os << q.q().transpose();
+    return os;
+}
 }
 
 #endif

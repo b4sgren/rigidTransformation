@@ -9,7 +9,7 @@ namespace rigidTransform
 constexpr double PI = 3.141592653589793238462643383279;
 
 template<typename T>
-Eigen::Matrix<T,3,3> skew3(const Eigen::Matrix<T,3,1> &v)
+Eigen::Matrix<T,3,3> skew3(const Eigen::Ref<const Eigen::Matrix<T,3,1>> &v)
 {
     Eigen::Matrix<T,3,3> mat;
     mat << T(0.0), -v(2), v(1), v(2), T(0.0), -v(0), -v(1), v(0), T(0.0);
