@@ -93,7 +93,7 @@ TEST_F(Quat_Fixture, InitializeFromRotationMatrix)
     for(int i{0}; i != 100; ++i)
     {
         rt::SO3<double> R{rt::SO3<double>::random()};
-        Quatd q{R.R()};
+        Quatd q(Quatd::fromR(R.R()));
         EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
     }
 }
@@ -106,7 +106,7 @@ TEST_F(Quat_Fixture, InitializeFromAxisAngle)
         Eigen::Vector3d vec{getRandomVector(-10, 10)};
         vec = vec / vec.norm() * theta;
 
-        Quatd q{vec};
+        Quatd q(Quatd::fromAxisAngle(vec));
         rt::SO3<double> R{vec};
 
         EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
@@ -174,18 +174,18 @@ TEST_F(Quat_Fixture, OrderOfMultiplication)
         Eigen::Vector3d v{0, 0, 1};
 
         Eigen::Vector3d v1 = v * ang1;
-        Quatd q_1_from_orig(v1);
+        Quatd q_1_from_orig(Quatd::fromAxisAngle(v1));
         Eigen::Matrix3d R_1_from_origin(Eigen::AngleAxisd(ang1, Eigen::Vector3d::UnitZ()));
 
         Eigen::Vector3d v2 = v * ang2;
-        Quatd q_2_from_1(v2);
+        Quatd q_2_from_1(Quatd::fromAxisAngle(v2));
         Eigen::Matrix3d R_2_from_1(Eigen::AngleAxisd(ang2, Eigen::Vector3d::UnitZ()));
 
         // Note the opposite order of composition!!
         Eigen::Matrix3d resR(R_2_from_1 * R_1_from_origin);
         Quatd resq(q_1_from_orig * q_2_from_1);
 
-        Quatd resqR(resR);
+        Quatd resqR(Quatd::fromR(resR));
         EXPECT_TRUE(resq.q().isApprox(resqR.q()));
     }
 }
@@ -249,7 +249,7 @@ TEST_F(Quat_Fixture, QuaternionExponentialMap)
 
         Quatd q(Quatd::Exp(v));
         rt::SO3<double> R(rt::SO3<double>::Exp(v));
-        Quatd q_true(R.R());
+        Quatd q_true(Quatd::fromR(R.R()));
 
         EXPECT_TRUE(q_true.q().isApprox(q.q()));
     }

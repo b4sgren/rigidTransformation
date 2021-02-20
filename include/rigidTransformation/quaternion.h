@@ -30,7 +30,7 @@ public:
             arr_ *= -1;
     }
 
-    Quaternion(const Vec4T &q) : arr_(data_)
+    Quaternion(const Eigen::Ref<const Vec4T> &q) : arr_(data_)
     {
         arr_ = q;
         if(arr_(0) < 0)
@@ -55,7 +55,7 @@ public:
         arr_ = q;
     }
 
-    Quaternion(const Mat3T &R) : arr_(data_)
+    static Quaternion fromR(const Eigen::Ref<const Mat3T> &R)
     {
         T d{R.trace()};
         Vec4T q;
@@ -84,10 +84,10 @@ public:
         if(q(0) < T(0.0))
             q *= -1;
 
-        arr_ = q;
+        return Quaternion(q);
     }
 
-    Quaternion(const Vec3T &v) : arr_(data_)
+    static Quaternion fromAxisAngle(const Eigen::Ref<const Vec3T> &v)
     {
         T theta{v.norm()};
         Vec3T vec{v/theta};
@@ -98,7 +98,7 @@ public:
         if(q(0) < 0)
             q *= -1;
 
-        arr_ = q;
+        return Quaternion(q);
     }
 
     Quaternion(const Quaternion &q) : arr_(data_)
