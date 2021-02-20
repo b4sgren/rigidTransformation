@@ -322,20 +322,3 @@ TEST_F(Quat_Fixture, Normalize)
 
     EXPECT_FLOAT_EQ(1, quat.norm());
 }
-
-// TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{randomDouble(0, 1e-6)};
-//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-//         vec = vec / vec.norm() * ang;
-
-//         Quaternion<double> q{Quaternion<double>::fromAxisAngle(vec)};
-
-//         Eigen::Vector3d log_q{q.Log()};
-//         Quaternion<double> q2{Quaternion<double>::Exp(log_q)};
-
-//         EXPECT_TRUE(q == q2);
-//     }
-// }
