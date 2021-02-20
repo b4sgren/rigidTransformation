@@ -83,12 +83,12 @@ public:
         arr_.transposeInPlace();
     }
 
-    Vec2T rota(const Vec2T& v) const
+    Vec2T rota(const Eigen::Ref<const Vec2T> &v) const
     {
         return R() * v;
     }
 
-    Vec2T rotp(const Vec2T &v) const
+    Vec2T rotp(const Eigen::Ref<Vec2T> &v) const
     {
         return inverse().R() * v;
     }
