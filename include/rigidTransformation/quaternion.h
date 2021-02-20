@@ -175,6 +175,11 @@ public:
         return inverse().rota(v);
     }
 
+    Quaternion boxplusr(const Eigen::Ref<const Vec3T> &v)
+    {
+        return (*this) * Quaternion::Exp(v);
+    }
+
     static Quaternion random()
     {
         Vec3T u;

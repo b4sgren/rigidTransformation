@@ -267,6 +267,18 @@ TEST_F(Quat_Fixture, QuaternionLogarithmicMap)
     }
 }
 
+TEST_F(Quat_Fixture, BoxPlusr)
+{
+    for(Quatd q: transforms_)
+    {
+        Eigen::Vector3d v{getRandomVector(-rt::PI, rt::PI)};
+        Quatd q2(q.boxplusr(v));
+        Quatd q2_true(q * Quatd::Exp(v));
+
+        EXPECT_TRUE(q2_true.q().isApprox(q2.q()));
+    }
+}
+
 // TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
 // {
 //     for(int i{0}; i != 100; ++i)
