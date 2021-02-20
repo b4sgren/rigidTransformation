@@ -197,6 +197,20 @@ TEST_F(Quat_Fixture, QuaternionInverse)
     }
 }
 
+TEST_F(Quat_Fixture, InverseInPlace)
+{
+    for(Quatd q: transforms_)
+    {
+        Quatd q_orig(q);
+        q.inverse_();
+
+        Quatd res(q * q_orig);
+        Quatd I(Quatd::Identity());
+
+        EXPECT_TRUE(I.q().isApprox(res.q()));
+    }
+}
+
 // TEST(Inverse, QuaternionInverse_QuaternionInverse)
 // {
 //     Eigen::Vector4d qi;

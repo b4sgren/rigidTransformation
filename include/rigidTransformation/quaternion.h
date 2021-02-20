@@ -142,6 +142,11 @@ public:
         return Quaternion(q);
     }
 
+    void inverse_()
+    {
+        arr_.template tail<3>() *= -1;
+    }
+
     static Quaternion random()
     {
         Vec3T u;
