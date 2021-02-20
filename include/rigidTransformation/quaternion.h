@@ -180,6 +180,11 @@ public:
         return (*this) * Quaternion::Exp(v);
     }
 
+    Vec3T boxminusr(const Quaternion &q)
+    {
+        return Quaternion::Log(q.inverse() * (*this));
+    }
+
     static Quaternion random()
     {
         Vec3T u;

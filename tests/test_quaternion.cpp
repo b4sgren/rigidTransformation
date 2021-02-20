@@ -279,6 +279,18 @@ TEST_F(Quat_Fixture, BoxPlusr)
     }
 }
 
+TEST_F(Quat_Fixture, Boxminusr)
+{
+    for(Quatd q : transforms_)
+    {
+        Quatd q2(Quatd::random());
+        Eigen::Vector3d v(q.boxminusr(q2));
+        Quatd q_res(q2.boxplusr(v));
+
+        EXPECT_TRUE(q_res.q().isApprox(q.q()));
+    }
+}
+
 // TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
 // {
 //     for(int i{0}; i != 100; ++i)
