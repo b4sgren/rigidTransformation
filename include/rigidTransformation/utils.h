@@ -38,9 +38,9 @@ Eigen::Matrix<double,n,1> ei(const int i)
 template<typename T>
 T randomScalar(T min, T max)
 {
-   static std::random_device rd;
-   static std::mt19937 generator(rd());
-   static std::uniform_real_distribution<T> dist(min, max);
+   std::random_device rd;
+   std::mt19937 generator(rd());
+   std::uniform_real_distribution<T> dist(min, max);
    return dist(generator);
 }
 

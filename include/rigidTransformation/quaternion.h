@@ -55,51 +55,6 @@ public:
         arr_ = q;
     }
 
-    static Quaternion fromR(const Eigen::Ref<const Mat3T> &R)
-    {
-        T d{R.trace()};
-        Vec4T q;
-        if(d > 0)
-        {
-            T s{2 * sqrt(d + 1)};
-            q << s/4, (R(1,2) - R(2,1))/s, (R(2,0) - R(0,2))/s, (R(0,1) - R(1,0))/s;
-        }
-        else if(R(0,0) > R(1,1) && R(0,0) > R(2,2))
-        {
-            T s{2 * sqrt(1 + R(0,0) - R(1,1) - R(2,2))};
-            q << (R(1,2) - R(2,1))/s , s/4, (R(1,0) + R(0,1))/s, (R(2,0) + R(0,2))/s;
-        }
-        else if(R(1,1) > R(2,2))
-        {
-            T s{2 * sqrt(1 + R(1,1) - R(0,0) - R(2,2))};
-            q << (R(2,0) - R(0,2))/s, (R(1,0) + R(0,1))/s, s/4, (R(2,1) + R(1,2))/s;
-        }
-        else
-        {
-            T s{2 * sqrt(1 + R(2,2) - R(0,0) - R(1,1))};
-            q << (R(0,1) - R(1,0))/s, (R(2,0) + R(0,2))/s, (R(2,1) + R(1,2))/s, s/4;
-        }
-        q.template tail<3>() *= -1;
-
-        if(q(0) < T(0.0))
-            q *= -1;
-
-        return Quaternion(q);
-    }
-
-    static Quaternion fromAxisAngle(const Eigen::Ref<const Vec3T> &v)
-    {
-        T theta{v.norm()};
-        Vec3T vec{v/theta};
-        Vec4T q{Vec4T::Zero()};
-        q(0) = cos(theta/2);
-        q.template tail<3>() = vec * sin(theta/2);
-
-        if(q(0) < 0)
-            q *= -1;
-
-        return Quaternion(q);
-    }
 
     Quaternion(const Quaternion &q) : arr_(data_)
     {
@@ -198,6 +153,43 @@ public:
     Vec3T boxminusl(const Quaternion &q)
     {
         return Quaternion::Log((*this) * q.inverse());
+    }
+
+    static Quaternion fromAxisAngle(const Eigen::Ref<const Vec3T> &v)
+    {
+        return Quaternion::Exp(v);
+    }
+
+    static Quaternion fromR(const Eigen::Ref<const Mat3T> &R)
+    {
+        T d{R.trace()};
+        Vec4T q;
+        if(d > 0)
+        {
+            T s{2 * sqrt(d + 1)};
+            q << s/4, (R(1,2) - R(2,1))/s, (R(2,0) - R(0,2))/s, (R(0,1) - R(1,0))/s;
+        }
+        else if(R(0,0) > R(1,1) && R(0,0) > R(2,2))
+        {
+            T s{2 * sqrt(1 + R(0,0) - R(1,1) - R(2,2))};
+            q << (R(1,2) - R(2,1))/s , s/4, (R(1,0) + R(0,1))/s, (R(2,0) + R(0,2))/s;
+        }
+        else if(R(1,1) > R(2,2))
+        {
+            T s{2 * sqrt(1 + R(1,1) - R(0,0) - R(2,2))};
+            q << (R(2,0) - R(0,2))/s, (R(1,0) + R(0,1))/s, s/4, (R(2,1) + R(1,2))/s;
+        }
+        else
+        {
+            T s{2 * sqrt(1 + R(2,2) - R(0,0) - R(1,1))};
+            q << (R(0,1) - R(1,0))/s, (R(2,0) + R(0,2))/s, (R(2,1) + R(1,2))/s, s/4;
+        }
+        q.template tail<3>() *= -1;
+
+        if(q(0) < T(0.0))
+            q *= -1;
+
+        return Quaternion(q);
     }
 
     static Quaternion random()
