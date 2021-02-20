@@ -241,7 +241,6 @@ TEST_F(Quat_Fixture, PassiveRotationOfAVector)
     }
 }
 
-// Test Taylor series expansion still
 TEST_F(Quat_Fixture, QuaternionExponentialMap)
 {
     for(int i{0}; i != 100; ++i)
@@ -315,6 +314,15 @@ TEST_F(Quat_Fixture, Boxminusl)
     }
 }
 
+TEST_F(Quat_Fixture, Normalize)
+{
+    Eigen::Vector4d q{1, 0.1, 0, 0.1};
+    Quatd quat(q);
+    quat.normalize_();
+
+    EXPECT_FLOAT_EQ(1, quat.norm());
+}
+
 // TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
 // {
 //     for(int i{0}; i != 100; ++i)
@@ -329,45 +337,5 @@ TEST_F(Quat_Fixture, Boxminusl)
 //         Quaternion<double> q2{Quaternion<double>::Exp(log_q)};
 
 //         EXPECT_TRUE(q == q2);
-//     }
-// }
-
-// TEST(BoxPlus, QuaternionAnd3Vector_ReturnsNewQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         SO3<double> Rq{q.R()};
-//         Eigen::Vector3d v{getRandomVector(-PI, PI)};
-
-//         SO3<double> R{Rq.boxplus(v)};
-//         Quaternion<double>q_true{Quaternion<double>::fromRotationMatrix(R.R())};
-//         Quaternion<double> q2{q.boxplus(v)};
-
-//         EXPECT_TRUE(q_true == q2);
-//     }
-// }
-
-// TEST(BoxMinus, TwoQuaternions_ReturnDifferenceAs3Vector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q1{Quaternion<double>::random()}, q2{Quaternion<double>::random()};
-
-//         Eigen::Vector3d w{q1.boxminus(q2)};
-//         Quaternion<double> res{q2.boxplus(w)};
-
-//         EXPECT_TRUE(q1 == res);
-//     }
-// }
-
-// TEST(Normalize, Quaternion_QuaternionUnitNorm)
-// {
-//     for(int i{0}; i != 10; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         q.normalize();
-
-//         EXPECT_TRUE(q.isValidQuaternion());
 //     }
 // }

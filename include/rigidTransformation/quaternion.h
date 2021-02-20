@@ -149,6 +149,11 @@ public:
         return arr_.norm();
     }
 
+    void normalize_()
+    {
+        arr_ = arr_/norm();
+    }
+
     Quaternion inverse() const
     {
         Vec4T q;
@@ -220,8 +225,17 @@ public:
         T theta{v.norm()};
         Vec3T vec{v/theta};
         Vec4T q{Vec4T::Zero()};
-        q(0) = cos(theta/2);
-        q.template tail<3>() = vec * sin(theta/2);
+        if(abs(theta) > 1e-4)
+        {
+            q(0) = cos(theta/2);
+            q.template tail<3>() = vec * sin(theta/2);
+        }
+        else
+        {
+            q(0) = 1.0;
+            q.template tail<3>() = v/2.0;
+            q = q/q.norm();
+        }
 
         if(q(0) < 0)
             q *= -1;
@@ -240,7 +254,14 @@ public:
         Vec3T _qv(q.qv());
         T theta{_qv.norm()};
 
-        Vec3T logq(2 * atan(theta/_qw) * _qv/theta);
+        Vec3T logq;
+        if(abs(theta) > 1e-8)
+            logq = 2 * atan(theta/_qw) * _qv/theta;
+        else
+        {
+            T temp(1/_qw);
+            logq = 2 * temp * _qv;
+        }
         return logq;
     }
 
