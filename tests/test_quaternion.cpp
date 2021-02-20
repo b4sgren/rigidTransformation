@@ -34,6 +34,11 @@ Eigen::Vector3d getRandomVector(double min, double max)
     return v;
 }
 
+void print(const Quatd &q1, const Quatd &q2)
+{
+    std::cout << "----------------\n" << q1 << "\n" << q2 << std::endl;
+}
+
 class Quat_Fixture : public ::testing::Test
 {
 public:
@@ -236,61 +241,19 @@ TEST_F(Quat_Fixture, PassiveRotationOfAVector)
     }
 }
 
-// TEST(ActiveRotation, QuaternionAndVector_ReturnRotatedVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
+TEST_F(Quat_Fixture, QuaternionExponentialMap)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d v{getRandomVector(-rt::PI, rt::PI)};
 
-//         Eigen::Vector3d vp{q.rota(v)};
-//         Eigen::Vector3d vp2{q*v};
-//         Eigen::Vector3d res{q.R() * v};
+        Quatd q(Quatd::Exp(v));
+        rt::SO3<double> R(rt::SO3<double>::Exp(v));
+        Quatd q_true(R.R());
 
-//         EXPECT_TRUE(res.isApprox(vp));
-//         EXPECT_TRUE(res.isApprox(vp2));
-//     }
-// }
-
-// TEST(PassiveRotation, QuaternionAndVector_ReturnRotatedVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-
-//         Eigen::Vector3d vp{q.rotp(v)};
-//         Eigen::Vector3d res{q.inv().R() * v};
-
-//         EXPECT_TRUE(res.isApprox(vp));
-//     }
-// }
-
-// TEST(VeeOperator, PureQuaternion_ReturnTheVectorPortion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-
-//         Eigen::Vector3d v1{Quaternion<double>::vee(q.q())}, v2;
-//         v2 << q.qx(), q.qy(), q.qz();
-
-//         EXPECT_TRUE(v1.isApprox(v2));
-//     }
-// }
-
-// TEST(HatOperator, 3Vector_ReturnPureQuaternion)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d v{getRandomVector(-PI, PI)};
-
-//         Eigen::Vector4d q1{Quaternion<double>::hat(v)}, q2;
-//         q2 << 0.0, v;
-
-//         EXPECT_TRUE(q1.isApprox(q2));
-//     }
-// }
+        EXPECT_TRUE(q_true.q().isApprox(q.q()));
+    }
+}
 
 // TEST(QuaternionExponential, 3Vector_ReturnQuaternion) //No need to test Taylor Series b/c done in fromAxisAngle
 // {

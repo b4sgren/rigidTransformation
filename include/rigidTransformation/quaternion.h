@@ -86,6 +86,9 @@ public:
         q(0) = cos(theta/2);
         q.template tail<3>() = vec * sin(theta/2);
 
+        if(q(0) < 0)
+            q *= -1;
+
         arr_ = q;
     }
 
@@ -176,6 +179,20 @@ public:
     static Quaternion Identity()
     {
         return Quaternion();
+    }
+
+    static Quaternion Exp(const Eigen::Ref<const Vec3T> &v)
+    {
+        T theta{v.norm()};
+        Vec3T vec{v/theta};
+        Vec4T q{Vec4T::Zero()};
+        q(0) = cos(theta/2);
+        q.template tail<3>() = vec * sin(theta/2);
+
+        if(q(0) < 0)
+            q *= -1;
+
+        return Quaternion(q);
     }
 
 private:
