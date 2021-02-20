@@ -26,7 +26,7 @@ public:
 
     SO2(const T *data) : arr_(const_cast<T*>(data)) {}
 
-    SO2(const Mat2T &R) : arr_(data_) { arr_ = R; }
+    SO2(const Eigen::Ref<const Mat2T> &R) : arr_(data_) { arr_ = R; }
 
     SO2(const T& ang): arr_(data_)
     {
