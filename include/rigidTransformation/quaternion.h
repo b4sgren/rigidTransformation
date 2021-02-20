@@ -156,6 +156,11 @@ public:
         return v - _qw*t + skew3<T>(t)*_qv;
     }
 
+    Vec3T rotp(const Eigen::Ref<const Vec3T>& v) const
+    {
+        return inverse().rota(v);
+    }
+
     static Quaternion random()
     {
         Vec3T u;

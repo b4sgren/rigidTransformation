@@ -223,6 +223,19 @@ TEST_F(Quat_Fixture, ActiveRotationOfAVector)
     }
 }
 
+TEST_F(Quat_Fixture, PassiveRotationOfAVector)
+{
+    for(Quatd q : transforms_)
+    {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector3d vp(q.rotp(v));
+        Eigen::Vector3d vp_true(q.R() * v);
+
+        EXPECT_TRUE(vp_true.isApprox(vp));
+
+    }
+}
+
 // TEST(ActiveRotation, QuaternionAndVector_ReturnRotatedVector)
 // {
 //     for(int i{0}; i != 100; ++i)
