@@ -211,54 +211,17 @@ TEST_F(Quat_Fixture, InverseInPlace)
     }
 }
 
-// TEST(Inverse, QuaternionInverse_QuaternionInverse)
-// {
-//     Eigen::Vector4d qi;
-//     qi << 1.0, 0.0, 0.0, 0.0;
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
+TEST_F(Quat_Fixture, ActiveRotationOfAVector)
+{
+    for(Quatd q : transforms_)
+    {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector3d vp(q.rota(v));
+        Eigen::Vector3d vp_true(q.R().transpose() * v);
 
-//         Quaternion<double> q_inv{q.inv()};
-//         Quaternion<double> res{q * q_inv};
-
-//         EXPECT_TRUE(qi.isApprox(res.q()));
-//     }
-// }
-
-// TEST(SelfInverse, Quaternion_QuaternionInverse)
-// {
-//     Eigen::Vector4d qi;
-//     qi << 1.0, 0.0, 0.0, 0.0;
-//     for(int i{0}; i!= 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-//         Quaternion<double> q2{q};
-
-//         q.selfInv();
-//         Quaternion<double> res{q * q2};
-
-//         EXPECT_TRUE(qi.isApprox(res.q()));
-//     }
-// }
-
-// TEST(QuaternionMultiply, RandomQuaternions_ReturnsConcatenatedRotation)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q1{Quaternion<double>::random()}, q2{Quaternion<double>::random()};
-//         Quaternion<double> q3{q1 * q2};
-
-//         Eigen::Vector4d q_true;
-//         q_true << q1.qw() * q2.qw() - q1.qx() * q2.qx() - q1.qy() * q2.qy() - q1.qz() * q2.qz(),
-//                   q1.qw() * q2.qx() + q1.qx() * q2.qw() + q1.qy() * q2.qz() - q1.qz() * q2.qy(),
-//                   q1.qw() * q2.qy() - q1.qx() * q2.qz() + q1.qy() * q2.qw() + q1.qz() * q2.qx(),
-//                   q1.qw() * q2.qz() + q1.qx() * q2.qy() - q1.qy() * q2.qx() + q1.qz() * q2.qw();
-//         fixQuat(q_true);
-
-//         EXPECT_TRUE(q_true.isApprox(q3.q()));
-//     }
-// }
+        EXPECT_TRUE(vp_true.isApprox(vp));
+    }
+}
 
 // TEST(ActiveRotation, QuaternionAndVector_ReturnRotatedVector)
 // {

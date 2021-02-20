@@ -147,6 +147,15 @@ public:
         arr_.template tail<3>() *= -1;
     }
 
+    Vec3T rota(const Eigen::Ref<const Vec3T>& v) const
+    {
+        T _qw = qw();
+        Vec3T _qv = qv();
+
+        Vec3T t(2 * skew3<T>(v) * _qv);
+        return v - _qw*t + skew3<T>(t)*_qv;
+    }
+
     static Quaternion random()
     {
         Vec3T u;
