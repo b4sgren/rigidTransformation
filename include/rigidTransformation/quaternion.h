@@ -24,9 +24,18 @@ public:
         arr_(0) = T(1.0);
     }
 
-    Quaternion(const T* data) : arr_(const_cast<T*>(data)) {}
+    Quaternion(const T* data) : arr_(const_cast<T*>(data))
+    {
+        if(arr_(0) < 0)
+            arr_ *= -1;
+    }
 
-    Quaternion(const Vec4T &q) : arr_(data_) { arr_ = q; }
+    Quaternion(const Vec4T &q) : arr_(data_)
+    {
+        arr_ = q;
+        if(arr_(0) < 0)
+            arr_ *= -1;
+    }
 
     Quaternion(const T& phi, const T& theta, const T& psi) : arr_(data_)
     {
@@ -95,6 +104,8 @@ public:
     Quaternion(const Quaternion &q) : arr_(data_)
     {
         arr_ = q.q();
+        if(arr_(0) < 0)
+            arr_ *= -1;
     }
 
     Quaternion& operator=(const Quaternion &rhs)
@@ -173,6 +184,9 @@ public:
              cos(2 * PI * u(1)) * sqrt(1 - u(0)),
              sin(2 * PI * u(2)) * sqrt(u(0)),
              cos(2 * PI * u(2)) * sqrt(u(0));
+
+        if(q(0) < 0)
+            q *= -1;
         return Quaternion(q);
     }
 
@@ -193,6 +207,21 @@ public:
             q *= -1;
 
         return Quaternion(q);
+    }
+
+    Vec3T Log() const
+    {
+        return Quaternion::Log(*this);
+    }
+
+    static Vec3T Log(const Quaternion &q)
+    {
+        T _qw(q.qw());
+        Vec3T _qv(q.qv());
+        T theta{_qv.norm()};
+
+        Vec3T logq(2 * atan(theta/_qw) * _qv/theta);
+        return logq;
     }
 
 private:

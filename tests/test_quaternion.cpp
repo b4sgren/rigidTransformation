@@ -241,6 +241,7 @@ TEST_F(Quat_Fixture, PassiveRotationOfAVector)
     }
 }
 
+// Test Taylor series expansion still
 TEST_F(Quat_Fixture, QuaternionExponentialMap)
 {
     for(int i{0}; i != 100; ++i)
@@ -255,20 +256,16 @@ TEST_F(Quat_Fixture, QuaternionExponentialMap)
     }
 }
 
-// TEST(QuaternionExponential, 3Vector_ReturnQuaternion) //No need to test Taylor Series b/c done in fromAxisAngle
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d vec{getRandomVector(-PI, PI)};
+TEST_F(Quat_Fixture, QuaternionLogarithmicMap)
+{
+    for(Quatd q : transforms_)
+    {
+        Eigen::Vector3d logq{q.Log()};
+        Quatd q2{Quatd::Exp(logq)};
 
-//         Quaternion<double> q{Quaternion<double>::Exp(vec)};
-//         SO3<double> R{SO3<double>::Exp(vec)};
-//         Quaternion<double> q_true{Quaternion<double>::fromRotationMatrix(R.R())};
-
-//         // EXPECT_EQ(q_true, q); //Doesn't like this
-//         EXPECT_TRUE(q_true == q);
-//     }
-// }
+        EXPECT_TRUE(q.q().isApprox(q2.q()));
+    }
+}
 
 // TEST(QuaternionLogarithm, Quaternion_Return3Vector)
 // {
