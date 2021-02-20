@@ -185,6 +185,16 @@ public:
         return Quaternion::Log(q.inverse() * (*this));
     }
 
+    Quaternion boxplusl(const Eigen::Ref<const Vec3T> &v)
+    {
+        return Quaternion::Exp(v) * (*this);
+    }
+
+    Vec3T boxminusl(const Quaternion &q)
+    {
+        return Quaternion::Log((*this) * q.inverse());
+    }
+
     static Quaternion random()
     {
         Vec3T u;
