@@ -135,6 +135,13 @@ public:
         return arr_.norm();
     }
 
+    Quaternion inverse() const
+    {
+        Vec4T q;
+        q << qw(), -qv();
+        return Quaternion(q);
+    }
+
     static Quaternion random()
     {
         Vec3T u;
