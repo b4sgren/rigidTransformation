@@ -157,12 +157,31 @@ TEST_F(Quat_Fixture, GroupMultiplication)
         if(q3_true(0) < 0)
             q3_true *= -1;
 
-        Eigen::Matrix3d R1(q.R().transpose()), R2(q2.R().transpose());
-        Eigen::Matrix3d R3 = (R1 * R2).transpose();
-
-        // The way the multiplication is setup means we don't have to do it in the reverse order.
         EXPECT_TRUE(q3_true.isApprox(q3.q()));
-        EXPECT_TRUE(R3.isApprox(q3.R()));
+    }
+}
+
+TEST_F(Quat_Fixture, OrderOfMultiplication)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang1{randomDouble(-rt::PI, rt::PI)}, ang2{randomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector3d v{0, 0, 1};
+
+        Eigen::Vector3d v1 = v * ang1;
+        Quatd q_1_from_orig(v1);
+        Eigen::Matrix3d R_1_from_origin(Eigen::AngleAxisd(ang1, Eigen::Vector3d::UnitZ()));
+
+        Eigen::Vector3d v2 = v * ang2;
+        Quatd q_2_from_1(v2);
+        Eigen::Matrix3d R_2_from_1(Eigen::AngleAxisd(ang2, Eigen::Vector3d::UnitZ()));
+
+        // Note the opposite order of composition!!
+        Eigen::Matrix3d resR(R_2_from_1 * R_1_from_origin);
+        Quatd resq(q_1_from_orig * q_2_from_1);
+
+        Quatd resqR(resR);
+        EXPECT_TRUE(resq.q().isApprox(resqR.q()));
     }
 }
 
