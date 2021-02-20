@@ -267,23 +267,6 @@ TEST_F(Quat_Fixture, QuaternionLogarithmicMap)
     }
 }
 
-// TEST(QuaternionLogarithm, Quaternion_Return3Vector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Quaternion<double> q{Quaternion<double>::random()};
-
-//         Eigen::Vector3d log_q1{q.Log()};
-//         Eigen::Vector3d log_q2{Quaternion<double>::Log(q)};
-
-//         Quaternion<double> q1{Quaternion<double>::Exp(log_q1)};
-//         Quaternion<double> q2{Quaternion<double>::Exp(log_q2)};
-
-//         EXPECT_TRUE(q == q1);
-//         EXPECT_TRUE (q == q2);
-//     }
-// }
-
 // TEST(QuaternionLogarithTaylorSeries, Quaternion_Return3Vector)
 // {
 //     for(int i{0}; i != 100; ++i)
@@ -339,13 +322,4 @@ TEST_F(Quat_Fixture, QuaternionLogarithmicMap)
 
 //         EXPECT_TRUE(q.isValidQuaternion());
 //     }
-// }
-
-// TEST(Identity, AskedForIdentity_ReturnsIdentity)
-// {
-//     Eigen::Vector4d I;
-//     I << 1.0, 0.0, 0.0, 0.0;
-//     Quaternion<double> q{Quaternion<double>::Identity()};
-
-//     EXPECT_TRUE(I.isApprox(q.q()));
 // }
