@@ -165,9 +165,10 @@ public:
         {
             logR = 0.5 * (R.R() - R.R().transpose());
         }
-        else if(abs(theta - PI) < 1e-8)
+        else if(abs(theta - PI) < 1e-8) // abs(abs(theta) - PI)??
         {
             // Find a way to simplify this
+            // Do angle Pi - theta around the negative axis??
         }
         else
         {

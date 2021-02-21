@@ -250,10 +250,7 @@ public:
         if(abs(theta) > 1e-8)
             logq = 2 * atan(theta/_qw) * _qv/theta;
         else
-        {
-            T temp(1/_qw);
-            logq = 2 * temp * _qv;
-        }
+            logq = 2 * _qv/_qw;
         return logq;
     }
 
