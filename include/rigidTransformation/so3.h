@@ -27,7 +27,7 @@ public:
 
     SO3(const T* data) : arr_(const_cast<T*>(data)) {}
 
-    SO3(const Mat3T &R) : arr_(data_) { arr_ = R; }
+    SO3(const Eigen::Ref<const Mat3T> &R) : arr_(data_) { arr_ = R; }
 
     SO3(const SO3 &R) : arr_(data_)
     {
@@ -48,7 +48,7 @@ public:
         arr_ = Rpsi * Rtheta * Rphi;
     }
 
-    SO3(const Vec3T &v) : arr_{data_}
+    static SO3 fromAxisAngle(const Eigen::Ref<const Vec3T> &v)
     {
         T theta = v.norm();
         Mat3T vx{skew3<T>(v)};
@@ -60,7 +60,7 @@ public:
             B = (1 - cos(theta)) / (theta * theta);
         }
 
-        arr_ = Mat3T::Identity() + A * vx + B * vx * vx;
+        return SO3(Mat3T::Identity() + A * vx + B * vx * vx);
     }
 
     Mat3T R() const { return arr_; }

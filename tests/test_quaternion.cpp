@@ -107,7 +107,7 @@ TEST_F(Quat_Fixture, InitializeFromAxisAngle)
         vec = vec / vec.norm() * theta;
 
         Quatd q(Quatd::fromAxisAngle(vec));
-        rt::SO3<double> R{vec};
+        rt::SO3<double> R(rt::SO3<double>::fromAxisAngle(vec));
 
         EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
     }

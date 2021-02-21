@@ -56,7 +56,7 @@ TEST_F(SO3_Fixture, TestDefaultInitialization)
 TEST_F(SO3_Fixture, TestPointerInitialization)
 {
     double vals[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
-    rt::SO3<double> R{vals};
+    rt::SO3<double> R(vals);
     Eigen::Matrix3d M;
     M << 1, 2, 3, 4, 5, 6, 7, 8, 9;
     M.transposeInPlace();
@@ -67,7 +67,7 @@ TEST_F(SO3_Fixture, TestPointerInitialization)
 TEST_F(SO3_Fixture, TestInitializationFromMatrix)
 {
     Eigen::Matrix3d M{Eigen::Matrix3d::Random()};
-    rt::SO3<double> R{M};
+    rt::SO3<double> R(M);
 
     EXPECT_TRUE(M.isApprox(R.R()));
 }
@@ -99,7 +99,7 @@ TEST_F(SO3_Fixture, TestFromAxisAngle)
         Eigen::Vector3d vec{Eigen::Vector3d::Random()};
         Eigen::Vector3d v = vec / vec.norm() * phi;
 
-        rt::SO3<double> R{v};
+        rt::SO3<double> R(rt::SO3<double>::fromAxisAngle(v));
         Eigen::Matrix3d R_true = Eigen::AngleAxisd(phi, vec/vec.norm()).matrix();
 
         EXPECT_TRUE(R_true.isApprox(R.R()));
@@ -109,8 +109,8 @@ TEST_F(SO3_Fixture, TestFromAxisAngle)
 TEST_F(SO3_Fixture, InitializeFromSO3)
 {
     Eigen::Matrix3d M{Eigen::Matrix3d::Random()};
-    rt::SO3<double> R{M};
-    rt::SO3<double> R2{R};
+    rt::SO3<double> R(M);
+    rt::SO3<double> R2(R);
 
     EXPECT_TRUE(R.R().isApprox(R2.R()));
 }
@@ -118,7 +118,7 @@ TEST_F(SO3_Fixture, InitializeFromSO3)
 TEST_F(SO3_Fixture, TestAssignmentOperator)
 {
     Eigen::Matrix3d M{Eigen::Matrix3d::Random()};
-    rt::SO3<double> R{M};
+    rt::SO3<double> R(M);
     rt::SO3<double> R2 = R;
 
     EXPECT_TRUE(R.R().isApprox(R2.R()));
@@ -128,14 +128,14 @@ TEST_F(SO3_Fixture, TestRandomInitialization)
 {
     for(int i{0}; i != 100; ++i)
     {
-        rt::SO3<double> R{rt::SO3<double>::random()};
+        rt::SO3<double> R(rt::SO3<double>::random());
         EXPECT_FLOAT_EQ(1.0, R.R().determinant());
     }
 }
 
 TEST_F(SO3_Fixture, TestIdentityFunction)
 {
-    rt::SO3<double> R{rt::SO3<double>::Identity()};
+    rt::SO3<double> R(rt::SO3<double>::Identity());
     Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
     EXPECT_TRUE(I.isApprox(R.R()));
 }
@@ -144,8 +144,8 @@ TEST_F(SO3_Fixture, TestGroupMultiplication)
 {
     for(auto R : transforms_)
     {
-        rt::SO3<double> R2{rt::SO3<double>::random()};
-        rt::SO3<double> R3{R * R2};
+        rt::SO3<double> R2(rt::SO3<double>::random());
+        rt::SO3<double> R3(R * R2);
 
         Eigen::Matrix3d R3_true = R.R() * R2.R();
 
@@ -158,8 +158,8 @@ TEST_F(SO3_Fixture, TestInverse)
     Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
     for(auto R : transforms_)
     {
-        rt::SO3<double> R_inv{R.inverse()};
-        rt::SO3<double> res{R * R_inv};
+        rt::SO3<double> R_inv(R.inverse());
+        rt::SO3<double> res(R * R_inv);
         EXPECT_TRUE(I.isApprox(res.R()));
     }
 }
@@ -169,12 +169,11 @@ TEST_F(SO3_Fixture, TestInPlaceInverse)
     Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
     for(auto R : transforms_)
     {
-        rt::SO3<double> R_orig{R};
+        rt::SO3<double> R_orig(R);
         R.inverse_();
-        rt::SO3<double> res{R * R_orig};
+        rt::SO3<double> res(R * R_orig);
         EXPECT_TRUE(I.isApprox(res.R()));
     }
-
 }
 
 TEST_F(SO3_Fixture, TestActiveRotation)
@@ -219,7 +218,7 @@ TEST_F(SO3_Fixture, ExponentialMap)
     for(auto R : transforms_)
     {
         Eigen::Vector3d logR{R.Log()};
-        rt::SO3<double> R2{rt::SO3<double>::Exp(logR)};
+        rt::SO3<double> R2(rt::SO3<double>::Exp(logR));
         EXPECT_TRUE(R.R().isApprox(R2.R(), 1e-8));
     }
 }
@@ -230,8 +229,8 @@ TEST_F(SO3_Fixture, TestAdjoint)
     {
         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
 
-        rt::SO3<double> R2{R * rt::SO3<double>::Exp(v)};
-        rt::SO3<double> R3{rt::SO3<double>::Exp(R.Adj() * v) * R};
+        rt::SO3<double> R2(R * rt::SO3<double>::Exp(v));
+        rt::SO3<double> R3(rt::SO3<double>::Exp(R.Adj() * v) * R);
         EXPECT_TRUE(R2.R().isApprox(R3.R()));
     }
 }
@@ -243,8 +242,8 @@ TEST_F(SO3_Fixture, Boxplusr)
         double theta{getRandomDouble(-rt::PI, rt::PI)};
         Eigen::Vector3d v{getRandomVector(-10, 10)};
         v = v/v.norm() * theta;
-        rt::SO3<double> R2{R.boxplusr(v)};
-        rt::SO3<double> R3{R * rt::SO3<double>(v)};
+        rt::SO3<double> R2(R.boxplusr(v));
+        rt::SO3<double> R3(R * rt::SO3<double>::fromAxisAngle(v));
 
         EXPECT_TRUE(R2.R().isApprox(R3.R()));
     }
@@ -269,8 +268,8 @@ TEST_F(SO3_Fixture, Boxplusl)
         double theta{getRandomDouble(-rt::PI, rt::PI)};
         Eigen::Vector3d v{getRandomVector(-10, 10)};
         v = v/v.norm() * theta;
-        rt::SO3<double> R2{R.boxplusl(v)};
-        rt::SO3<double> R3{rt::SO3<double>(v) * R};
+        rt::SO3<double> R2(R.boxplusl(v));
+        rt::SO3<double> R3(rt::SO3<double>::fromAxisAngle(v) * R);
 
         EXPECT_TRUE(R2.R().isApprox(R3.R()));
     }
@@ -281,9 +280,9 @@ TEST_F(SO3_Fixture, Boxminusl)
 {
     for(auto R : transforms_)
     {
-        rt::SO3<double> R2{rt::SO3<double>::random()};
+        rt::SO3<double> R2(rt::SO3<double>::random());
         Eigen::Vector3d diff{R.boxminusl(R2)};
-        rt::SO3<double> R3{R2.boxplusl(diff)};
+        rt::SO3<double> R3(R2.boxplusl(diff));
 
         EXPECT_TRUE(R.R().isApprox(R3.R(), 1e-8));
     }
