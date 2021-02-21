@@ -322,3 +322,15 @@ TEST_F(Quat_Fixture, Normalize)
 
     EXPECT_FLOAT_EQ(1, quat.norm());
 }
+
+TEST_F(Quat_Fixture, Adjoint)
+{
+    for(Quatd q : transforms_)
+    {
+        Eigen::Vector3d v{getRandomVector(-rt::PI, rt::PI)};
+        Quatd q2 = q.boxplusr(v);
+        Quatd q3 = q.boxplusl(q.Adj() * v);
+
+        EXPECT_TRUE(q2.q().isApprox(q3.q()));
+    }
+}

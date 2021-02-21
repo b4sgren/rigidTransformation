@@ -99,6 +99,11 @@ public:
         return R;
     }
 
+    Mat3T Adj() const
+    {
+        return R().transpose();
+    }
+
     T norm() const
     {
         return arr_.norm();
