@@ -48,21 +48,6 @@ public:
         arr_ = Rpsi * Rtheta * Rphi;
     }
 
-    static SO3 fromAxisAngle(const Eigen::Ref<const Vec3T> &v)
-    {
-        T theta = v.norm();
-        Mat3T vx{skew3<T>(v)};
-
-        T A{1.0}, B{0.5};
-        if(abs(theta) > 1e-8)
-        {
-            A = sin(theta) / theta;
-            B = (1 - cos(theta)) / (theta * theta);
-        }
-
-        return SO3(Mat3T::Identity() + A * vx + B * vx * vx);
-    }
-
     Mat3T R() const { return arr_; }
 
     Mat3T Adj() const { return arr_; }
@@ -126,6 +111,21 @@ public:
     Vec3T boxminusl(const SO3 &R2)
     {
         return SO3::Log((*this) * R2.inverse());
+    }
+
+    static SO3 fromAxisAngle(const Eigen::Ref<const Vec3T> &v)
+    {
+        T theta = v.norm();
+        Mat3T vx{skew3<T>(v)};
+
+        T A{1.0}, B{0.5};
+        if(abs(theta) > 1e-8)
+        {
+            A = sin(theta) / theta;
+            B = (1 - cos(theta)) / (theta * theta);
+        }
+
+        return SO3(Mat3T::Identity() + A * vx + B * vx * vx);
     }
 
     static SO3 random()
