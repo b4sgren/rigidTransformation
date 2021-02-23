@@ -114,6 +114,37 @@ public:
         return SE2();
     }
 
+    Vec3F Log() const
+    {
+        return SE2::Log((*this));
+    }
+
+    static Vec3F Log(const SE2& T)
+    {
+        F theta{atan2(T.T()(1,0), T.T()(0,0))}; // should I add () to index??
+        Vec2F t(T.t());
+
+        F A,B;
+        if(abs(theta) > 1e-8)
+        {
+            A = sin(theta)/theta;
+            B = (1 - cos(theta))/theta;
+        }
+        else
+        {
+            A = F(1.0);
+            B = F(theta/2.0);
+        }
+        F normalizer{1.0/(A*A + B*B)};
+        Mat2F temp_arr;
+        temp_arr << A, B, -B, A;
+        Mat2F V_inv = temp_arr * normalizer;
+
+        Vec3F logT;
+        logT << V_inv * t, theta;
+        return logT;
+    }
+
 private:
     F data_[9];
 public:

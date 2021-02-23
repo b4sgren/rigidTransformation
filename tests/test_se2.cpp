@@ -212,6 +212,19 @@ TEST_F(SE2_Fixture, PassiveTransformation)
     }
 }
 
+TEST_F(SE2_Fixture, MatrixLogarithm)
+{
+    for(SE2d T : transforms_)
+    {
+        Eigen::Vector3d logT(T.Log());
+        Eigen::Matrix3d logTx(T.T().log());
+        Eigen::Vector3d logT_true;
+        logT_true << logTx(0,2), logTx(1,2), logTx(1,0);
+
+        EXPECT_TRUE(logT_true.isApprox(logT));
+    }
+}
+
 // TEST(MatrixLogarithm, SE2Element_ReturnElementOfLieAlgebra)
 // {
 //     for(int i{0}; i != 100; ++i)
