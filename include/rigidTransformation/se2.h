@@ -62,6 +62,11 @@ public:
         return (*this);
     }
 
+    SE2 operator*(const SE2& rhs)
+    {
+        return SE2(T() * rhs.T());
+    }
+
     Mat3F T() const { return arr_; }
 
     Mat2F R() const { return arr_.template block<2,2>(0,0); }

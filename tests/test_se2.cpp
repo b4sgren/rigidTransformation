@@ -36,6 +36,8 @@ class SE2_Fixture : public ::testing::Test
 public:
     SE2_Fixture()
     {
+        for(int i{0}; i != 100; ++i)
+            transforms_.push_back(SE2d::random());
     }
 
     ~SE2_Fixture(){}
@@ -135,41 +137,18 @@ TEST_F(SE2_Fixture, RandomInitialization)
     }
 }
 
-// TEST(GenerateRandomSE2Element, IfTransformationIsValid_ReturnsTrue)
-// {
-//     for(int i{0}; i!=100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
+TEST_F(SE2_Fixture, GroupMultiplication)
+{
+    for(SE2d T1 : transforms_)
+    {
+        SE2d T2(SE2d::random());
 
-// TEST(FromAngleAndVec, AngleAndTranslationVector_ReturnTransformationMatrix)
-// {
-//     for(int i{0}; i!=100; ++i)
-//     {
-//         double angle{getRandomDouble(-PI, PI)};
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+        SE2d T3(T1*T2);
+        Eigen::Matrix3d T3_true(T1.T() * T2.T());
 
-//         SE2<double> T{SE2<double>::fromAngleAndVec(angle, t)};
-//         double ct{cos(angle)}, st{sin(angle)};
-//         Eigen::Matrix3d T_true;
-//         T_true << ct, -st, t(0), st, ct, t(1), 0.0, 0.0, 1.0;
-
-//         EXPECT_TRUE(T_true.isApprox(T.T()));
-//     }
-// }
-
-// TEST(FromPointer, PointerInColumnMajorOrder_ReturnsTransformationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-//         SE2<double> T2{T.data()};
-
-//         EXPECT_TRUE(T == T2);
-//     }
-// }
+        EXPECT_TRUE(compareMat(T3_true, T3.T()));
+    }
+}
 
 // TEST(GroupMultiplication, TwoSE2Objects_ReturnConcatenatedSE2Object)
 // {
