@@ -39,6 +39,21 @@ public:
         arr_ << ct, -st, x, st, ct, y, 0, 0, 1;
     }
 
+    SE2(const Eigen::Ref<const Mat2F> &R, const Eigen::Ref<const Vec2F> &t) : arr_(data_)
+    {
+        arr_.setIdentity();
+        arr_.template block<2,2>(0,0) = R;
+        arr_.template block<2,1>(0,2) = t;
+    }
+
+    SE2(const Eigen::Ref<const Mat2F> &R, const F& x, const F& y) : arr_(data_)
+    {
+        arr_.setIdentity();
+        arr_.template block<2,2>(0,0) = R;
+        arr_(0,2) = x;
+        arr_(1,2) = y;
+    }
+
     Mat3F T() const { return arr_; }
 
 private:
