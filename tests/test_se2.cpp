@@ -252,6 +252,18 @@ TEST_F(SE2_Fixture, Boxplusr)
     }
 }
 
+TEST_F(SE2_Fixture, Boxminusr)
+{
+    for(SE2d T : transforms_)
+    {
+        SE2d T2{SE2d::random()};
+        Eigen::Vector3d diff(T.boxminusr(T2));
+        SE2d res(T2.boxplusr(diff));
+
+        EXPECT_TRUE(compareMat(res.T(), T.T()));
+    }
+}
+
 // TEST(BoxPlus, SE2And3Vector_ReturnsNewSE2Element)
 // {
 //     for(int i{0}; i != 100; ++i)
