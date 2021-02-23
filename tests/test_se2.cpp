@@ -150,21 +150,17 @@ TEST_F(SE2_Fixture, GroupMultiplication)
     }
 }
 
-// TEST(GroupMultiplication, TwoSE2Objects_ReturnConcatenatedSE2Object)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T1{SE2<double>::random()}, T2{SE2<double>::random()};
+TEST_F(SE2_Fixture, InverseOfGroupObject)
+{
+    for(SE2d T : transforms_)
+    {
+        SE2d T_inv(T.inverse());
+        SE2d res(T * T_inv);
+        Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
 
-//         SE2<double> T3{T1 * T2};
-//         Eigen::Matrix3d T3_true;
-//         T3_true.block<2,2>(0,0) = T1.R() * T2.R();
-//         T3_true.block<2,1>(0,2) = T1.t() + T1.R() * T2.t();
-//         T3_true(2,2) = 1.0;
-
-//         EXPECT_TRUE(T3_true.isApprox(T3.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat(I, res.T()));
+    }
+}
 
 // TEST(Inverse, SE2Object_ReturnInverse)
 // {

@@ -73,6 +73,14 @@ public:
 
     Vec2F t() const { return arr_.template block<2,1>(0,2); }
 
+    SE2 inverse() const
+    {
+        Mat3F T(Mat3F::Identity());
+        T.template block<2,2>(0,0) = R().transpose();
+        T.template block<2,1>(0,2) = -R().transpose() * t();
+        return SE2(T);
+    }
+
     static SE2 random()
     {
         static std::random_device rd;
