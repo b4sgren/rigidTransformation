@@ -73,6 +73,17 @@ public:
 
     Vec2F t() const { return arr_.template block<2,1>(0,2); }
 
+    Mat3F Adj() const
+    {
+        Mat2F J;
+        J << 0, -1, 1, 0;
+        Mat3F adj(Mat3F::Identity());
+        adj.template block<2,2>(0,0) = R();
+        adj.template block<2,1>(0,2) = -J * t();
+
+        return adj;
+    }
+
     SE2 inverse() const
     {
         Mat3F T(Mat3F::Identity());

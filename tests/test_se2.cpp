@@ -292,35 +292,21 @@ TEST_F(SE2_Fixture, Boxminusl)
     }
 }
 
-// TEST(BoxPlus, SE2And3Vector_ReturnsNewSE2Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-//         double ang{getRandomDouble(-PI, PI)};
-//         Eigen::Vector3d d;
-//         d << t, ang;
+TEST_F(SE2_Fixture, Adjoint)
+{
+    for(SE2d T : transforms_)
+    {
+        double theta{getRandomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector2d rho{getRandomVector(-10, 10)};
+        Eigen::Vector3d tau;
+        tau << rho, theta;
 
-//         SE2<double> res{T.boxplus(d)};
-//         SE2<double> res_true{T * SE2<double>::Exp(d)};
+        SE2d T2 = T.boxplusr(tau);
+        SE2d T3 = T.boxplusl(T.Adj() * tau);
 
-//         EXPECT_TRUE(res == res_true);
-//     }
-// }
-
-// TEST(BoxMinus, 2SE2Elements_ReturnsDifference)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T1{SE2<double>::random()}, T2{SE2<double>::random()};
-
-//         Eigen::Vector3d d{T1.boxminus(T2)};
-//         SE2<double> T{T2.boxplus(d)};
-
-//         EXPECT_TRUE(T == T1);
-//     }
-// }
+        EXPECT_TRUE(compareMat(T2.T(), T3.T()));
+    }
+}
 
 // TEST(Adjoint, SE2ElementAnd3Vector_ReturnsCorrectComposition)
 // {
