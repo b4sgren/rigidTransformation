@@ -145,6 +145,28 @@ public:
         return logT;
     }
 
+    static SE2 Exp(const Eigen::Ref<const Vec3F> &logT)
+    {
+        F theta(logT(2));
+        Vec2F rho(logT.template head<2>());
+
+        F A,B;
+        if(abs(theta) > 1e-8)
+        {
+            A = sin(theta)/theta;
+            B = (1 - cos(theta))/theta;
+        }
+        else
+        {
+            A = F(1.0);
+            B = F(theta/2.0);
+        }
+        Mat2F V;
+        V << A, -B, B, A;
+        Vec2F t(V * rho);
+        return SE2(t, theta);
+    }
+
 private:
     F data_[9];
 public:

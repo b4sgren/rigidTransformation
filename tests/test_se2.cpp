@@ -225,57 +225,16 @@ TEST_F(SE2_Fixture, MatrixLogarithm)
     }
 }
 
-// TEST(MatrixLogarithm, SE2Element_ReturnElementOfLieAlgebra)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
+TEST_F(SE2_Fixture, MatrixExponential)
+{
+    for(SE2d T : transforms_)
+    {
+        Eigen::Vector3d logT(T.Log());
+        SE2d T2(SE2d::Exp(logT));
 
-//         Eigen::Matrix3d log_T{T.log()};
-//         Eigen::Matrix3d log_T2{SE2<double>::log(T)};
-//         Eigen::Matrix3d log_T3{SE2<double>::log(T.T())};
-//         Eigen::Matrix3d log_T_true{T.T().log()};
-
-//         EXPECT_TRUE(log_T_true.isApprox(log_T));
-//         EXPECT_TRUE(log_T_true.isApprox(log_T2));
-//         EXPECT_TRUE(log_T_true.isApprox(log_T3));
-//     }
-// }
-
-// TEST(TaylorMatrixLogarithm, SE2Element_ReturnsElementOfLieAlgebra)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(-1e-6, 1e-6)};
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-
-//         SE2<double> T{SE2<double>::fromAngleAndVec(ang, t)};
-
-//         Eigen::Matrix3d log_T{T.log()};
-//         Eigen::Matrix3d log_T_true{T.T().log()};
-
-//         EXPECT_TRUE(log_T_true.isApprox(log_T));
-//     }
-// }
-
-// TEST(MatrixLogarith, SE2Element_Returns3Vector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-
-//         Eigen::Vector3d log_T{T.Log()};
-//         Eigen::Vector3d log_T2{SE2<double>::Log(T)};
-//         Eigen::Vector3d log_T3{SE2<double>::Log(T.T())};
-
-//         Eigen::Matrix3d temp{T.T().log()};
-//         Eigen::Vector3d log_T_true{SE2<double>::vee(temp)};
-
-//         EXPECT_TRUE(log_T_true.isApprox(log_T));
-//         EXPECT_TRUE(log_T_true.isApprox(log_T2));
-//         EXPECT_TRUE(log_T_true.isApprox(log_T3));
-//     }
-// }
+        EXPECT_TRUE(compareMat(T.T(), T2.T()));
+    }
+}
 
 // TEST(MatrixExponential, se2Element_ReturnSE2Element)
 // {
