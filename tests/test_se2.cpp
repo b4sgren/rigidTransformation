@@ -264,6 +264,22 @@ TEST_F(SE2_Fixture, Boxminusr)
     }
 }
 
+TEST_F(SE2_Fixture, Boxplusl)
+{
+    for(SE2d T : transforms_)
+    {
+        double theta{getRandomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector2d rho{getRandomVector(-10, 10)};
+        Eigen::Vector3d tau;
+        tau << rho, theta;
+
+        SE2d T2(T.boxplusl(tau));
+        SE2d T_true(SE2d::Exp(tau) * T);
+
+        EXPECT_TRUE(compareMat(T_true.T(), T2.T()));
+    }
+}
+
 // TEST(BoxPlus, SE2And3Vector_ReturnsNewSE2Element)
 // {
 //     for(int i{0}; i != 100; ++i)
