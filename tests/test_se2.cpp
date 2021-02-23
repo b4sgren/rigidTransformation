@@ -175,32 +175,36 @@ TEST_F(SE2_Fixture, InverseInPlace)
     }
 }
 
-// TEST(Inverse, SE2Object_ReturnInverse)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-//         SE2<double> T_inv{T.inv()};
+TEST_F(SE2_Fixture, ActiveTransformation)
+{
+    for(SE2d T : transforms_)
+    {
+        Eigen::Vector2d pt(getRandomVector(-10, 10));
+        Eigen::Vector2d pt2(T.transa(pt));
 
-//         SE2<double> res{T * T_inv};
+        Eigen::Vector3d pth;
+        pth << pt, 1;
+        Eigen::Vector3d res(T.T() * pth);
 
-//         EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(res.T()));
-//     }
-// }
+        EXPECT_TRUE(res.head<2>().isApprox(pt2));
+    }
+}
 
-// TEST(InverseInPlace, SE2Object_InvertsSelf)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-//         Eigen::Matrix3d T_mat{T.T()};
+TEST_F(SE2_Fixture, PassiveTransformation)
+{
+    for(SE2d T : transforms_)
+    {
+        Eigen::Vector2d pt(getRandomVector(-10, 10));
+        Eigen::Vector2d pt2(T.transp(pt));
 
-//         T.selfInv();
-//         Eigen::Matrix3d res{T.T() * T_mat};
+        Eigen::Vector3d pth;
+        pth << pt, 1;
+        Eigen::Vector3d res(T.inverse().T() * pth);
 
-//         EXPECT_TRUE(Eigen::Matrix3d::Identity().isApprox(res));
-//     }
-// }
+        EXPECT_TRUE(res.head<2>().isApprox(pt2));
+    }
+}
+
 
 // TEST(ActiveTransformation, SE2ObjectAndPoint_ReturnsTransformedPoint)
 // {

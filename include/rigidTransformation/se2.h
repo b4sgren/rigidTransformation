@@ -87,6 +87,16 @@ public:
         arr_.template block<2,1>(0,2) = -R() * t();
     }
 
+    Vec2F transa(const Eigen::Ref<const Vec2F> &pt)
+    {
+        return R() * pt + t();
+    }
+
+    Vec2F transp(const Eigen::Ref<const Vec2F> &pt)
+    {
+        return inverse().transa(pt);
+    }
+
     static SE2 random()
     {
         static std::random_device rd;
