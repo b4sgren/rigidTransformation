@@ -110,8 +110,18 @@ TEST_F(SE2_Fixture, InitializeFromSE2)
 {
     Eigen::Matrix3d T_true{Eigen::Matrix3d::Random()};
     SE2d T(T_true);
+    SE2d T2(T);
 
-    EXPECT_TRUE(compareMat(T_true, T.T()));
+    EXPECT_TRUE(compareMat(T_true, T2.T()));
+}
+
+TEST_F(SE2_Fixture, AssignmentOperator)
+{
+    Eigen::Matrix3d T_true{Eigen::Matrix3d::Random()};
+    SE2d T(T_true);
+    SE2d T2 = T;
+
+    EXPECT_TRUE(compareMat(T_true, T2.T()));
 }
 
 // TEST(GenerateRandomSE2Element, IfTransformationIsValid_ReturnsTrue)

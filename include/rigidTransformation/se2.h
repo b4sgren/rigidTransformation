@@ -56,6 +56,12 @@ public:
 
     SE2(const SE2& T) : arr_(data_) { arr_ = T.T(); }
 
+    SE2& operator=(const SE2& rhs)
+    {
+        arr_ = rhs.T();
+        return (*this);
+    }
+
     Mat3F T() const { return arr_; }
 
     Mat2F R() const { return arr_.template block<2,2>(0,0); }
