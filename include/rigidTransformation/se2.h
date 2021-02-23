@@ -23,7 +23,9 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     SE2() : arr_(data_) { arr_.setIdentity(); }
 
-    SE2(F *data) : arr_(data) {}
+    SE2(const F *data) : arr_(const_cast<F*>(data)) {}
+
+    SE2(const Eigen::Ref<const Mat3F> &T) : arr_(data_) { arr_ = T; }
 
     Mat3F T() const { return arr_; }
 
