@@ -97,6 +97,11 @@ public:
         return inverse().transa(pt);
     }
 
+    SE2 boxplusr(const Eigen::Ref<const Vec3F> &tau)
+    {
+        return (*this) * SE2::Exp(tau);
+    }
+
     static SE2 random()
     {
         static std::random_device rd;

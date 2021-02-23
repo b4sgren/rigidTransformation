@@ -236,86 +236,21 @@ TEST_F(SE2_Fixture, MatrixExponential)
     }
 }
 
-// TEST(MatrixExponential, se2Element_ReturnSE2Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(-PI, PI)};
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector3d w;
-//         w << ang, t(0), t(1);
+TEST_F(SE2_Fixture, Boxplusr)
+{
+    for(SE2d T : transforms_)
+    {
+        double theta{getRandomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector2d rho{getRandomVector(-10, 10)};
+        Eigen::Vector3d tau;
+        tau << rho, theta;
 
-//         Eigen::Matrix3d log_T{SE2<double>::hat(w)};
+        SE2d T2(T.boxplusr(tau));
+        SE2d T_true(T * SE2d::Exp(tau));
 
-//         SE2<double> T{SE2<double>::exp(log_T)};
-//         Eigen::Matrix3d T_true{log_T.exp()};
-
-//         EXPECT_TRUE(T_true.isApprox(T.T()));
-//     }
-// }
-
-// TEST(TaylorMatrixExponential, se2Element_ReturnsSE2Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(-1e-6, 1e-6)};
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector3d w;
-//         w << ang, t(0), t(1);
-
-//         Eigen::Matrix3d log_T{SE2<double>::hat(w)};
-
-//         SE2<double> T{SE2<double>::exp(log_T)};
-//         Eigen::Matrix3d T_true{log_T.exp()};
-
-//         EXPECT_TRUE(T_true.isApprox(T.T()));
-
-//     }
-// }
-
-// TEST(MatrixExponential, 3Vector_ReturnsSE2Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(-PI, PI)};
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector3d w;
-//         w << ang, t(0), t(1);
-
-//         SE2<double> T{SE2<double>::Exp(w)};
-
-//         Eigen::Matrix3d log_T{SE2<double>::hat(w)};
-//         Eigen::Matrix3d T_true{log_T.exp()};
-
-//         EXPECT_TRUE(T_true.isApprox(T.T()));
-//     }
-// }
-
-// TEST(Adjoint, SE2ElementAnd3Vector_ReturnsCorrectComposition)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-
-//         double ang{getRandomDouble(-PI, PI)};
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector3d delta;
-//         delta << ang, t(0), t(1);
-
-//         SE2<double> res1{T * SE2<double>::Exp(delta)};
-//         Eigen::Vector3d temp{T.Adj() * delta};
-//         SE2<double> temp2{SE2<double>::Exp(temp)};
-//         SE2<double> res2{temp2 * T};
-
-//         if(!(res1 == res2))
-//         {
-//             int debug = 1;
-//             SE2<double> blah{temp2 * T};
-//         }
-
-//         EXPECT_TRUE(res1 == res2);
-//     }
-// }
+        EXPECT_TRUE(compareMat(T_true.T(), T2.T()));
+    }
+}
 
 // TEST(BoxPlus, SE2And3Vector_ReturnsNewSE2Element)
 // {
@@ -347,10 +282,28 @@ TEST_F(SE2_Fixture, MatrixExponential)
 //     }
 // }
 
-// TEST(Identity, AskedForIdentity_ReturnsIdentity)
+// TEST(Adjoint, SE2ElementAnd3Vector_ReturnsCorrectComposition)
 // {
-//     Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
-//     SE2<double> T{SE2<double>::Identity()};
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         SE2<double> T{SE2<double>::random()};
 
-//     EXPECT_TRUE(I.isApprox(T.T()));
+//         double ang{getRandomDouble(-PI, PI)};
+//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
+//         Eigen::Vector3d delta;
+//         delta << ang, t(0), t(1);
+
+//         SE2<double> res1{T * SE2<double>::Exp(delta)};
+//         Eigen::Vector3d temp{T.Adj() * delta};
+//         SE2<double> temp2{SE2<double>::Exp(temp)};
+//         SE2<double> res2{temp2 * T};
+
+//         if(!(res1 == res2))
+//         {
+//             int debug = 1;
+//             SE2<double> blah{temp2 * T};
+//         }
+
+//         EXPECT_TRUE(res1 == res2);
+//     }
 // }
