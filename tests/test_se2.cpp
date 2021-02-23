@@ -71,6 +71,22 @@ TEST_F(SE2_Fixture, EigenMatrixInitialization)
     EXPECT_TRUE(compareMat(T_true, T.T()));
 }
 
+TEST_F(SE2_Fixture, FromAngleAndt)
+{
+    double theta{getRandomDouble(-rt::PI, rt::PI)};
+    Eigen::Vector2d t(getRandomVector(-10, 10));
+
+    SE2d T1(t, theta);
+    SE2d T2(t(0), t(1), theta);
+
+    double ct{cos(theta)}, st{sin(theta)};
+    Eigen::Matrix3d T_true;
+    T_true << ct, -st, t(0), st, ct, t(1), 0, 0, 1;
+
+    EXPECT_TRUE(compareMat(T_true, T1.T()));
+    EXPECT_TRUE(compareMat(T_true, T2.T()));
+}
+
 // TEST(SE2_Element, AskedForMatrix_ReturnsHomogeneousTransformationMatrix)
 // {
 //     Eigen::Matrix3d T;

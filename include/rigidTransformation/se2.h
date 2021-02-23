@@ -27,6 +27,18 @@ public:
 
     SE2(const Eigen::Ref<const Mat3F> &T) : arr_(data_) { arr_ = T; }
 
+    SE2(const Eigen::Ref<const Vec2F> &t, const F& theta) : arr_(data_)
+    {
+        F ct{cos(theta)}, st{sin(theta)};
+        arr_ << ct, -st, t(0), st, ct, t(1), 0, 0, 1;
+    }
+
+    SE2(const F& x, const F& y, const F& theta) : arr_(data_)
+    {
+        F ct{cos(theta)}, st{sin(theta)};
+        arr_ << ct, -st, x, st, ct, y, 0, 0, 1;
+    }
+
     Mat3F T() const { return arr_; }
 
 private:
