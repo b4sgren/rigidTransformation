@@ -112,6 +112,12 @@ public:
         return SE2::Exp(tau) * (*this);
     }
 
+    Vec3F boxminusl(const SE2 &T)
+    {
+        return SE2::Log((*this) * T.inverse());
+    }
+
+
     static SE2 random()
     {
         static std::random_device rd;
