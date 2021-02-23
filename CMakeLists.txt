@@ -14,13 +14,13 @@ add_executable(test_so2 tests/test_so2.cpp)
 target_link_libraries(test_so2 gtest gtest_main)
 
 add_executable(test_so3 tests/test_so3.cpp)
-target_link_libraries(test_so3 ${GTEST_LIBRARIES} gtest gtest_main pthread)
+target_link_libraries(test_so3 ${GTEST_LIBRARIES} gtest gtest_main)
 
-# add_executable(se2_tests tests/se2_tests.cpp)
-# target_link_libraries(se2_tests ${GTEST_LIBRARIES} gtest gtest_main pthread)
+add_executable(test_se2 tests/test_se2.cpp)
+target_link_libraries(test_se2 ${GTEST_LIBRARIES} gtest gtest_main)
 
 add_executable(test_quaternion tests/test_quaternion.cpp)
-target_link_libraries(test_quaternion ${GTEST_LIBRARIES} gtest gtest_main pthread)
+target_link_libraries(test_quaternion ${GTEST_LIBRARIES} gtest gtest_main)
 
 # add_executable(se3_tests tests/se3_tests.cpp)
 # target_link_libraries(se3_tests ${GTEST_LIBRARIES} gtest gtest_main pthread)
