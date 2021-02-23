@@ -106,18 +106,13 @@ TEST_F(SE2_Fixture, FromRAndt)
     EXPECT_TRUE(compareMat(T_true, T2.T()));
 }
 
-// TEST(SE2_Element, AskedForMatrix_ReturnsHomogeneousTransformationMatrix)
-// {
-//     Eigen::Matrix3d T;
-//     T << 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0;
-//     Eigen::Matrix2d R{T.block<2,2>(0,0)};
-//     Eigen::Vector2d t{T.block<2,1>(0,2)};
+TEST_F(SE2_Fixture, InitializeFromSE2)
+{
+    Eigen::Matrix3d T_true{Eigen::Matrix3d::Random()};
+    SE2d T(T_true);
 
-//     SE2<double> T1{T};
-//     EXPECT_TRUE(T.isApprox(T1.T()));
-//     EXPECT_TRUE(R.isApprox(T1.R()));
-//     EXPECT_TRUE(t.isApprox(T1.t()));
-// }
+    EXPECT_TRUE(compareMat(T_true, T.T()));
+}
 
 // TEST(GenerateRandomSE2Element, IfTransformationIsValid_ReturnsTrue)
 // {

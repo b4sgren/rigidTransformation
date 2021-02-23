@@ -54,7 +54,13 @@ public:
         arr_(1,2) = y;
     }
 
+    SE2(const SE2& T) : arr_(data_) { arr_ = T.T(); }
+
     Mat3F T() const { return arr_; }
+
+    Mat2F R() const { return arr_.template block<2,2>(0,0); }
+
+    Vec2F t() const { return arr_.template block<2,1>(0,2); }
 
 private:
     F data_[9];
