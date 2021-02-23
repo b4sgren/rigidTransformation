@@ -23,6 +23,8 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     SE2() : arr_(data_) { arr_.setIdentity(); }
 
+    SE2(F *data) : arr_(data) {}
+
     Mat3F T() const { return arr_; }
 
 private:

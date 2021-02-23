@@ -50,6 +50,17 @@ TEST_F(SE2_Fixture, DefaultInitialization)
     EXPECT_TRUE(compareMat(I, T.T()));
 }
 
+TEST_F(SE2_Fixture, PointerInitialization)
+{
+    double sqrt2{sqrt(2)};
+    double data[]{sqrt2, sqrt2, 0, -sqrt2, sqrt2, 0, 1, 2, 1};
+    SE2d T(data);
+    Eigen::Matrix3d T_true;
+    T_true << sqrt2, -sqrt2, 1, sqrt2, sqrt2, 2, 0, 0, 1;
+
+    EXPECT_TRUE(compareMat(T_true, T.T()));
+}
+
 // TEST(SE2_Element, AskedForMatrix_ReturnsHomogeneousTransformationMatrix)
 // {
 //     Eigen::Matrix3d T;
