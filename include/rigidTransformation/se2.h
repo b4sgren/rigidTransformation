@@ -109,6 +109,11 @@ public:
         return SE2(x, y, theta);
     }
 
+    static SE2 Identity()
+    {
+        return SE2();
+    }
+
 private:
     F data_[9];
 public:

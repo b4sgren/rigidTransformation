@@ -137,6 +137,13 @@ TEST_F(SE2_Fixture, RandomInitialization)
     }
 }
 
+TEST_F(SE2_Fixture, IdentityInitialization)
+{
+    SE2d T(SE2d::Identity());
+    Eigen::Matrix3d I(Eigen::Matrix3d::Identity());
+    EXPECT_TRUE(compareMat(I, T.T()));
+}
+
 TEST_F(SE2_Fixture, GroupMultiplication)
 {
     for(SE2d T1 : transforms_)
@@ -204,86 +211,6 @@ TEST_F(SE2_Fixture, PassiveTransformation)
         EXPECT_TRUE(res.head<2>().isApprox(pt2));
     }
 }
-
-
-// TEST(ActiveTransformation, SE2ObjectAndPoint_ReturnsTransformedPoint)
-// {
-//     for(int i{0}; i !=100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-//         Eigen::Vector2d v{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector3d vn; // HOmogeneous coordinates
-//         vn << v(0), v(1), 1.0;
-
-//         /*
-//         Note that you get out what you pass in. If you want a vector in
-//         homogeneous coordinates then pass in a vector in homogeneous coordinates
-//         */
-//         Eigen::Vector2d vp{T.transa(v)};
-//         Eigen::Vector3d vn_p{T.transa(vn)};
-
-//         Eigen::Vector2d vp_true{T.R() * v + T.t()};
-
-//         EXPECT_TRUE(vp_true.isApprox(vp));
-//         EXPECT_TRUE(vp_true.isApprox(vn_p.segment<2>(0)));
-//     }
-// }
-
-// TEST(PassiveTransformation, SE2ObjectAndPoint_ReturnsTransformedPoint)
-// {
-//     for(int i{0}; i !=100; ++i)
-//     {
-//         SE2<double> T{SE2<double>::random()};
-//         Eigen::Vector2d v{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector3d vn; // Homogeneous coordinates
-//         vn << v(0), v(1), 1.0;
-
-//         /*
-//         Note that you get out what you pass in. If you want a vector in
-//         homogeneous coordinates then pass in a vector in homogeneous coordinates
-//         */
-//         Eigen::Vector2d vp{T.transp(v)};
-//         Eigen::Vector3d vn_p{T.transp(vn)};
-
-//         Eigen::Vector2d vp_true{T.inv().R() * v + T.inv().t()};
-
-//         EXPECT_TRUE(vp_true.isApprox(vp));
-//         EXPECT_TRUE(vp_true.isApprox(vn_p.segment<2>(0)));
-//     }
-// }
-
-// TEST(HatOperator, ThreeVector_3by3MatrixOfLieAlgebra)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-//         double ang{getRandomDouble(-PI, PI)};
-//         Eigen::Vector3d w;
-//         w << ang, t(0), t(1);
-
-//         Eigen::Matrix3d log_T{SE2<double>::hat(w)};
-//         Eigen::Matrix3d log_T_true;
-//         log_T_true << 0, -ang, t(0), ang, 0, t(1), 0, 0, 0;
-
-//         EXPECT_TRUE(log_T_true.isApprox(log_T));
-//     }
-// }
-
-// TEST(VeeOperator, se2Element_Return3Vector)
-// {
-//     for(int i{0}; i !=100; ++i)
-//     {
-//         Eigen::Vector2d t{getRandomVector(-10.0, 10.0)};
-//         double ang{getRandomDouble(-PI, PI)};
-//         Eigen::Vector3d w_true;
-//         w_true << ang, t(0), t(1);
-
-//         Eigen::Matrix3d log_T{SE2<double>::hat(w_true)};
-//         Eigen::Vector3d w{SE2<double>::vee(log_T)};
-
-//         EXPECT_TRUE(w_true.isApprox(w));
-//     }
-// }
 
 // TEST(MatrixLogarithm, SE2Element_ReturnElementOfLieAlgebra)
 // {
