@@ -124,6 +124,17 @@ TEST_F(SE2_Fixture, AssignmentOperator)
     EXPECT_TRUE(compareMat(T_true, T2.T()));
 }
 
+TEST_F(SE2_Fixture, RandomInitialization)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE2d T(SE2d::random());
+        double det{T.R().determinant()};
+
+        EXPECT_FLOAT_EQ(1.0, det);
+    }
+}
+
 // TEST(GenerateRandomSE2Element, IfTransformationIsValid_ReturnsTrue)
 // {
 //     for(int i{0}; i!=100; ++i)

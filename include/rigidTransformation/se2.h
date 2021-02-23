@@ -68,6 +68,18 @@ public:
 
     Vec2F t() const { return arr_.template block<2,1>(0,2); }
 
+    static SE2 random()
+    {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<F> r_dist(-PI, PI);
+        static std::uniform_real_distribution<F> t_dist(-10.0, 10.0);
+
+        F theta{r_dist(gen)};
+        F x{t_dist(gen)}, y{t_dist(gen)};
+        return SE2(x, y, theta);
+    }
+
 private:
     F data_[9];
 public:
