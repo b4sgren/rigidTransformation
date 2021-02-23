@@ -162,6 +162,19 @@ TEST_F(SE2_Fixture, InverseOfGroupObject)
     }
 }
 
+TEST_F(SE2_Fixture, InverseInPlace)
+{
+    for(SE2d T : transforms_)
+    {
+        SE2d T_copy = T;
+        T.inverse_();
+        SE2d res(T * T_copy);
+
+        Eigen::Matrix3d I{Eigen::Matrix3d::Identity()};
+        EXPECT_TRUE(compareMat(I, res.T()));
+    }
+}
+
 // TEST(Inverse, SE2Object_ReturnInverse)
 // {
 //     for(int i{0}; i != 100; ++i)

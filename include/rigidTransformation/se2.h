@@ -81,6 +81,12 @@ public:
         return SE2(T);
     }
 
+    void inverse_()
+    {
+        arr_.template block<2,2>(0,0) = R().transpose();
+        arr_.template block<2,1>(0,2) = -R() * t();
+    }
+
     static SE2 random()
     {
         static std::random_device rd;
