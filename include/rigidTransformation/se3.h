@@ -47,9 +47,22 @@ public:
         arr_.template tail<4>() = Quaternion<F>::fromR(R).q();
     }
 
+    SE3(const Quaternion<F> &q, const Eigen::Ref<const Vec3F> &t) : arr_(data_), q_(data_+3)
+    {
+        arr_.template head<3>() = t;
+        arr_.template tail<4>() = q.q();
+    }
+
     Vec7F T() const { return arr_; }
+    Mat3F R() const { return q_.R(); }
     Vec4F q() const { return q_.q(); }
     Vec3F t() const { return arr_.template head<3>(); }
+
+    static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
+    {
+        Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));
+        return SE3(q, t);
+    }
 private:
     F data_[7];
     Eigen::Map<Vec7F> arr_;

@@ -106,6 +106,36 @@ TEST_F(SE3_Fixture, FromRotationMatrixAndt)
     }
 }
 
+TEST_F(SE3_Fixture, FromQuatAndt)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quatd q(Quatd::random());
+        Eigen::Vector3d t(getRandomVector(-10, 10));
+
+        SE3d T(q,t);
+        EXPECT_TRUE(compareMat<3>(t, T.t()));
+        EXPECT_TRUE(compareMat<4>(q.q(), T.q()));
+    }
+}
+
+TEST_F(SE3_Fixture, FromAxisAngleAndt)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double theta{randomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        v = v/v.norm() * theta;
+        Eigen::Vector3d t(getRandomVector(-10, 10));
+
+        Quatd q(q.fromAxisAngle(v));
+        SE3d T(T.fromAxisAngleAndt(v,t));
+
+        EXPECT_TRUE(compareMat<3>(t,T.t()));
+        EXPECT_TRUE(compareMat<4>(q.q(), T.q()));
+    }
+}
+
 // TEST(GetRotation, SE3Element_Returns3x3RotationMatrix)
 // {
 //     Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
