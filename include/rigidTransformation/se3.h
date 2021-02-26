@@ -53,6 +53,11 @@ public:
         arr_.template tail<4>() = q.q();
     }
 
+    SE3(const SE3 &T): arr_(data_), q_(data_+3)
+    {
+        arr_ = T.T();
+    }
+
     Vec7F T() const { return arr_; }
     Mat3F R() const { return q_.R(); }
     Vec4F q() const { return q_.q(); }

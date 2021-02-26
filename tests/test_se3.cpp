@@ -136,6 +136,16 @@ TEST_F(SE3_Fixture, FromAxisAngleAndt)
     }
 }
 
+TEST_F(SE3_Fixture, FromSE3)
+{
+    Vector7d T_true;
+    T_true << 1, 2, 3, 4, 5, 6, 7;
+    SE3d T(T_true);
+    SE3d T2(T);
+
+    EXPECT_TRUE(compareMat<7>(T.T(), T2.T()));
+}
+
 // TEST(GetRotation, SE3Element_Returns3x3RotationMatrix)
 // {
 //     Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
