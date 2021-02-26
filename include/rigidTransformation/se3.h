@@ -58,6 +58,12 @@ public:
         arr_ = T.T();
     }
 
+    SE3& operator=(const SE3& rhs)
+    {
+        arr_ = rhs.T();
+        return (*this);
+    }
+
     Vec7F T() const { return arr_; }
     Mat3F R() const { return q_.R(); }
     Vec4F q() const { return q_.q(); }
