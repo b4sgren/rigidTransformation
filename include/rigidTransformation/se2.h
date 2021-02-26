@@ -205,6 +205,13 @@ public:
     Eigen::Map<Mat3F> arr_;
 };
 
+template<typename F>
+std::ostream& operator <<(std::ostream &os, const SE2<F> &T)
+{
+    os << T.T();
+    return os;
+}
+
 } // namespace rigidTransform
 
 #endif

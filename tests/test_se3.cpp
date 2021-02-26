@@ -40,6 +40,8 @@ class SE3_Fixture : public ::testing::Test
 public:
     SE3_Fixture()
     {
+        for(int i{0}; i != 100; ++i)
+            transforms_.push_back(SE3d::random());
     }
 
     ~SE3_Fixture(){}
@@ -165,201 +167,21 @@ TEST_F(SE3_Fixture, RandomInitialization)
     }
 }
 
-// TEST(GetRotation, SE3Element_Returns3x3RotationMatrix)
-// {
-//     Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
-//     SE3<double> Td{T};
+TEST_F(SE3_Fixture, GroupMultiplication)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T2(SE3d::random());
+        SE3d T3(T * T2);
 
-//     Eigen::Matrix3d R{T.block<3,3>(0,0)};
-//     EXPECT_TRUE(R.isApprox(Td.R()));
-// }
+        Quatd q(T.q()), q2(T2.q());
+        Quatd q3(q * q2);
+        Eigen::Vector3d t3(T.t() + q.rota(T2.t()));
 
-// TEST(GetTranslation, SE3Element_Returns3x1TranslationVector)
-// {
-//     Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
-//     SE3<double> Td{T};
-
-//     Eigen::Vector3d t{T.block<3,1>(0,3)};
-//     EXPECT_TRUE(t.isApprox(Td.t()));
-// }
-
-// TEST(RandomGeneration, RandomSE3Element_VerifyThatElementIsValidTransformation)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
-
-// TEST(FromRotationMatrixAndVector, RotationMatrixAndVector_ValidTransformationMatrix)
-// {
-//     for(int i{0}; i != 0; ++i)
-//     {
-//         double ang{getRandomDouble(0, PI)};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-
-//         Eigen::Matrix3d R(Eigen::AngleAxisd(ang, v));
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         SE3<double> T{R, t};
-
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
-
-// TEST(FromAxisAngleAndVector, AxisAngle_ReturnValidTransformationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(0, PI)};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         SE3<double> T{SE3<double>::fromAxisAngleAndVector(v * ang, t)};
-
-//         Eigen::Matrix3d R(Eigen::AngleAxisd(ang, v));
-//         SE3<double> T_true{R, t};
-
-//         EXPECT_TRUE(T_true == T);
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
-
-// TEST(FromAxisAngleAndVector, AxisAngle_ReturnValidTransformationMatrixUsingTaylorSeries)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(0, 1e-6)};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         SE3<double> T{SE3<double>::fromAxisAngleAndVector(v * ang, t)};
-
-//         Eigen::Matrix3d R(Eigen::AngleAxisd(ang, v));
-//         SE3<double> T_true{R, t};
-
-//         EXPECT_TRUE(T_true == T);
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
-
-// TEST(FromAxisAngleAndVector, EigenAngleAxid_ReturnValidTransformationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(0, 1e-6)};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         SE3<double> T{SE3<double>::fromAxisAngleAndVector(Eigen::AngleAxisd(ang, v), t)};
-//         SE3<double> T_true{SE3<double>::fromAxisAngleAndVector(v * ang, t)};
-
-//         EXPECT_TRUE(T_true == T);
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
-
-// TEST(FromRPYAnglesAndVector, RPYAnglesVecAndVector_ReturnValidTransformationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d rpy{getRandomVector(-PI, PI)};
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         SE3<double> T{SE3<double>::fromRPYAndVector(rpy, t)};
-
-//         Eigen::Matrix3d Rx(Eigen::AngleAxisd(rpy(0), Eigen::Vector3d::UnitX()));
-//         Eigen::Matrix3d Ry(Eigen::AngleAxisd(rpy(1), Eigen::Vector3d::UnitY()));
-//         Eigen::Matrix3d Rz(Eigen::AngleAxisd(rpy(2), Eigen::Vector3d::UnitZ()));
-//         Eigen::Matrix3d R{Rz * Ry * Rx};
-//         SE3<double> T_true{R, t};
-
-//         EXPECT_TRUE(T_true == T);
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
-
-// TEST(FromRPYAnglesAndVector, RPYAnglesAndVector_ReturnValidTransformationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d rpy{getRandomVector(-PI, PI)};
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         SE3<double> T{SE3<double>::fromRPYAndVector(rpy(0), rpy(1), rpy(2), t)};
-
-//         Eigen::Matrix3d Rx(Eigen::AngleAxisd(rpy(0), Eigen::Vector3d::UnitX()));
-//         Eigen::Matrix3d Ry(Eigen::AngleAxisd(rpy(1), Eigen::Vector3d::UnitY()));
-//         Eigen::Matrix3d Rz(Eigen::AngleAxisd(rpy(2), Eigen::Vector3d::UnitZ()));
-//         Eigen::Matrix3d R{Rz * Ry * Rx};
-//         SE3<double> T_true{R, t};
-
-//         EXPECT_TRUE(T_true == T);
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
-
-// TEST(FromQuaternion, Quaternion_ReturnValidTransformationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-//         double ang{getRandomDouble(0, PI)};
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         Eigen::Vector4d q;
-//         double st = sin(ang/2);
-//         // q << cos(ang/2), st * v(0), st * v(1), st * v(2);
-//         q << cos(ang/2), st * v;
-
-//         SE3<double> T{SE3<double>::fromQuaternionAndVector(q, t)};
-
-//         Eigen::Matrix3d R{Eigen::AngleAxisd(ang, v)};
-//         SE3<double> T_true{R, t};
-
-//         EXPECT_TRUE(T.isValidTransformation());
-//         EXPECT_TRUE(T_true == T);
-//     }
-// }
-
-// TEST(FromQuaternion, EigenQuaternion_ReturnValidTransformationMatrix)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         v /= v.norm();
-//         double ang{getRandomDouble(0, PI)};
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-
-//         Eigen::Quaterniond q{Eigen::AngleAxisd(ang, v)};
-//         Eigen::Matrix3d R{Eigen::AngleAxisd(ang, v)};
-//         SE3<double> T{SE3<double>::fromQuaternionAndVector(q, t)};
-//         SE3<double> T_true{R, t};
-
-//         EXPECT_TRUE(T.isValidTransformation());
-//         EXPECT_TRUE(T_true == T);
-//     }
-// }
-
-// TEST(FromPointer, PointerInColumnMajorOrder_ReturnValidTransformation)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T_true{SE3<double>::random()};
-//         double *p{T_true.data()};
-
-//         SE3<double> T(p);
-//         EXPECT_TRUE(T_true == T);
-//         EXPECT_TRUE(T.isValidTransformation());
-//     }
-// }
+        EXPECT_TRUE(compareMat<3>(t3, T3.t()));
+        EXPECT_TRUE(compareMat<4>(q3.q(), T3.q()));
+    }
+}
 
 // TEST(GroupMultiplication, 2SE3Elements_ReturnNewSE3Element)
 // {

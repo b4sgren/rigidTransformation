@@ -25,6 +25,7 @@ public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     SE3() : arr_(data_), q_(data_+3)
     {
+        arr_.setZero();
         arr_(3) = 1.0;
     }
 
@@ -64,9 +65,17 @@ public:
         return (*this);
     }
 
+    SE3 operator*(const SE3& rhs)
+    {
+        Quaternion<F> q(quat() * rhs.quat());
+        Vec3F trans(t() + quat().rota(rhs.t()));
+        return SE3(q,trans);
+    }
+
     Vec7F T() const { return arr_; }
     Mat3F R() const { return q_.R(); }
     Vec4F q() const { return q_.q(); }
+    Quaternion<F> quat() const { return q_; } // better name for this
     Vec3F t() const { return arr_.template head<3>(); }
 
     static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
@@ -98,6 +107,12 @@ private:
     Quaternion<F> q_;
 };
 
+template<typename F>
+std::ostream& operator <<(std::ostream &os, const SE3<F> &T)
+{
+    os << T.T().transpose();
+    return os;
+}
 } // namespace rigidTransform
 
 #endif
