@@ -41,6 +41,12 @@ public:
         arr_.template tail<4>() = Quaternion<F>(r,p,y).q();
     }
 
+    SE3(const Eigen::Ref<const Mat3F> &R, const Eigen::Ref<const Vec3F> &t): arr_(data_), q_(data_+3)
+    {
+        arr_.template head<3>() = t;
+        arr_.template tail<4>() = Quaternion<F>::fromR(R).q();
+    }
+
     Vec7F T() const { return arr_; }
     Vec4F q() const { return q_.q(); }
     Vec3F t() const { return arr_.template head<3>(); }

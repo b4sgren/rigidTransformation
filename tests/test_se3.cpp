@@ -93,6 +93,19 @@ TEST_F(SE3_Fixture, InitializeFromRPY)
     }
 }
 
+TEST_F(SE3_Fixture, FromRotationMatrixAndt)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Quatd q(Quatd::random());
+        Eigen::Vector3d t(getRandomVector(-10, 10));
+        SE3d T(q.R().transpose(), t);
+
+        EXPECT_TRUE(compareMat<3>(t, T.t()));
+        EXPECT_TRUE(compareMat<4>(q.q(), T.q()));
+    }
+}
+
 // TEST(GetRotation, SE3Element_Returns3x3RotationMatrix)
 // {
 //     Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
