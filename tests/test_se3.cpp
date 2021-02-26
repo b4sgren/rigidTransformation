@@ -210,29 +210,17 @@ TEST_F(SE3_Fixture, InverseInPlace)
     }
 }
 
-// TEST(Inverse, SE3Element_ReturnInverseElement)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-//         SE3<double> T_inv{T.inv()};
-//         SE3<double> res{T * T_inv};
+TEST_F(SE3_Fixture, ActiveTransformation)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector3d vp(T.transa(v));
+        Eigen::Vector3d vp_true(T.t() + T.quat().rota(v));
 
-//         EXPECT_TRUE(Eigen::Matrix4d::Identity().isApprox(res.T()));
-//     }
-// }
-
-// TEST(Inverse, SE3Element_DoesInverseInPlace)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-//         Eigen::Matrix4d T_inv{T.T().inverse()};
-//         T.selfInv();
-
-//         EXPECT_TRUE(T_inv.isApprox(T.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<3>(vp_true, vp));
+    }
+}
 
 // TEST(TransformAVector, SE3ElementAnd3Vector_ReturnActivelyTransformedVector)
 // {

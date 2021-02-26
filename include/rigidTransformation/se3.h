@@ -91,6 +91,11 @@ public:
         arr_.template head<3>() = -q_.rota(t());
     }
 
+    Vec3F transa(const Eigen::Ref<const Vec3F> &v)
+    {
+        return t() + q_.rota(v);
+    }
+
     static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
     {
         Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));
