@@ -28,6 +28,8 @@ public:
         arr_(3) = 1.0;
     }
 
+    SE3(const F* data) : arr_(const_cast<F*>(data)), q_(const_cast<F*>(data+3)) {}
+
     Vec7F T() const { return arr_; }
 private:
     F data_[7];

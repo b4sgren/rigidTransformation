@@ -53,6 +53,14 @@ TEST_F(SE3_Fixture, DefaultInitialization)
     EXPECT_TRUE(compareMat(I, T.T()));
 }
 
+TEST_F(SE3_Fixture, PointerInitialization)
+{
+    double data[]{1,2,3,4,5,6,7};
+    SE3d T(data);
+    Eigen::Map<Vector7d> T_true(data);
+    EXPECT_TRUE(compareMat(T_true, T.T()));
+}
+
 // TEST(Constructor, SE3Element_Returns4by4Matrix)
 // {
 //     Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
