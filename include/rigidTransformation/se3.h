@@ -78,6 +78,13 @@ public:
     Quaternion<F> quat() const { return q_; } // better name for this
     Vec3F t() const { return arr_.template head<3>(); }
 
+    SE3 inverse() const
+    {
+        Quaternion<F> q_inv = q_.inverse();
+        Vec3F t_inv = -q_inv.rota(t());
+        return SE3(q_inv, t_inv);
+    }
+
     static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
     {
         Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));

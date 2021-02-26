@@ -183,18 +183,18 @@ TEST_F(SE3_Fixture, GroupMultiplication)
     }
 }
 
-// TEST(GroupMultiplication, 2SE3Elements_ReturnNewSE3Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T1{SE3<double>::random()}, T2{SE3<double>::random()};
+TEST_F(SE3_Fixture, Inverse)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T_inv(T.inverse());
+        SE3d T3(T * T_inv);
+        Vector7d I(Vector7d::Zero());
+        I(3) = 1.0;
 
-//         SE3<double> T3{T1 * T2};
-//         Eigen::Matrix4d T3_true{T1.T() * T2.T()};
-
-//         EXPECT_TRUE(T3_true.isApprox(T3.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(I, T3.T()));
+    }
+}
 
 // TEST(Inverse, SE3Element_ReturnInverseElement)
 // {
