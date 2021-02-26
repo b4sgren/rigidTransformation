@@ -7,6 +7,10 @@
 
 #include "se3.h"
 
+namespace rt = rigidTransform;
+using SE3d = rt::SE3<double>;
+using Vector7d = Eigen::Matrix<double,7,1>;
+
 double getRandomDouble(double min, double max)
 {
     std::random_device rd;
@@ -23,8 +27,10 @@ Eigen::Vector3d getRandomVector(double min, double max)
     return v;
 }
 
-namespace rt = rigidTransform;
-using SE3d = rt::SE3<double>;
+bool compareMat(const Eigen::Ref<const Vector7d> &v1, const Eigen::Ref<const Vector7d> &v2)
+{
+    return v1.isApprox(v2);
+}
 
 class SE3_Fixture : public ::testing::Test
 {
@@ -41,7 +47,10 @@ protected:
 
 TEST_F(SE3_Fixture, DefaultInitialization)
 {
-    EXPECT_TRUE(true);
+    SE3d T;
+    Vector7d I(Vector7d::Zero());
+    I(3) = 1.0;
+    EXPECT_TRUE(compareMat(I, T.T()));
 }
 
 // TEST(Constructor, SE3Element_Returns4by4Matrix)

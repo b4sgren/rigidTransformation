@@ -27,6 +27,8 @@ public:
     {
         arr_(3) = 1.0;
     }
+
+    Vec7F T() const { return arr_; }
 private:
     F data_[7];
     Eigen::Map<Vec7F> arr_;
