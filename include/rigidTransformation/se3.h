@@ -35,8 +35,15 @@ public:
         arr_ = T;
     }
 
+    SE3(const F& r, const F& p, const F& y, const Eigen::Ref<const Vec3F> &t) : arr_(data_), q_(data_+3)
+    {
+        arr_.template head<3>() = t;
+        arr_.template tail<4>() = Quaternion<F>(r,p,y).q();
+    }
+
     Vec7F T() const { return arr_; }
     Vec4F q() const { return q_.q(); }
+    Vec3F t() const { return arr_.template head<3>(); }
 private:
     F data_[7];
     Eigen::Map<Vec7F> arr_;

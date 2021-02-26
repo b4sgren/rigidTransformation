@@ -6,12 +6,14 @@
 #include <vector>
 
 #include "se3.h"
+#include "quaternion.h"
 
 namespace rt = rigidTransform;
 using SE3d = rt::SE3<double>;
+using Quatd = rt::Quaternion<double>;
 using Vector7d = Eigen::Matrix<double,7,1>;
 
-double getRandomDouble(double min, double max)
+double randomDouble(double min, double max)
 {
     std::random_device rd;
     std::mt19937 generator(rd());
@@ -23,7 +25,7 @@ double getRandomDouble(double min, double max)
 Eigen::Vector3d getRandomVector(double min, double max)
 {
     Eigen::Vector3d v;
-    v << getRandomDouble(min, max), getRandomDouble(min, max), getRandomDouble(min, max);
+    v << randomDouble(min, max), randomDouble(min, max), randomDouble(min, max);
     return v;
 }
 
@@ -74,13 +76,22 @@ TEST_F(SE3_Fixture, InitializeFromVector)
     EXPECT_TRUE(compareMat<4>(T_true.tail<4>(), T.q()));
 }
 
-// TEST(Constructor, SE3Element_Returns4by4Matrix)
-// {
-//     Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
-//     SE3<double> Td{T};
+TEST_F(SE3_Fixture, InitializeFromRPY)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double r{randomDouble(-rt::PI, rt::PI)};
+        double p{randomDouble(-rt::PI, rt::PI)};
+        double y{randomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector3d t(getRandomVector(-10, 10));
+        SE3d T(r,p,y,t);
 
-//     EXPECT_TRUE(T.isApprox(Td.T()));
-// }
+        Quatd q{r, p, y};
+
+        EXPECT_TRUE(compareMat<3>(t, T.t()));
+        EXPECT_TRUE(compareMat<4>(q.q(), T.q()));
+    }
+}
 
 // TEST(GetRotation, SE3Element_Returns3x3RotationMatrix)
 // {
