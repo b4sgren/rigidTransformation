@@ -87,6 +87,11 @@ public:
 
         return SE3(q, t);
     }
+
+    static SE3 Identity()
+    {
+        return SE3();
+    }
 private:
     F data_[7];
     Eigen::Map<Vec7F> arr_;
