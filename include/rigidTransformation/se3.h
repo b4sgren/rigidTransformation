@@ -96,6 +96,11 @@ public:
         return t() + q_.rota(v);
     }
 
+    Vec3F transp(const Eigen::Ref<const Vec3F> &v)
+    {
+        return inverse().transa(v);
+    }
+
     static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
     {
         Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));

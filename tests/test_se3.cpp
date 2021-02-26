@@ -222,6 +222,19 @@ TEST_F(SE3_Fixture, ActiveTransformation)
     }
 }
 
+TEST_F(SE3_Fixture, PassiveTransformation)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector3d vp(T.transp(v));
+        // Eigen::Vector3d vp_true(T.t() + T.quat().rota(v));
+        Eigen::Vector3d res(T.transa(vp));
+
+        EXPECT_TRUE(compareMat<3>(v, res));
+    }
+}
+
 // TEST(TransformAVector, SE3ElementAnd3Vector_ReturnActivelyTransformedVector)
 // {
 //     for(int i{0}; i != 100; ++i)
