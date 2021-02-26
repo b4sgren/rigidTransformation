@@ -30,7 +30,13 @@ public:
 
     SE3(const F* data) : arr_(const_cast<F*>(data)), q_(const_cast<F*>(data+3)) {}
 
+    SE3(const Eigen::Ref<const Vec7F> &T) : arr_(data_), q_(data_+3)
+    {
+        arr_ = T;
+    }
+
     Vec7F T() const { return arr_; }
+    Vec4F q() const { return q_.q(); }
 private:
     F data_[7];
     Eigen::Map<Vec7F> arr_;

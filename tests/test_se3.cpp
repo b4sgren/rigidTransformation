@@ -27,7 +27,8 @@ Eigen::Vector3d getRandomVector(double min, double max)
     return v;
 }
 
-bool compareMat(const Eigen::Ref<const Vector7d> &v1, const Eigen::Ref<const Vector7d> &v2)
+template<int n>
+bool compareMat(const Eigen::Ref<const Eigen::Matrix<double, n, 1>> &v1, const Eigen::Ref<const Eigen::Matrix<double, n, 1>> &v2)
 {
     return v1.isApprox(v2);
 }
@@ -50,7 +51,8 @@ TEST_F(SE3_Fixture, DefaultInitialization)
     SE3d T;
     Vector7d I(Vector7d::Zero());
     I(3) = 1.0;
-    EXPECT_TRUE(compareMat(I, T.T()));
+    EXPECT_TRUE(compareMat<7>(I, T.T()));
+    EXPECT_TRUE(compareMat<4>(I.tail<4>(), T.q()));
 }
 
 TEST_F(SE3_Fixture, PointerInitialization)
@@ -58,7 +60,18 @@ TEST_F(SE3_Fixture, PointerInitialization)
     double data[]{1,2,3,4,5,6,7};
     SE3d T(data);
     Eigen::Map<Vector7d> T_true(data);
-    EXPECT_TRUE(compareMat(T_true, T.T()));
+    EXPECT_TRUE(compareMat<7>(T_true, T.T()));
+    EXPECT_TRUE(compareMat<4>(T_true.tail<4>(), T.q()));
+}
+
+TEST_F(SE3_Fixture, InitializeFromVector)
+{
+    Vector7d T_true;
+    T_true << 1,2,3,4,5,6,7;
+
+    SE3d T(T_true);
+    EXPECT_TRUE(compareMat<7>(T_true, T.T()));
+    EXPECT_TRUE(compareMat<4>(T_true.tail<4>(), T.q()));
 }
 
 // TEST(Constructor, SE3Element_Returns4by4Matrix)
