@@ -85,6 +85,12 @@ public:
         return SE3(q_inv, t_inv);
     }
 
+    void inverse_()
+    {
+        q_.inverse_();
+        arr_.template head<3>() = -q_.rota(t());
+    }
+
     static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
     {
         Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));

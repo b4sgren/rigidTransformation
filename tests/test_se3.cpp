@@ -196,6 +196,20 @@ TEST_F(SE3_Fixture, Inverse)
     }
 }
 
+TEST_F(SE3_Fixture, InverseInPlace)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T_orig(T);
+        T.inverse_();
+        SE3d res(T * T_orig);
+        Vector7d I(Vector7d::Zero());
+        I(3) = 1.0;
+
+        EXPECT_TRUE(compareMat<7>(I, res.T()));
+    }
+}
+
 // TEST(Inverse, SE3Element_ReturnInverseElement)
 // {
 //     for(int i{0}; i != 100; ++i)
