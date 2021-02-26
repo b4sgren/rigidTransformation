@@ -74,6 +74,19 @@ public:
         Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));
         return SE3(q, t);
     }
+
+    static SE3 random()
+    {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<F> dist(-10, 10);
+
+        Quaternion<F> q(Quaternion<F>::random());
+        Vec3F t;
+        t << dist(gen), dist(gen), dist(gen);
+
+        return SE3(q, t);
+    }
 private:
     F data_[7];
     Eigen::Map<Vec7F> arr_;

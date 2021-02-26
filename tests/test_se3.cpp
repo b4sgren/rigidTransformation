@@ -156,6 +156,15 @@ TEST_F(SE3_Fixture, AssignmentOperator)
     EXPECT_TRUE(compareMat<7>(T.T(), T2.T()));
 }
 
+TEST_F(SE3_Fixture, RandomInitialization)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        SE3d T(SE3d::random());
+        EXPECT_FLOAT_EQ(1.0, T.q().norm());
+    }
+}
+
 // TEST(GetRotation, SE3Element_Returns3x3RotationMatrix)
 // {
 //     Eigen::Matrix4d T{Eigen::Matrix4d::Random()};
