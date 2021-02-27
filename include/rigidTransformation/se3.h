@@ -65,10 +65,11 @@ public:
         return (*this);
     }
 
-    SE3 operator*(const SE3& rhs)
+    SE3 operator*(const SE3& T2)
     {
-        Quaternion<F> q(quat() * rhs.quat());
-        Vec3F trans(t() + quat().rota(rhs.t()));
+        Quaternion<F> q(q_ * T2.q_);
+        Vec3F _t(2 * T2.t().cross(q_.qv()));
+        Vec3F trans(t() + q_.rota(T2.t()));
         return SE3(q,trans);
     }
 
@@ -126,6 +127,7 @@ public:
     }
 private:
     F data_[7];
+public:
     Eigen::Map<Vec7F> arr_;
     Quaternion<F> q_;
 };

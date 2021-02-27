@@ -131,7 +131,7 @@ public:
         T _qw = qw();
         Vec3T _qv = qv();
 
-        Vec3T t(2 * skew3<T>(v) * _qv);
+        Vec3T t(2 * skew3<T>(v) * _qv); // could use Eigen .cross instead of skew3
         return v - _qw*t + skew3<T>(t)*_qv;
     }
 

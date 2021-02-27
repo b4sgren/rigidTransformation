@@ -174,14 +174,54 @@ TEST_F(SE3_Fixture, GroupMultiplication)
         SE3d T2(SE3d::random());
         SE3d T3(T * T2);
 
-        Quatd q(T.q()), q2(T2.q());
-        Quatd q3(q * q2);
-        Eigen::Vector3d t3(T.t() + q.rota(T2.t()));
+        Eigen::Matrix4d TR, T2R, T3R;
+        TR << T.R().transpose(), T.t(), 0, 0, 0, 1;
+        T2R << T2.R().transpose(), T2.t(), 0, 0, 0, 1;
 
-        EXPECT_TRUE(compareMat<3>(t3, T3.t()));
-        EXPECT_TRUE(compareMat<4>(q3.q(), T3.q()));
+        T3R = TR * T2R;
+        SE3d T3_true(T3R.block<3,3>(0,0), T3R.block<3,1>(0,3));
+
+        // std::cout << "------------\n" << T3_true << "\n" << T3 << std::endl;
+
+        EXPECT_TRUE(compareMat<3>(T3_true.t(), T3.t()));
+        EXPECT_TRUE(compareMat<4>(T3_true.q(), T3.q()));
     }
 }
+
+// TEST_F(SE3_Fixture, OrderOfGroupMultiplication) // Check this
+// {
+//     for(int i{0}; i != 100; ++i)
+//     {
+//         double ang1{randomDouble(-rt::PI, rt::PI)}, ang2{randomDouble(-rt::PI, rt::PI)};
+//         Eigen::Vector3d v{0, 0, 1};
+//         Eigen::Vector3d t1(getRandomVector(-5, 5)), t2(getRandomVector(-5, 5));
+
+//         Eigen::Vector3d v1 = v * ang1;
+//         Quatd q_1_from_orig(Quatd::fromAxisAngle(v1));
+//         Eigen::Matrix3d R_1_from_origin(Eigen::AngleAxisd(ang1, Eigen::Vector3d::UnitZ()));
+//         SE3d Tq_1_from_orig(q_1_from_orig, t1);
+//         Eigen::Matrix4d TR_1_form_orig;
+//         TR_1_form_orig << R_1_from_origin, t1, 0, 0, 0, 1;
+
+//         Eigen::Vector3d v2 = v * ang2;
+//         Quatd q_2_from_1(Quatd::fromAxisAngle(v2));
+//         Eigen::Matrix3d R_2_from_1(Eigen::AngleAxisd(ang2, Eigen::Vector3d::UnitZ()));
+//         SE3d Tq_2_from_1(q_2_from_1, t2);
+//         Eigen::Matrix4d TR_2_from_1;
+//         TR_2_from_1 << R_2_from_1, t2, 0, 0, 0, 1;
+
+//         SE3d Tq_2_from_orig(Tq_1_from_orig * Tq_2_from_1);
+//         Eigen::Matrix4d TR_2_from_orig(TR_2_from_1 * TR_1_form_orig);
+
+//         Quatd qR(Quatd::fromR(TR_2_from_orig.block<3,3>(0,0)));
+
+//         std::cout << "----------------\n" << qR << "\n" << Tq_2_from_orig.q().transpose() << std::endl;
+//         std::cout << TR_2_from_orig.col(3).transpose() << "\n" << Tq_2_from_orig.t().transpose() << std::endl;
+
+//         EXPECT_TRUE(compareMat<4>(qR.q(), Tq_2_from_orig.q()));
+//         EXPECT_TRUE(compareMat<3>(TR_2_from_orig.block<3,1>(0,3), Tq_2_from_orig.t()));
+//     }
+// }
 
 TEST_F(SE3_Fixture, Inverse)
 {
@@ -234,6 +274,8 @@ TEST_F(SE3_Fixture, PassiveTransformation)
         EXPECT_TRUE(compareMat<3>(v, res));
     }
 }
+
+
 
 // TEST(TransformAVector, SE3ElementAnd3Vector_ReturnActivelyTransformedVector)
 // {
