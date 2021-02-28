@@ -128,6 +128,10 @@ public:
         return SE2::Log((*this) * T.inverse());
     }
 
+    F* data()
+    {
+        return arr_.data();
+    }
 
     static SE2 random()
     {

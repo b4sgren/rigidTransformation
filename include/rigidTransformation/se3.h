@@ -132,6 +132,11 @@ public:
         return adj;
     }
 
+    F* data()
+    {
+        return arr_.data();
+    }
+
     static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
     {
         Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));

@@ -125,6 +125,11 @@ public:
         return SO2::Log((*this) * R.inverse());
     }
 
+    T* data()
+    {
+        return arr_.data();
+    }
+
     static SO2 random()
     {
         T ang{randomScalar(T(-PI), T(PI))};

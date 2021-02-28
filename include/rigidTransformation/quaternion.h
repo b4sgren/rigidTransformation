@@ -160,6 +160,11 @@ public:
         return Quaternion::Log((*this) * q.inverse());
     }
 
+    T* data()
+    {
+        return arr_.data();
+    }
+
     static Quaternion fromAxisAngle(const Eigen::Ref<const Vec3T> &v)
     {
         return Quaternion::Exp(v);

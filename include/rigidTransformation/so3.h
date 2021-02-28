@@ -113,6 +113,11 @@ public:
         return SO3::Log((*this) * R2.inverse());
     }
 
+    T* data()
+    {
+        return arr_.data();
+    }
+
     static SO3 fromAxisAngle(const Eigen::Ref<const Vec3T> &v)
     {
         T theta = v.norm();
