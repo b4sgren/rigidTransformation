@@ -356,60 +356,18 @@ TEST_F(SE3_Fixture, Boxminusl)
     }
 }
 
-// TEST(BoxPlus, SE3ElementAnd6Vector_ReturnsSE3ElementWhenAdded)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)}, t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Matrix<double,6,1> xci;
-//         xci << t, w;
+TEST_F(SE3_Fixture, Adjoint)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d rho(getRandomVector(-10, 10));
+        Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
+        Eigen::Matrix<double, 6, 1> tau;
+        tau << rho, theta;
 
-//         SE3<double> T_res{T.boxplus(xci)};
-//         Eigen::Matrix4d T_true{T.T() * SE3<double>::hat(xci).exp()};
-//     }
-// }
+        SE3d T1(T.boxplusr(tau));
+        SE3d T2(T.boxplusl(T.Adj() * tau));
 
-// TEST(BoxMinus, ElementsOfSE3_6VectorRepresentingTheDifference)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T1{SE3<double>::random()}, T2{SE3<double>::random()};
-
-//         Eigen::Matrix<double,6,1>xci{T1.boxminus(T2)};
-
-//         SE3<double> T{T2.boxplus(xci)};
-
-//         if(!(T == T1))
-//         {
-//             std::cout << "T1:\n" << T1.T() << std::endl;
-//             std::cout << "T2:\n" << T.T() << std::endl;
-//         }
-
-//         EXPECT_TRUE(T == T1);
-//     }
-// }
-
-// TEST(Adjoint, ElementOfSE3And6Vector_MultipliedOnLeftEqualsMultipliedOnRight)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T1{SE3<double>::random()};
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)}, t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Matrix<double,6,1> xci;
-//         xci << t, w;
-
-//         SE3<double> T2{T1.boxplus(xci)};
-//         SE3<double> T3{SE3<double>::Exp(T1.Adj() * xci) * T1};
-
-//         EXPECT_TRUE(T2 == T3);
-//     }
-// }
-
-// TEST(Identity, AskedForIdentity_ReturnsIdentity)
-// {
-//     Eigen::Matrix4d I{Eigen::Matrix4d::Identity()};
-//     SE3<double> T{SE3<double>::Identity()};
-
-//     EXPECT_TRUE(I.isApprox(T.T()));
-// }
+        EXPECT_TRUE(compareMat<7>(T1.T(), T2.T()));
+    }
+}

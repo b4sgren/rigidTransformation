@@ -121,6 +121,17 @@ public:
         return SE3::Log((*this) * T.inverse());
     }
 
+    Eigen::Matrix<F,6,6> Adj() const
+    {
+        Mat3F rot = R().transpose();
+        Eigen::Matrix<F,6,6> adj;
+        adj.setZero();
+        adj.template block<3,3>(0,0) = rot;
+        adj.template block<3,3>(3,3) = rot;
+        adj.template block<3,3>(0,3) = skew3<F>(t()) * rot;
+        return adj;
+    }
+
     static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
     {
         Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));
