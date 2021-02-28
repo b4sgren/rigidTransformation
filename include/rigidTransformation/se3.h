@@ -146,6 +146,32 @@ public:
         return SE3(q, t);
     }
 
+    Vec6F Log() const
+    {
+        return SE3::Log(*this);
+    }
+
+    static Vec6F Log(const SE3 &T)
+    {
+        Vec3F logq(Quaternion<F>::Log(T.q_));
+        F theta(logq.norm());
+
+        Vec3F rho;
+        if(abs(theta) > 1e-8)
+        {
+            F A(sin(theta)/theta), B((1-cos(theta))/(theta*theta));
+            Mat3F thetax(skew3<F>(logq));
+            Mat3F V_inv(Mat3F::Identity() - 0.5*thetax + (1-A/(2*B))/(theta*theta)*thetax*thetax);
+            rho = V_inv * T.t();
+        }
+        else
+            rho = T.t();
+
+        Vec6F logT;
+        logT << rho, logq;
+        return logT;
+    }
+
 private:
     F data_[7];
 public:

@@ -289,6 +289,17 @@ TEST_F(SE3_Fixture, ExponentialMap)
     }
 }
 
+TEST_F(SE3_Fixture, LogarithmicMap)
+{
+    for(auto T : transforms_)
+    {
+        Eigen::Matrix<double,6,1> logT = T.Log();
+        SE3d res = SE3d::Exp(logT);
+
+        EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
+    }
+}
+
 // TEST(MatrixLogarithm, SE3Element_Returns4by4MatrixInLieAlgebra)
 // {
 //     for(int i{0}; i != 100; ++i)
