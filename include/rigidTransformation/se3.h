@@ -68,7 +68,6 @@ public:
     SE3 operator*(const SE3& T2)
     {
         Quaternion<F> q(q_ * T2.q_);
-        Vec3F _t(2 * T2.t().cross(q_.qv()));
         Vec3F trans(t() + q_.rota(T2.t()));
         return SE3(q,trans);
     }

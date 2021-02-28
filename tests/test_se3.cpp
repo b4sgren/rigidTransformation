@@ -7,6 +7,7 @@
 
 #include "se3.h"
 #include "quaternion.h"
+#include "so3.h"
 
 namespace rt = rigidTransform;
 using SE3d = rt::SE3<double>;
@@ -181,47 +182,37 @@ TEST_F(SE3_Fixture, GroupMultiplication)
         T3R = TR * T2R;
         SE3d T3_true(T3R.block<3,3>(0,0), T3R.block<3,1>(0,3));
 
-        // std::cout << "------------\n" << T3_true << "\n" << T3 << std::endl;
-
         EXPECT_TRUE(compareMat<3>(T3_true.t(), T3.t()));
         EXPECT_TRUE(compareMat<4>(T3_true.q(), T3.q()));
     }
 }
 
-// TEST_F(SE3_Fixture, OrderOfGroupMultiplication) // Check this
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang1{randomDouble(-rt::PI, rt::PI)}, ang2{randomDouble(-rt::PI, rt::PI)};
-//         Eigen::Vector3d v{0, 0, 1};
-//         Eigen::Vector3d t1(getRandomVector(-5, 5)), t2(getRandomVector(-5, 5));
+TEST_F(SE3_Fixture, OrderOfGroupMultiplication) // Check this. It passes but the order of quaternion multiplication isn't backwards...
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d t1(getRandomVector(-10, 10));
+        Eigen::Vector3d t2(getRandomVector(-10, 10));
+        Eigen::Vector3d vec(getRandomVector(-10, 10));
+        vec = vec/vec.norm();
+        double ang1(randomDouble(-rt::PI, rt::PI)), ang2(randomDouble(-rt::PI, rt::PI));
 
-//         Eigen::Vector3d v1 = v * ang1;
-//         Quatd q_1_from_orig(Quatd::fromAxisAngle(v1));
-//         Eigen::Matrix3d R_1_from_origin(Eigen::AngleAxisd(ang1, Eigen::Vector3d::UnitZ()));
-//         SE3d Tq_1_from_orig(q_1_from_orig, t1);
-//         Eigen::Matrix4d TR_1_form_orig;
-//         TR_1_form_orig << R_1_from_origin, t1, 0, 0, 0, 1;
+        SE3d T_1_from_orig(SE3d::fromAxisAngleAndt(vec*ang1, t1));
+        SE3d T_2_from_1(SE3d::fromAxisAngleAndt(vec*ang2, t2));
+        SE3d T_2_from_orig(T_2_from_1 * T_1_from_orig);
 
-//         Eigen::Vector3d v2 = v * ang2;
-//         Quatd q_2_from_1(Quatd::fromAxisAngle(v2));
-//         Eigen::Matrix3d R_2_from_1(Eigen::AngleAxisd(ang2, Eigen::Vector3d::UnitZ()));
-//         SE3d Tq_2_from_1(q_2_from_1, t2);
-//         Eigen::Matrix4d TR_2_from_1;
-//         TR_2_from_1 << R_2_from_1, t2, 0, 0, 0, 1;
+        Eigen::Matrix3d R_1_from_origin(rt::SO3<double>::fromAxisAngle(vec*ang1).R());
+        Eigen::Matrix3d R_2_from_1(rt::SO3<double>::fromAxisAngle(vec*ang2).R());
+        Eigen::Matrix4d TR_1_from_orig, TR_2_from_1;
+        TR_1_from_orig << R_1_from_origin, t1, 0, 0, 0, 1;
+        TR_2_from_1 << R_2_from_1, t2, 0, 0, 0, 1;
+        Eigen::Matrix4d TR_2_from_orig = TR_2_from_1 * TR_1_from_orig;
 
-//         SE3d Tq_2_from_orig(Tq_1_from_orig * Tq_2_from_1);
-//         Eigen::Matrix4d TR_2_from_orig(TR_2_from_1 * TR_1_form_orig);
-
-//         Quatd qR(Quatd::fromR(TR_2_from_orig.block<3,3>(0,0)));
-
-//         std::cout << "----------------\n" << qR << "\n" << Tq_2_from_orig.q().transpose() << std::endl;
-//         std::cout << TR_2_from_orig.col(3).transpose() << "\n" << Tq_2_from_orig.t().transpose() << std::endl;
-
-//         EXPECT_TRUE(compareMat<4>(qR.q(), Tq_2_from_orig.q()));
-//         EXPECT_TRUE(compareMat<3>(TR_2_from_orig.block<3,1>(0,3), Tq_2_from_orig.t()));
-//     }
-// }
+        SE3d res(TR_2_from_orig.block<3,3>(0,0), TR_2_from_orig.block<3,1>(0,3));
+        EXPECT_TRUE(compareMat<3>(res.t(), T_2_from_orig.t()));
+        EXPECT_TRUE(compareMat<4>(res.q(), T_2_from_orig.q()));
+    }
+}
 
 TEST_F(SE3_Fixture, Inverse)
 {
@@ -274,78 +265,6 @@ TEST_F(SE3_Fixture, PassiveTransformation)
         EXPECT_TRUE(compareMat<3>(v, res));
     }
 }
-
-
-
-// TEST(TransformAVector, SE3ElementAnd3Vector_ReturnActivelyTransformedVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector4d vec;
-//         vec << v, 1.0;
-
-//         Eigen::Vector3d res{T.transa(v)};
-//         Eigen::Vector3d res2{T * v};
-//         Eigen::Vector3d res_true((T.T() * vec).head<3>());
-
-//         EXPECT_TRUE(res_true.isApprox(res));
-//         EXPECT_TRUE(res_true.isApprox(res2));
-//     }
-// }
-
-// TEST(TransformAVector, SE3ElementAndHomogeneousVector_ReturnActivelyTransformedHomogeneousVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-
-//         Eigen::Vector4d vec;
-//         vec << v, 1.0;
-
-//         Eigen::Vector4d res{T.transa(vec)};
-//         Eigen::Vector4d res2{T*vec};
-//         Eigen::Vector4d res_true{T.T() * vec};
-
-//         EXPECT_TRUE(res_true.isApprox(res));
-//         EXPECT_TRUE(res_true.isApprox(res2));
-//     }
-// }
-
-// TEST(TransformAVector, SE3ElementAnd3Vector_ReturnPasivelyTransformedVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-//         Eigen::Vector4d vec;
-//         vec << v, 1.0;
-
-//         Eigen::Vector3d res{T.transp(v)};
-//         Eigen::Vector3d res_true((T.T().inverse() * vec).head<3>());
-
-//         EXPECT_TRUE(res_true.isApprox(res));
-//     }
-// }
-
-// TEST(TransformAVector, SE3ElementAndHomogeneousVector_ReturnPassivelyTransformedHomogeneousVector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-//         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-
-//         Eigen::Vector4d vec;
-//         vec << v, 1.0;
-
-//         Eigen::Vector4d res{T.transp(vec)};
-//         Eigen::Vector4d res_true{T.T().inverse() * vec};
-
-//         EXPECT_TRUE(res_true.isApprox(res));
-//     }
-// }
 
 // TEST(MatrixLogarithm, SE3Element_Returns4by4MatrixInLieAlgebra)
 // {
