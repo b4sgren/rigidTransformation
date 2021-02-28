@@ -124,6 +124,28 @@ public:
     {
         return SE3();
     }
+
+    static SE3 Exp(const Eigen::Ref<const Vec6F> &tau)
+    {
+        auto rho(tau.template head<3>());
+        auto theta(tau.template tail<3>());
+        F norm(theta.norm());
+
+        Quaternion<double> q(Quaternion<double>::Exp(theta));
+
+        Vec3F t;
+        if(abs(norm) > 1e-8)
+        {
+            Mat3F thetax(skew3<F>(theta));
+            Mat3F V = Mat3F::Identity() + (1 - cos(norm))/(norm*norm)*thetax + (norm - sin(norm))/pow(norm,3) * thetax*thetax;
+            t = V * rho;
+        }
+        else
+            t = rho;
+
+        return SE3(q, t);
+    }
+
 private:
     F data_[7];
 public:

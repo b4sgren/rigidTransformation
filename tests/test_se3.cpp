@@ -8,6 +8,7 @@
 #include "se3.h"
 #include "quaternion.h"
 #include "so3.h"
+#include "utils.h"
 
 namespace rt = rigidTransform;
 using SE3d = rt::SE3<double>;
@@ -263,6 +264,28 @@ TEST_F(SE3_Fixture, PassiveTransformation)
         Eigen::Vector3d res(T.transa(vp));
 
         EXPECT_TRUE(compareMat<3>(v, res));
+    }
+}
+
+TEST_F(SE3_Fixture, ExponentialMap)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d rho(getRandomVector(-10, 10));
+        Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
+        Eigen::Matrix<double, 6, 1> tau;
+        tau << rho, theta;
+
+        SE3d T = SE3d::Exp(tau);
+        Eigen::Matrix3d thetax = rt::skew3<double>(theta);
+        Eigen::Matrix4d logT;
+        logT << thetax, rho, 0, 0, 0, 0;
+        Eigen::Matrix4d TR_true = logT.exp();
+
+        SE3d T_true(TR_true.block<3,3>(0,0), TR_true.block<3,1>(0,3));
+
+        EXPECT_TRUE(compareMat<3>(T_true.t(), T.t()));
+        EXPECT_TRUE(compareMat<4>(T_true.q(), T.q()));
     }
 }
 
