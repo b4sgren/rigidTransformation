@@ -328,6 +328,34 @@ TEST_F(SE3_Fixture, Boxminusr)
     }
 }
 
+TEST_F(SE3_Fixture, Boxplusl)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d rho(getRandomVector(-10, 10));
+        Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
+        Eigen::Matrix<double, 6, 1> tau;
+        tau << rho, theta;
+
+        SE3d T2(T.boxplusl(tau));
+        SE3d T_true = SE3d::Exp(tau) * T;
+
+        EXPECT_TRUE(compareMat<7>(T_true.T(), T2.T()));
+    }
+}
+
+TEST_F(SE3_Fixture, Boxminusl)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T2(SE3d::random());
+        Eigen::Matrix<double, 6, 1> diff(T.boxminusl(T2));
+        SE3d res(T2.boxplusl(diff));
+
+        EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
+    }
+}
+
 // TEST(BoxPlus, SE3ElementAnd6Vector_ReturnsSE3ElementWhenAdded)
 // {
 //     for(int i{0}; i != 100; ++i)

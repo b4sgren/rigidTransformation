@@ -111,6 +111,16 @@ public:
         return SE3::Log(T.inverse() * (*this));
     }
 
+    SE3 boxplusl(const Eigen::Ref<const Vec6F> &tau)
+    {
+        return SE3::Exp(tau) * (*this);
+    }
+
+    Vec6F boxminusl(const SE3 &T)
+    {
+        return SE3::Log((*this) * T.inverse());
+    }
+
     static SE3 fromAxisAngleAndt(const Eigen::Ref<const Vec3F> &v, const Eigen::Ref<const Vec3F> &t)
     {
         Quaternion<F> q(Quaternion<F>::fromAxisAngle(v));
