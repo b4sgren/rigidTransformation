@@ -300,183 +300,33 @@ TEST_F(SE3_Fixture, LogarithmicMap)
     }
 }
 
-// TEST(MatrixLogarithm, SE3Element_Returns4by4MatrixInLieAlgebra)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
+TEST_F(SE3_Fixture, Boxplusr)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d rho(getRandomVector(-10, 10));
+        Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
+        Eigen::Matrix<double, 6, 1> tau;
+        tau << rho, theta;
 
-//         Eigen::Matrix4d log_T_true{T.T().log()};
-//         Eigen::Matrix4d log_T{T.log()};
-//         Eigen::Matrix4d log_T2{SE3<double>::log(T)};
-//         Eigen::Matrix4d log_T3{SE3<double>::log(T.T())}; //Can call on not elements of the class
+        SE3d T2(T.boxplusr(tau));
+        SE3d T_true = T * SE3d::Exp(tau);
 
-//         double norm{(log_T_true - log_T).norm()};
-//         if(norm > 1e-8)
-//         {
-//             std::cout << "\n\n" << log_T_true << std::endl;
-//             std::cout << log_T << std::endl;
-//             std::cout << norm << std::endl;
-//         }
+        EXPECT_TRUE(compareMat<7>(T_true.T(), T2.T()));
+    }
+}
 
-//         EXPECT_TRUE(log_T2.isApprox(log_T));
-//         EXPECT_TRUE(log_T3.isApprox(log_T2));
-//         EXPECT_LE(norm, 1e-8);
-//     }
-// }
+TEST_F(SE3_Fixture, Boxminusr)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T2(SE3d::random());
+        Eigen::Matrix<double, 6, 1> diff(T.boxminusr(T2));
+        SE3d res(T2.boxplusr(diff));
 
-// TEST(MatrixLogarithm, SE3Element_ReturnsMatInLieAlgebraUsingTaylorSeriesAbout0)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(0.0, 1e-6)};
-//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-//         vec  = vec / vec.norm() * ang;
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         SE3<double> T{SE3<double>::fromAxisAngleAndVector(vec, t)};
-
-//         Eigen::Matrix4d log_T_true{T.T().log()};
-//         Eigen::Matrix4d log_T{T.log()};
-
-//         double norm{(log_T_true - log_T).norm()};
-
-//         if(norm > 1e-6 || std::isnan(norm))
-//         {
-//             std::cout << "\n\n" << log_T_true << std::endl;
-//             std::cout << log_T << std::endl;
-//             std::cout << norm << std::endl;
-//             Eigen::Matrix4d temp{T.log()};
-//         }
-
-//         EXPECT_LE(norm, 1e-6);
-//     }
-// }
-
-// TEST(MatrixLogarithm, DISABLED_SE3Element_ReturnsMatInLieAlgebraUsingTaylorSeriesAboutPI)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{PI - getRandomDouble(0.0, 1e-6)};
-//         Eigen::Vector3d vec{getRandomVector(-10.0, 10.0)};
-//         vec  = vec / vec.norm() * ang;
-//         Eigen::Vector3d t{getRandomVector(-10.0, 10.0)};
-
-//         SE3<double> T{SE3<double>::fromAxisAngleAndVector(vec, t)};
-
-//         Eigen::Matrix4d log_T_true{T.T().log()};
-//         Eigen::Matrix4d log_T{T.log()};
-
-//         double norm{(log_T_true - log_T).norm()};
-
-//         if(norm > 1e-8)
-//         {
-//             std::cout << "\n\n" << log_T_true << std::endl;
-//             std::cout << log_T << std::endl;
-//             std::cout << norm << std::endl;
-//         }
-
-//         EXPECT_LE(norm, 1e-8); //Haven't worked this out in python either
-//     }
-// }
-
-// TEST(MatrixExponential, ElementOfSE3LieAlgebra_ReturnSE3Element)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)}, t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Matrix4d logT;
-//         logT << skew3(w), t, Eigen::RowVector4d::Zero();
-
-//         Eigen::Matrix4d T_true{logT.exp()};
-//         SE3<double> T{SE3<double>::exp(logT)};
-
-//         EXPECT_TRUE(T_true.isApprox(T.T()));
-//     }
-// }
-
-// TEST(MatrixExponential, ElementOfSE3LieAlgebra_ReturnsSE3ElementUsingTaylorSeriesAobut0)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang{getRandomDouble(0.0, 1e-6)};
-//         Eigen::Vector3d w{getRandomVector(-10.0, 10.0)}, t{getRandomVector(-10.0, 10.0)};
-//         w = w / w.norm() * ang;
-
-//         Eigen::Matrix4d logT;
-//         logT << skew3(w), t, Eigen::RowVector4d::Zero();
-
-//         Eigen::Matrix4d T_true{logT.exp()};
-//         SE3<double> T{SE3<double>::exp(logT)};
-
-//         EXPECT_TRUE(T_true.isApprox(T.T()));
-//     }
-// }
-
-// TEST(HatOperator, SixVector_Returns4x4MatrixOfLieAlgebra)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)}, u{getRandomVector(-10.0, 10.0)};
-//         Eigen::Matrix<double, 6, 1> xci;
-//         xci << u, w;
-
-//         Eigen::Matrix4d logT{SE3<double>::hat(xci)};
-//         Eigen::Matrix4d log_T_true;
-//         log_T_true << 0, -w(2), w(1), u(0), w(2), 0, -w(0), u(1), -w(1), w(0), 0, u(2), 0, 0, 0, 0;
-
-//         EXPECT_TRUE(log_T_true.isApprox(logT));
-//     }
-// }
-
-// TEST(VeeOperator, 4x4Matrix_Returns6Vector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)}, u{getRandomVector(-10.0, 10.0)};
-//         Eigen::Matrix<double,6,1> xci_true;
-//         xci_true << u, w;
-
-//         Eigen::Matrix4d logT{SE3<double>::hat(xci_true)};
-//         Eigen::Matrix<double,6,1> xci{SE3<double>::vee(logT)};
-
-//         EXPECT_TRUE(xci_true.isApprox(xci));
-//     }
-// }
-
-// TEST(MatrixLogarithm, ElementOfSE3_ReturnsA6Vector)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         SE3<double> T{SE3<double>::random()};
-
-//         Eigen::Matrix<double,6,1> xci{T.Log()}, xci_true; //Same 3 calls as other log method
-//         Eigen::Matrix4d logT{T.T().log()};
-
-//         xci_true << logT.block<3,1>(0,3), logT(2,1), logT(0,2), logT(1,0);
-
-//         double norm{(xci_true - xci).norm()};
-
-//         EXPECT_LT(norm, 1e-8);
-//     }
-// }
-
-// TEST(MatrixExponential, 6Vector_ReturnElementOfSE3)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d w{getRandomVector(-PI, PI)}, t{getRandomVector(-10.0, 10.0)};
-//         Eigen::Matrix<double,6,1> xci;
-//         xci << t, w;
-//         Eigen::Matrix4d logT;
-//         logT << 0, -w(2), w(1), t(0), w(2), 0, -w(0), t(1), -w(1), w(0), 0, t(2), 0, 0, 0, 0;
-
-//         Eigen::Matrix4d T_true{logT.exp()};
-//         SE3<double> T{SE3<double>::Exp(xci)};
-
-//         EXPECT_TRUE(T_true.isApprox(T.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
+    }
+}
 
 // TEST(BoxPlus, SE3ElementAnd6Vector_ReturnsSE3ElementWhenAdded)
 // {
