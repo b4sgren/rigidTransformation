@@ -298,3 +298,12 @@ TEST_F(SO2_Fixture, LeftBoxMinus)
         EXPECT_TRUE(R.R().isApprox(R3.R(), 1e-8));
     }
 }
+
+TEST_F(SO2_Fixture, RecoverTheta) {
+    for (auto R : transforms_) {
+        double theta = R.theta();
+        rt::SO2<double> R2 {rt::SO2<double>(theta)};
+
+        EXPECT_TRUE(R.R().isApprox(R2.R()));
+    }
+}

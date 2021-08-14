@@ -65,6 +65,8 @@ public:
 
     Mat2T R() const { return arr_; }
 
+    T theta() const { return SO2::Log(*this); }
+
     T det() const
     {
         return arr_.determinant();

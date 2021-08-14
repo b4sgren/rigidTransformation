@@ -99,6 +99,23 @@ public:
         return R;
     }
 
+    Vec3T euler() const {
+        T t0 = 2 * (qw()*qx() + qy()*qz());
+        T t1 = 1 - 2 * (qx()*qx() + qy()*qy());
+        T phi = atan2(t0, t1);
+
+        T t2 = 2 * (qw()*qy() - qz()*qx());
+        int sign_t2 = (t2 > 0) ? 1 : ((t2 < 0) ? -1 : 0);
+        t2 = abs(t2) > 1.0 ? sign_t2 : t2;
+        T theta = asin(t2);
+
+        T t3 = 2 * (qw()*qz() + qx()*qy());
+        T t4 = 1 - 2 * (qy()*qy() + qz()*qz());
+        T psi = atan2(t3, t4);
+
+        return (Vec3T() << phi, theta, psi).finished();
+    }
+
     Mat3T Adj() const
     {
         return R().transpose();

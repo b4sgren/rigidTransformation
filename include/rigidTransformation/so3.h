@@ -50,6 +50,26 @@ public:
 
     Mat3T R() const { return arr_; }
 
+    Vec3T euler() const {
+        Mat3T R1 = R();
+        T phi, theta, psi;
+        if (1 - abs(R1(2, 0)) > 1e-8) {
+            phi = atan2(R1(2, 1), R1(2, 2));
+            theta = asin(-R1(2, 0));
+            psi = atan2(R1(1, 0), R1(0, 0));
+        } else {
+            phi = 0.0;
+            if (R1(2, 0) > 0.0) {
+                theta = PI/2.0;
+                psi = -atan2(-R1(1, 2), R1(1, 1));
+            } else {
+                theta = -PI/2.0;
+                psi = atan2(-R1(1, 2), R1(1, 1));
+            }
+        }
+        return (Vec3T() << phi, theta, psi).finished();
+    }
+
     Mat3T Adj() const { return arr_; }
 
     SO3& operator=(const SO3& rhs)

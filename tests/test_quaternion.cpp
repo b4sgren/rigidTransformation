@@ -334,3 +334,12 @@ TEST_F(Quat_Fixture, Adjoint)
         EXPECT_TRUE(q2.q().isApprox(q3.q()));
     }
 }
+
+TEST_F(Quat_Fixture, Euler) {
+    for (Quatd q : transforms_) {
+        Eigen::Vector3d rpy = q.euler();
+        Quatd q2 = Quatd(rpy(0), rpy(1), rpy(2));
+
+        EXPECT_TRUE(q.q().isApprox(q2.q()));
+    }
+}

@@ -77,6 +77,10 @@ public:
     Vec4F q() const { return q_.q(); }
     Quaternion<F> quat() const { return q_; } // better name for this
     Vec3F t() const { return arr_.template head<3>(); }
+    F x() const { return arr_(0); }
+    F y() const { return arr_(1); }
+    F z() const { return arr_(2); }
+    Vec3F euler() const { return q_.euler(); }
 
     SE3 inverse() const
     {

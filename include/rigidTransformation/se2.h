@@ -73,6 +73,10 @@ public:
 
     Vec2F t() const { return arr_.template block<2,1>(0,2); }
 
+    F theta() const { return SE2::Log(*this)(2); }
+    F x() const { return arr_(0, 2); }
+    F y() const { return arr_(1, 2); }
+
     Mat3F Adj() const
     {
         Mat2F J;

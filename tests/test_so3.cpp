@@ -288,6 +288,15 @@ TEST_F(SO3_Fixture, Boxminusl)
     }
 }
 
+TEST_F(SO3_Fixture, Euler) {
+    for (auto R : transforms_) {
+        Eigen::Vector3d rpy = R.euler();
+        rt::SO3<double> R2 = rt::SO3<double>(rpy(0), rpy(1), rpy(2));
+
+        EXPECT_TRUE(R.R().isApprox(R2.R()));
+    }
+}
+
 // TEST(Normalize, GivenSO3ElementWithDetNotEq1_NormalizeElement)
 // {
 //     SO3<double> R1{SO3<double>::random()}, R2{SO3<double>::random()};
