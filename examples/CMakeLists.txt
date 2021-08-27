@@ -6,3 +6,6 @@ target_link_libraries(so2_example ${PROJECT_NAME} ${CERES_LIBRARIES})
 
 add_executable(so3_example so3_example.cpp)
 target_link_libraries(so3_example ${PROJECT_NAME} ${CERES_LIBRARIES})
+
+add_executable(quaternion_example quaternion_example.cpp)
+target_link_libraries(quaternion_example ${PROJECT_NAME} ${CERES_LIBRARIES})
