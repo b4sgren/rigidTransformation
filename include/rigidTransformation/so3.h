@@ -72,13 +72,15 @@ class SO3 {
         return (*this);
     }
 
-    SO3 operator*(const SO3 &rhs) {
+    template <typename T2>
+    SO3 operator*(const SO3<T2> &rhs) {
         SO3 temp;
         temp.arr_ = R() * rhs.R();
         return temp;
     }
 
-    SO3& operator*=(const SO3 &rhs) {
+    template <typename T2>
+    SO3& operator*=(const SO3<T2> &rhs) {
         (*this) = (*this) * rhs;
         return (*this);
     }
@@ -105,7 +107,8 @@ class SO3 {
         return (*this) * SO3::Exp(v);
     }
 
-    Vec3T boxminusr(const SO3 &R2) {
+    template <typename T2>
+    Vec3T boxminusr(const SO3<T2> &R2) {
         return SO3::Log(R2.inverse() * (*this));
     }
 
@@ -113,7 +116,8 @@ class SO3 {
         return SO3::Exp(v) * (*this);
     }
 
-    Vec3T boxminusl(const SO3 &R2) {
+    template <typename T2>
+    Vec3T boxminusl(const SO3<T2> &R2) {
         return SO3::Log((*this) * R2.inverse());
     }
 
@@ -162,15 +166,15 @@ class SO3 {
     }
 
     static Vec3T Log(const SO3& R) {
-        T theta = acos((R.R().trace() - 1)/2.0);
+        T theta = acos((R.R().trace() - T(1))/2.0);
         Mat3T logR{Mat3T::Zero()};
         if (abs(theta) < 1e-8) {
-            logR = 0.5 * (R.R() - R.R().transpose());
+            logR = T(0.5) * (R.R() - R.R().transpose());
         } else if (abs(abs(theta) - PI) < 1e-8) {
             // Find a way to simplify this
             // Do angle Pi - theta around the negative axis??
         } else {
-            logR = theta / (2 * sin(theta)) * (R.R() - R.R().transpose());
+            logR = theta / (T(2) * sin(theta)) * (R.R() - R.R().transpose());
         }
 
         return SO3::vee(logR);
@@ -182,7 +186,7 @@ class SO3 {
         Mat3T R{Mat3T::Identity()};
         if (abs(theta) > 1e-8) {
             R = Mat3T::Identity() + sin(theta)/theta * logRx +
-                (1 - cos(theta))/pow(theta, 2) * logRx * logRx;
+                (T(1) - cos(theta))/pow(theta, 2) * logRx * logRx;
         }
         return SO3(R);
     }
