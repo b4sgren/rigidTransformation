@@ -187,6 +187,8 @@ class SO3 {
         if (abs(theta) > 1e-8) {
             R = Mat3T::Identity() + sin(theta)/theta * logRx +
                 (T(1) - cos(theta))/pow(theta, 2) * logRx * logRx;
+        } else {
+            R = R + logRx;
         }
         return SO3(R);
     }
