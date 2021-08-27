@@ -5,7 +5,6 @@ bunch of rotation matrices in the plane
 #include "so3.h"
 #include "utils.h"
 #include <eigen3/Eigen/Dense>
-#include <eigen3/unsupported/Eigen/MatrixFunctions>
 
 #include <ceres/ceres.h>
 #include <random>
@@ -13,7 +12,6 @@ bunch of rotation matrices in the plane
 #include <iostream>
 
 namespace rt = rigidTransform;
-// Issue with jacobians??
 
 class RotationResidual {
 
