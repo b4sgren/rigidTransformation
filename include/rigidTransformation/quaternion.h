@@ -22,14 +22,14 @@ class Quaternion {
     }
 
     explicit Quaternion(const T* data) : arr_(const_cast<T*>(data)) {
-        if (arr_(0) < 0)
-            arr_ *= -1;
+        if (arr_(0) < T(0))
+            arr_ *= T(-1);
     }
 
     explicit Quaternion(const Eigen::Ref<const Vec4T> &q) : arr_(data_) {
         arr_ = q;
-        if (arr_(0) < 0)
-            arr_ *= -1;
+        if (arr_(0) < T(0))
+            arr_ *= T(-1);
     }
 
     Quaternion(const T& phi, const T& theta, const T& psi) : arr_(data_) {
@@ -44,7 +44,7 @@ class Quaternion {
         q(3) = sps * ct * cp - cps * st * sp;
 
         if (q(0) < T(0.0))
-            q *= -1;
+            q *= T(-1);
 
         arr_ = q;
     }
@@ -52,8 +52,8 @@ class Quaternion {
 
     Quaternion(const Quaternion &q) : arr_(data_) {
         arr_ = q.q();
-        if (arr_(0) < 0)
-            arr_ *= -1;
+        if (arr_(0) < T(0))
+            arr_ *= T(-1);
     }
 
     Quaternion& operator=(const Quaternion &rhs) {
@@ -61,7 +61,8 @@ class Quaternion {
         return (*this);
     }
 
-    Quaternion operator*(const Quaternion &rhs) {
+    template <typename T2>
+    Quaternion operator*(const Quaternion<T2> &rhs) {
         Eigen::Matrix<T, 4, 4> Q;
         Q(0, 0) = qw();
         Q.template block<1, 3>(0, 1) = -qv().transpose();
@@ -71,7 +72,7 @@ class Quaternion {
         Vec4T qp = Q * rhs.q();
 
         if (qp(0) < T(0))
-            qp *= -1;
+            qp *= T(-1);
 
         return Quaternion(qp);
     }
@@ -218,16 +219,16 @@ class Quaternion {
         Vec3T vec{v/theta};
         Vec4T q{Vec4T::Zero()};
         if (abs(theta) > 1e-4) {
-            q(0) = cos(theta/2);
-            q.template tail<3>() = vec * sin(theta/2);
+            q(0) = cos(theta/T(2.0));
+            q.template tail<3>() = vec * sin(theta/T(2.0));
         } else {
-            q(0) = 1.0;
-            q.template tail<3>() = v/2.0;
+            q(0) = T(1.0);
+            q.template tail<3>() = v/T(2.0);
             q = q/q.norm();
         }
 
-        if (q(0) < 0)
-            q *= -1;
+        if (q(0) < T(0))
+            q *= T(-1);
 
         return Quaternion(q);
     }
@@ -242,10 +243,10 @@ class Quaternion {
         T theta{_qv.norm()};
 
         Vec3T logq;
-        if (abs(theta) > 1e-8)
-            logq = 2 * atan(theta/_qw) * _qv/theta;
+        if (abs(theta) > T(1e-8))
+            logq = T(2) * atan(theta/_qw) * _qv/theta;
         else
-            logq = 2 * _qv/_qw;
+            logq = T(2) * _qv/_qw;
         return logq;
     }
 
