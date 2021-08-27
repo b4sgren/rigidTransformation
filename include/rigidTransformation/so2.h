@@ -39,13 +39,16 @@ class SO2 {
         return *this;
     }
 
-    SO2 operator*(const SO2 &rhs) const {
+    // What type to return??
+    template <typename T2>
+    SO2 operator*(const SO2<T2> &rhs) const {
         SO2 temp;
         temp.arr_ = R() * rhs.R();
         return temp;
     }
 
-    SO2& operator*=(const SO2 &rhs) {
+    template <typename T2>
+    SO2& operator*=(const SO2<T2> &rhs) {
         (*this) = (*this) * rhs;
         return (*this);
     }
@@ -89,21 +92,23 @@ class SO2 {
         return 1.0;
     }
 
-    // should I add an inplace operation of this?
-    SO2 boxplusr(T ang) const {
+    template <typename T2>
+    SO2 boxplusr(const T2 &ang) const {
         return (*this) * SO2::Exp(ang);
     }
 
-    T boxminusr(const SO2 &R) const {
+    template <typename T2>
+    T boxminusr(const SO2<T2> &R) const {
         return SO2::Log(R.inverse() * (*this));
     }
 
-    // should I add an inplace operation of this?
-    SO2 boxplusl(T ang) const {
+    template <typename T2>
+    SO2 boxplusl(const T2 &ang) const {
         return SO2::Exp(ang) * (*this);
     }
 
-    T boxminusl(const SO2 &R) const {
+    template <typename T2>
+    T boxminusl(const SO2<T2> &R) const {
         return SO2::Log((*this) * R.inverse());
     }
 
@@ -124,7 +129,7 @@ class SO2 {
         return atan2(R(1, 0), R(0, 0));
     }
 
-    static SO2 Exp(T ang) {
+    static SO2 Exp(const T &ang) {
         return SO2(ang);
     }
 
