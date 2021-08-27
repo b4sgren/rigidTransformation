@@ -22,7 +22,6 @@ class RotationResidual {
     bool operator() (const T* const r, T* residuals) const {
         rt::SO2<T> R(r);
         *residuals = info_ * rt::SO2<T>::Log(R.inverse() * R_);
-        // *residuals = info_ * R.boxminusr(R_); // Works with boxminusl but not boxminusr
         return true;
     }
 
