@@ -14,12 +14,12 @@ routine using Ceres
 namespace rt = rigidTransform;
 
 struct EdgeData {
-  EdgeData(const rt::SE2<double> &T, const Eigen::Matrix3d &cov,
-           size_t from_id, size_t to_id) : T_(T), cov_(cov),
+  EdgeData(const rt::SE2<double> &T, const Eigen::Matrix3d &I,
+           size_t from_id, size_t to_id) : T_(T), info_(I),
                                            from_id_{from_id}, to_id_{to_id} {}
 
   rt::SE2<double> T_;
-  Eigen::Matrix3d cov_;
+  Eigen::Matrix3d info_;
   size_t from_id_;
   size_t to_id_;
 };
@@ -39,6 +39,7 @@ class EdgeResidual {
   rt::SE2<double> dT_;
   Eigen::Matrix3d Xi_;
 };
+using EdgeCost = ceres::AutoDiffCostFunction<EdgeResidual, 3, 9, 9>;
 
 class SE2_Parameterization {
  public:
@@ -84,8 +85,23 @@ int main(int argc, char *argv[]) {
   ceres::Problem problem;
 
   for (EdgeData e : edges) {
+    ceres::CostFunction *cost = new EdgeCost(new EdgeResidual(e.T_, e.info_));
+    problem.AddResidualBlock(cost, nullptr, poses[e.from_id_].data(),
+                             poses[e.to_id_].data());
+  }
+
+  ceres::LocalParameterization *param = new
+    ceres::AutoDiffLocalParameterization<SE2_Parameterization, 9, 3>();
+  for (size_t i{0}; i != poses.size(); ++i) {
+    problem.SetParameterization(poses[i].data(), param);
   }
 
   // Solve the problem
+  ceres::Solver::Options options;
+  options.minimizer_progress_to_stdout = true;
+  ceres::Solver::Summary summary;
+  ceres::Solve(options, &problem, &summary);
+  std::cout << summary.FullReport() << std::endl;
+
   return 0;
 }
