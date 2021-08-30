@@ -24,6 +24,30 @@ struct EdgeData {
   size_t to_id_;
 };
 
+class EdgeResidual {
+ public:
+  EdgeResidual(const rt::SE2<double> &T, const Eigen::Matrix3d &info) : dT_(T) {
+    Xi_ = info.llt().matrixU();
+  }
+
+  template <typename T>
+  bool operator() (const T* const T1, const T* const T2, T* residuals) const {
+    return true;
+  }
+
+ private:
+  rt::SE2<double> dT_;
+  Eigen::Matrix3d Xi_;
+};
+
+class SE2_Parameterization {
+ public:
+  template <typename T>
+  bool operator() (const T* P, const T* delta, T* T_plus_delta) const {
+    return true;
+  }
+};
+
 void readData(const std::string &filename, std::vector<rt::SE2<double>> &poses,
               std::vector<EdgeData> &edges) {
   std::ifstream fin{filename};
@@ -55,7 +79,13 @@ int main(int argc, char *argv[]) {
   std::vector<rt::SE2<double>> poses{};
   std::vector<EdgeData> edges{};
   readData(filename, poses, edges);
+
   // Setup the Problem
+  ceres::Problem problem;
+
+  for (EdgeData e : edges) {
+  }
+
   // Solve the problem
   return 0;
 }
