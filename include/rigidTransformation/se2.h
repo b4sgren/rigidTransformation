@@ -28,7 +28,7 @@ class SE2 {
 
     SE2(const Eigen::Ref<const Vec2F> &t, const F& theta) : arr_(data_) {
         F ct{cos(theta)}, st{sin(theta)};
-        arr_ << ct, -st, t(0), st, ct, t(1), 0, 0, 1;
+        arr_ << ct, -st, t(0), st, ct, t(1), F(0), F(0), F(1);
     }
 
     SE2(const F& x, const F& y, const F& theta) : arr_(data_) {
