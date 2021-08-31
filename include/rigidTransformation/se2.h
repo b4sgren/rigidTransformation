@@ -58,7 +58,8 @@ class SE2 {
         return (*this);
     }
 
-    SE2 operator*(const SE2& rhs) {
+    template <typename T2>
+    SE2 operator*(const SE2<T2>& rhs) {
         return SE2(T() * rhs.T());
     }
 
@@ -146,14 +147,14 @@ class SE2 {
         Vec2F t(T.t());
 
         F A, B;
-        if (abs(theta) > 1e-8) {
+        if (abs(theta) > F(1e-8)) {
             A = sin(theta)/theta;
-            B = (1 - cos(theta))/theta;
+            B = (F(1.0) - cos(theta))/theta;
         } else {
             A = F(1.0);
-            B = F(theta/2.0);
+            B = theta/F(2.0);
         }
-        F normalizer{1.0/(A*A + B*B)};
+        F normalizer{F(1.0)/(A*A + B*B)};
         Mat2F temp_arr;
         temp_arr << A, B, -B, A;
         Mat2F V_inv = temp_arr * normalizer;
@@ -168,12 +169,12 @@ class SE2 {
         Vec2F rho(logT.template head<2>());
 
         F A, B;
-        if (abs(theta) > 1e-8) {
+        if (abs(theta) > F(1e-8)) {
             A = sin(theta)/theta;
-            B = (1 - cos(theta))/theta;
+            B = (F(1) - cos(theta))/theta;
         } else {
             A = F(1.0);
-            B = F(theta/2.0);
+            B = theta/F(2.0);
         }
         Mat2F V;
         V << A, -B, B, A;

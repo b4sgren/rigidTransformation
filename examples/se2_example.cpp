@@ -32,6 +32,12 @@ class EdgeResidual {
 
   template <typename T>
   bool operator() (const T* const T1, const T* const T2, T* residuals) const {
+    rt::SE2<T> T1_(T1), T2_(T2);
+    Eigen::Map<Eigen::Matrix<T, 3, 1>> res(residuals);
+
+    rt::SE2<T> dT = T1_.inverse() * T2_;
+    res = Xi_ * rt::SE2<T>::Log(dT.inverse() * dT_);
+
     return true;
   }
 
@@ -45,6 +51,9 @@ class SE2_Parameterization {
  public:
   template <typename T>
   bool operator() (const T* P, const T* delta, T* T_plus_delta) const {
+    rt::SE2<T> T_(P), Tpd(T_plus_delta);
+    Eigen::Map<Eigen::Matrix<T, 3, 1>> xi(delta);
+    Tpd = T_.boxplusr(xi);
     return true;
   }
 };
@@ -60,10 +69,14 @@ void readData(const std::string &filename, std::vector<rt::SE2<double>> &poses,
   double cxx, cxy, cxt, cyy, cyt, ctt;
 
   while (fin >> line_id) {
+    std::cout << "Here\t" << line_id << std::endl;
     if (line_id[0] == 'V') {
+      std::cout << "Hey" << std::endl;
       fin >> from_id >> dx >> dy >> dtheta;
+      std::cout << "Hey2" << std::endl;
       poses.emplace_back(dx, dy, dtheta);
     } else {
+      std::cout << "Hey" << std::endl;
       fin >> from_id >> to_id >> dx >> dy >> dtheta >> cxx >> cxy >> cxt >> cyy
           >> cyt >> ctt;
       rt::SE2<double> edge{dx, dy, dtheta};
@@ -81,6 +94,8 @@ int main(int argc, char *argv[]) {
   std::vector<EdgeData> edges{};
   readData(filename, poses, edges);
 
+  std::cout << poses.size() << "\t" << edges.size();
+
   // Setup the Problem
   ceres::Problem problem;
 
@@ -90,18 +105,18 @@ int main(int argc, char *argv[]) {
                              poses[e.to_id_].data());
   }
 
-  ceres::LocalParameterization *param = new
-    ceres::AutoDiffLocalParameterization<SE2_Parameterization, 9, 3>();
-  for (size_t i{0}; i != poses.size(); ++i) {
-    problem.SetParameterization(poses[i].data(), param);
-  }
+//   ceres::LocalParameterization *param = new
+//     ceres::AutoDiffLocalParameterization<SE2_Parameterization, 9, 3>();
+//   for (size_t i{0}; i != poses.size(); ++i) {
+//     problem.SetParameterization(poses[i].data(), param);
+//   }
 
-  // Solve the problem
-  ceres::Solver::Options options;
-  options.minimizer_progress_to_stdout = true;
-  ceres::Solver::Summary summary;
-  ceres::Solve(options, &problem, &summary);
-  std::cout << summary.FullReport() << std::endl;
+//   // Solve the problem
+//   ceres::Solver::Options options;
+//   options.minimizer_progress_to_stdout = true;
+//   ceres::Solver::Summary summary;
+//   ceres::Solve(options, &problem, &summary);
+//   std::cout << summary.FullReport() << std::endl;
 
   return 0;
 }
