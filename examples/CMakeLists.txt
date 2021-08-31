@@ -13,3 +13,6 @@ target_link_libraries(quaternion_example ${PROJECT_NAME} ${CERES_LIBRARIES})
 add_executable(se2_example se2_example.cpp)
 target_link_libraries(se2_example ${PROJECT_NAME} ${CERES_LIBRARIES})
 
+add_executable(se3_example se3_example.cpp)
+target_link_libraries(se3_example ${PROJECT_NAME} ${CERES_LIBRARIES})
+

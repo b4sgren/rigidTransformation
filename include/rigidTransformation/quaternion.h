@@ -135,7 +135,7 @@ class Quaternion {
         T _qw = qw();
         Vec3T _qv = qv();
 
-        Vec3T t(2 * skew3<T>(v) * _qv);
+        Vec3T t(T(2) * skew3<T>(v) * _qv);
         return v - _qw*t + skew3<T>(t)*_qv;
     }
 

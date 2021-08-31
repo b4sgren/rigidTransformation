@@ -24,7 +24,7 @@ class SE3 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     SE3() : arr_(data_), q_(data_+3) {
         arr_.setZero();
-        arr_(3) = 1.0;
+        arr_(3) = F(1.0);
     }
 
     explicit SE3(const F* data) : arr_(const_cast<F*>(data)),
@@ -61,7 +61,8 @@ class SE3 {
         return (*this);
     }
 
-    SE3 operator*(const SE3& T2) {
+    template <typename F2>
+    SE3 operator*(const SE3<F2>& T2) {
         Quaternion<F> q(q_ * T2.q_);
         Vec3F trans(t() + q_.rota(T2.t()));
         return SE3(q, trans);
@@ -153,13 +154,13 @@ class SE3 {
         auto theta(tau.template tail<3>());
         F norm(theta.norm());
 
-        Quaternion<double> q(Quaternion<double>::Exp(theta));
+        Quaternion<F> q(Quaternion<F>::Exp(theta));
 
         Vec3F t;
-        if (abs(norm) > 1e-8) {
+        if (abs(norm) > F(1e-8)) {
             Mat3F thetax(skew3<F>(theta));
-            Mat3F V = Mat3F::Identity() + (1 - cos(norm))/(norm*norm)*thetax +
-                (norm - sin(norm))/pow(norm, 3) * thetax*thetax;
+            Mat3F V = Mat3F::Identity() + (F(1) - cos(norm))/(norm*norm)*thetax
+                + (norm - sin(norm))/pow(norm, 3) * thetax*thetax;
             t = V * rho;
         } else {
             t = rho;
@@ -177,11 +178,11 @@ class SE3 {
         F theta(logq.norm());
 
         Vec3F rho;
-        if (abs(theta) > 1e-8) {
-            F A(sin(theta)/theta), B((1-cos(theta))/(theta*theta));
+        if (abs(theta) > F(1e-8)) {
+            F A(sin(theta)/theta), B((F(1)-cos(theta))/(theta*theta));
             Mat3F thetax(skew3<F>(logq));
-            Mat3F V_inv(Mat3F::Identity() - 0.5*thetax +
-                (1-A/(2*B))/(theta*theta)*thetax*thetax);
+            Mat3F V_inv(Mat3F::Identity() - F(0.5)*thetax +
+                (F(1)-A/(F(2)*B))/(theta*theta)*thetax*thetax);
             rho = V_inv * T.t();
         } else {
             rho = T.t();
