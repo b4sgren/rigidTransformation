@@ -41,7 +41,7 @@ class Quat_Parameterization {
     bool operator() (const T* rot, const T* delta, T* q_plus_delta) const {
         rt::Quaternion<T> q(rot), qpd(q_plus_delta);
         Eigen::Map<const Eigen::Matrix<T, 3, 1>> t(delta);
-        qpd = q.boxplusr(t);
+        qpd = q.template boxplusr<T>(t);
 
         return true;
     }
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     std::vector<rt::Quaternion<double>> measurements{};
     for (size_t i{0}; i < num_rotations; ++i) {
         theta << generator(engine), generator(engine), generator(engine);
-        measurements.emplace_back(q.boxplusr(theta));
+        measurements.emplace_back(q.boxplusr<double>(theta));
     }
     rt::Quaternion<double> q_hat = measurements[0];
     std::cout << "Initial Guess:\n" << q_hat << std::endl;

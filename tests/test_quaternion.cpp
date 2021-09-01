@@ -233,7 +233,7 @@ TEST_F(Quat_Fixture, PassiveRotationOfAVector)
     for(Quatd q : transforms_)
     {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(q.rotp(v));
+        Eigen::Vector3d vp(q.rotp<double>(v));
         Eigen::Vector3d vp_true(q.R() * v);
 
         EXPECT_TRUE(vp_true.isApprox(vp));
@@ -271,7 +271,7 @@ TEST_F(Quat_Fixture, BoxPlusr)
     for(Quatd q: transforms_)
     {
         Eigen::Vector3d v{getRandomVector(-rt::PI, rt::PI)};
-        Quatd q2(q.boxplusr(v));
+        Quatd q2(q.boxplusr<double>(v));
         Quatd q2_true(q * Quatd::Exp(v));
 
         EXPECT_TRUE(q2_true.q().isApprox(q2.q()));
@@ -284,7 +284,7 @@ TEST_F(Quat_Fixture, Boxminusr)
     {
         Quatd q2(Quatd::random());
         Eigen::Vector3d v(q.boxminusr(q2));
-        Quatd q_res(q2.boxplusr(v));
+        Quatd q_res(q2.boxplusr<double>(v));
 
         EXPECT_TRUE(q_res.q().isApprox(q.q()));
     }
@@ -295,7 +295,7 @@ TEST_F(Quat_Fixture, Boxplusl)
     for(Quatd q : transforms_)
     {
         Eigen::Vector3d v(getRandomVector(-rt::PI, rt::PI));
-        Quatd q2(q.boxplusl(v));
+        Quatd q2(q.boxplusl<double>(v));
         Quatd q2_true(Quatd::Exp(v) * q);
 
         EXPECT_TRUE(q2_true.q().isApprox(q2.q()));
@@ -308,7 +308,7 @@ TEST_F(Quat_Fixture, Boxminusl)
     {
         Quatd q2(Quatd::random());
         Eigen::Vector3d v(q.boxminusl(q2));
-        Quatd q_res(q2.boxplusl(v));
+        Quatd q_res(q2.boxplusl<double>(v));
 
         EXPECT_TRUE(q_res.q().isApprox(q.q()));
     }
@@ -328,8 +328,8 @@ TEST_F(Quat_Fixture, Adjoint)
     for(Quatd q : transforms_)
     {
         Eigen::Vector3d v{getRandomVector(-rt::PI, rt::PI)};
-        Quatd q2 = q.boxplusr(v);
-        Quatd q3 = q.boxplusl(q.Adj() * v);
+        Quatd q2 = q.boxplusr<double>(v);
+        Quatd q3 = q.boxplusl<double>(q.Adj() * v);
 
         EXPECT_TRUE(q2.q().isApprox(q3.q()));
     }

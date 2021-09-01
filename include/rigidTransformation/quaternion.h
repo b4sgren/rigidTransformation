@@ -141,11 +141,13 @@ class Quaternion {
         return v - _qw*t + skew3<T>(t)*_qv;
     }
 
-    Vec3T rotp(const Eigen::Ref<const Vec3T>& v) const {
+    template <typename T2>
+    Vec3T rotp(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>>& v) const {
         return inverse().rota(v);
     }
 
-    Quaternion boxplusr(const Eigen::Ref<const Vec3T> &v) {
+    template <typename T2>
+    Quaternion boxplusr(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
         return (*this) * Quaternion::Exp(v);
     }
 
@@ -153,7 +155,8 @@ class Quaternion {
         return Quaternion::Log(q.inverse() * (*this));
     }
 
-    Quaternion boxplusl(const Eigen::Ref<const Vec3T> &v) {
+    template <typename T2>
+    Quaternion boxplusl(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
         return Quaternion::Exp(v) * (*this);
     }
 
