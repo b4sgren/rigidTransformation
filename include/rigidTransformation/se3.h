@@ -89,15 +89,18 @@ class SE3 {
         arr_.template head<3>() = -q_.template rota<F>(t());
     }
 
-    Vec3F transa(const Eigen::Ref<const Vec3F> &v) {
+    template <typename F2>
+    Vec3F transa(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) {
         return t() + q_.template rota<F>(v);
     }
 
-    Vec3F transp(const Eigen::Ref<const Vec3F> &v) {
+    template <typename F2>
+    Vec3F transp(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) {
         return inverse().transa(v);
     }
 
-    SE3 boxplusr(const Eigen::Ref<const Vec6F> &tau) {
+    template <typename F2>
+    SE3 boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) {
         return (*this) * SE3::Exp(tau);
     }
 
@@ -105,7 +108,8 @@ class SE3 {
         return SE3::Log(T.inverse() * (*this));
     }
 
-    SE3 boxplusl(const Eigen::Ref<const Vec6F> &tau) {
+    template <typename F2>
+    SE3 boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) {
         return SE3::Exp(tau) * (*this);
     }
 

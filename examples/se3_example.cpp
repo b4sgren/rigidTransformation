@@ -54,7 +54,7 @@ class SE3_Parameterization {
   bool operator() (const T* P, const T* delta, T* T_plus_delta) const {
     rt::SE3<T> T_(P), Tpd(T_plus_delta);
     Eigen::Map<const Eigen::Matrix<T, 6, 1>> xi(delta);
-    Tpd = T_.boxplusr(xi);
+    Tpd = T_.template boxplusr<T>(xi);
     return true;
   }
 };

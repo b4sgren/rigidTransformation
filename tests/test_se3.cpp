@@ -247,7 +247,7 @@ TEST_F(SE3_Fixture, ActiveTransformation)
     for(SE3d T : transforms_)
     {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(T.transa(v));
+        Eigen::Vector3d vp(T.transa<double>(v));
         Eigen::Vector3d vp_true(T.t() + T.quat().rota<double>(v));
 
         EXPECT_TRUE(compareMat<3>(vp_true, vp));
@@ -259,9 +259,9 @@ TEST_F(SE3_Fixture, PassiveTransformation)
     for(SE3d T : transforms_)
     {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(T.transp(v));
+        Eigen::Vector3d vp(T.transp<double>(v));
         // Eigen::Vector3d vp_true(T.t() + T.quat().rota(v));
-        Eigen::Vector3d res(T.transa(vp));
+        Eigen::Vector3d res(T.transa<double>(vp));
 
         EXPECT_TRUE(compareMat<3>(v, res));
     }
@@ -309,7 +309,7 @@ TEST_F(SE3_Fixture, Boxplusr)
         Eigen::Matrix<double, 6, 1> tau;
         tau << rho, theta;
 
-        SE3d T2(T.boxplusr(tau));
+        SE3d T2(T.boxplusr<double>(tau));
         SE3d T_true = T * SE3d::Exp(tau);
 
         EXPECT_TRUE(compareMat<7>(T_true.T(), T2.T()));
@@ -322,7 +322,7 @@ TEST_F(SE3_Fixture, Boxminusr)
     {
         SE3d T2(SE3d::random());
         Eigen::Matrix<double, 6, 1> diff(T.boxminusr(T2));
-        SE3d res(T2.boxplusr(diff));
+        SE3d res(T2.boxplusr<double>(diff));
 
         EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
     }
@@ -337,7 +337,7 @@ TEST_F(SE3_Fixture, Boxplusl)
         Eigen::Matrix<double, 6, 1> tau;
         tau << rho, theta;
 
-        SE3d T2(T.boxplusl(tau));
+        SE3d T2(T.boxplusl<double>(tau));
         SE3d T_true = SE3d::Exp(tau) * T;
 
         EXPECT_TRUE(compareMat<7>(T_true.T(), T2.T()));
@@ -350,7 +350,7 @@ TEST_F(SE3_Fixture, Boxminusl)
     {
         SE3d T2(SE3d::random());
         Eigen::Matrix<double, 6, 1> diff(T.boxminusl(T2));
-        SE3d res(T2.boxplusl(diff));
+        SE3d res(T2.boxplusl<double>(diff));
 
         EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
     }
@@ -365,8 +365,8 @@ TEST_F(SE3_Fixture, Adjoint)
         Eigen::Matrix<double, 6, 1> tau;
         tau << rho, theta;
 
-        SE3d T1(T.boxplusr(tau));
-        SE3d T2(T.boxplusl(T.Adj() * tau));
+        SE3d T1(T.boxplusr<double>(tau));
+        SE3d T2(T.boxplusl<double>(T.Adj() * tau));
 
         EXPECT_TRUE(compareMat<7>(T1.T(), T2.T()));
     }
