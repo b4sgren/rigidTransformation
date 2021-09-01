@@ -76,13 +76,11 @@ class SO2 {
     }
 
     template <typename T2>
-    // Vec2T rota(const Eigen::Ref<const Vec2T> &v) const {
     Vec2T rota(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
         return R() * v;
     }
 
     template <typename T2>
-    // Vec2T rotp(const Eigen::Ref<Vec2T> &v) const {
     Vec2T rotp(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
         return inverse().R() * v;
     }
@@ -100,8 +98,9 @@ class SO2 {
         return (*this) * SO2::Exp(ang);
     }
 
-    template <typename T2>
-    T boxminusr(const SO2<T2> &R) const {
+    // template <typename T2>
+    // T boxminusr(const SO2<T2> &R) const {
+    T boxminusr(const SO2 &R) const {
         return SO2::Log(R.inverse() * (*this));
     }
 
@@ -110,8 +109,9 @@ class SO2 {
         return SO2::Exp(ang) * (*this);
     }
 
-    template <typename T2>
-    T boxminusl(const SO2<T2> &R) const {
+    // template <typename T2>
+    // T boxminusl(const SO2<T2> &R) const {
+    T boxminusl(const SO2 &R) const {
         return SO2::Log((*this) * R.inverse());
     }
 

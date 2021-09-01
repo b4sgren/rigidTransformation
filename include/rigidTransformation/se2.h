@@ -95,15 +95,18 @@ class SE2 {
         arr_.template block<2, 1>(0, 2) = -R() * t();
     }
 
-    Vec2F transa(const Eigen::Ref<const Vec2F> &pt) {
+    template <typename F2>
+    Vec2F transa(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) {
         return R() * pt + t();
     }
 
-    Vec2F transp(const Eigen::Ref<const Vec2F> &pt) {
-        return inverse().transa(pt);
+    template <typename F2>
+    Vec2F transp(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) {
+        return inverse().template transa<F2>(pt);
     }
 
-    SE2 boxplusr(const Eigen::Ref<const Vec3F> &tau) {
+    template <typename F2=F>
+    SE2 boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &tau) {
         return (*this) * SE2::Exp(tau);
     }
 
@@ -111,7 +114,8 @@ class SE2 {
         return SE2::Log(T.inverse() * (*this));
     }
 
-    SE2 boxplusl(const Eigen::Ref<const Vec3F> &tau) {
+    template <typename F2=F>
+    SE2 boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &tau) {
         return SE2::Exp(tau) * (*this);
     }
 

@@ -187,7 +187,7 @@ TEST_F(SE2_Fixture, ActiveTransformation)
     for(SE2d T : transforms_)
     {
         Eigen::Vector2d pt(getRandomVector(-10, 10));
-        Eigen::Vector2d pt2(T.transa(pt));
+        Eigen::Vector2d pt2(T.transa<double>(pt));
 
         Eigen::Vector3d pth;
         pth << pt, 1;
@@ -202,7 +202,7 @@ TEST_F(SE2_Fixture, PassiveTransformation)
     for(SE2d T : transforms_)
     {
         Eigen::Vector2d pt(getRandomVector(-10, 10));
-        Eigen::Vector2d pt2(T.transp(pt));
+        Eigen::Vector2d pt2(T.transp<double>(pt));
 
         Eigen::Vector3d pth;
         pth << pt, 1;
@@ -245,7 +245,7 @@ TEST_F(SE2_Fixture, Boxplusr)
         Eigen::Vector3d tau;
         tau << rho, theta;
 
-        SE2d T2(T.boxplusr(tau));
+        SE2d T2(T.boxplusr<double>(tau));
         SE2d T_true(T * SE2d::Exp(tau));
 
         EXPECT_TRUE(compareMat(T_true.T(), T2.T()));
@@ -258,7 +258,7 @@ TEST_F(SE2_Fixture, Boxminusr)
     {
         SE2d T2{SE2d::random()};
         Eigen::Vector3d diff(T.boxminusr(T2));
-        SE2d res(T2.boxplusr(diff));
+        SE2d res(T2.boxplusr<double>(diff));
 
         EXPECT_TRUE(compareMat(res.T(), T.T()));
     }
@@ -273,7 +273,7 @@ TEST_F(SE2_Fixture, Boxplusl)
         Eigen::Vector3d tau;
         tau << rho, theta;
 
-        SE2d T2(T.boxplusl(tau));
+        SE2d T2(T.boxplusl<double>(tau));
         SE2d T_true(SE2d::Exp(tau) * T);
 
         EXPECT_TRUE(compareMat(T_true.T(), T2.T()));
@@ -286,7 +286,7 @@ TEST_F(SE2_Fixture, Boxminusl)
     {
         SE2d T2{SE2d::random()};
         Eigen::Vector3d diff(T.boxminusl(T2));
-        SE2d res(T2.boxplusl(diff));
+        SE2d res(T2.boxplusl<double>(diff));
 
         EXPECT_TRUE(compareMat(res.T(), T.T()));
     }
@@ -301,8 +301,8 @@ TEST_F(SE2_Fixture, Adjoint)
         Eigen::Vector3d tau;
         tau << rho, theta;
 
-        SE2d T2 = T.boxplusr(tau);
-        SE2d T3 = T.boxplusl(T.Adj() * tau);
+        SE2d T2 = T.boxplusr<double>(tau);
+        SE2d T3 = T.boxplusl<double>(T.Adj() * tau);
 
         EXPECT_TRUE(compareMat(T2.T(), T3.T()));
     }
