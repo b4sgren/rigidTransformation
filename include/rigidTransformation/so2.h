@@ -39,7 +39,6 @@ class SO2 {
         return *this;
     }
 
-    // What type to return??
     template <typename T2>
     SO2 operator*(const SO2<T2> &rhs) const {
         SO2 temp;
@@ -76,11 +75,15 @@ class SO2 {
         arr_.transposeInPlace();
     }
 
-    Vec2T rota(const Eigen::Ref<const Vec2T> &v) const {
+    template <typename T2>
+    // Vec2T rota(const Eigen::Ref<const Vec2T> &v) const {
+    Vec2T rota(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
         return R() * v;
     }
 
-    Vec2T rotp(const Eigen::Ref<Vec2T> &v) const {
+    template <typename T2>
+    // Vec2T rotp(const Eigen::Ref<Vec2T> &v) const {
+    Vec2T rotp(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
         return inverse().R() * v;
     }
 
