@@ -41,7 +41,7 @@ class SO3_Parameterization {
     bool operator() (const T* rot, const T* delta, T* R_plus_delta) const {
         rt::SO3<T> R(rot), Rpd(R_plus_delta);
         Eigen::Map<const Eigen::Matrix<T, 3, 1>> t(delta);
-        Rpd = R.boxplusr(t);
+        Rpd = R.template boxplusr<T>(t);
 
         return true;
     }
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     std::vector<rt::SO3<double>> measurements{};
     for (size_t i{0}; i < num_rotations; ++i) {
         theta << generator(engine), generator(engine), generator(engine);
-        measurements.emplace_back(R.boxplusr(theta));
+        measurements.emplace_back(R.boxplusr<double>(theta));
     }
     rt::SO3<double> R_hat = measurements[0];
     std::cout << "Initial Guess:\n" << R_hat << std::endl;

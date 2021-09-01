@@ -37,7 +37,6 @@ class SO2_Parameterization {
     bool operator() (const T* rot, const T* delta, T* R_plus_delta) const {
         rt::SO2<T> R(rot), Rpd(R_plus_delta);
         Rpd = R.boxplusr(*delta);
-        std::cout << "---------\n" << *delta << "\n" << Rpd << std::endl;
 
         return true;
     }

@@ -181,7 +181,7 @@ TEST_F(SO3_Fixture, TestActiveRotation)
     for(auto R : transforms_)
     {
         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-        Eigen::Vector3d vp{R.rota(v)};
+        Eigen::Vector3d vp{R.rota<double>(v)};
         Eigen::Vector3d vp_true{R.R() * v};
 
         EXPECT_TRUE(vp_true.isApprox(vp));
@@ -193,8 +193,8 @@ TEST_F(SO3_Fixture, TestPassiveRotation)
     for(auto R : transforms_)
     {
         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-        Eigen::Vector3d vp{R.rotp(v)};
-        Eigen::Vector3d vpp{R.rota(vp)};
+        Eigen::Vector3d vp{R.rotp<double>(v)};
+        Eigen::Vector3d vpp{R.rota<double>(vp)};
 
         EXPECT_TRUE(v.isApprox(vpp));
     }
@@ -242,7 +242,7 @@ TEST_F(SO3_Fixture, Boxplusr)
         double theta{getRandomDouble(-rt::PI, rt::PI)};
         Eigen::Vector3d v{getRandomVector(-10, 10)};
         v = v/v.norm() * theta;
-        rt::SO3<double> R2(R.boxplusr(v));
+        rt::SO3<double> R2(R.boxplusr<double>(v));
         rt::SO3<double> R3(R * rt::SO3<double>::fromAxisAngle(v));
 
         EXPECT_TRUE(R2.R().isApprox(R3.R()));
@@ -255,7 +255,7 @@ TEST_F(SO3_Fixture, Boxminusr)
     {
         rt::SO3<double> R2{rt::SO3<double>::random()};
         Eigen::Vector3d diff{R.boxminusr(R2)};
-        rt::SO3<double> R3{R2.boxplusr(diff)};
+        rt::SO3<double> R3{R2.boxplusr<double>(diff)};
 
         EXPECT_TRUE(R.R().isApprox(R3.R(), 1e-8));
     }
@@ -268,7 +268,7 @@ TEST_F(SO3_Fixture, Boxplusl)
         double theta{getRandomDouble(-rt::PI, rt::PI)};
         Eigen::Vector3d v{getRandomVector(-10, 10)};
         v = v/v.norm() * theta;
-        rt::SO3<double> R2(R.boxplusl(v));
+        rt::SO3<double> R2(R.boxplusl<double>(v));
         rt::SO3<double> R3(rt::SO3<double>::fromAxisAngle(v) * R);
 
         EXPECT_TRUE(R2.R().isApprox(R3.R()));
@@ -282,7 +282,7 @@ TEST_F(SO3_Fixture, Boxminusl)
     {
         rt::SO3<double> R2(rt::SO3<double>::random());
         Eigen::Vector3d diff{R.boxminusl(R2)};
-        rt::SO3<double> R3(R2.boxplusl(diff));
+        rt::SO3<double> R3(R2.boxplusl<double>(diff));
 
         EXPECT_TRUE(R.R().isApprox(R3.R(), 1e-8));
     }

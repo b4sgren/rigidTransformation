@@ -95,29 +95,35 @@ class SO3 {
         arr_.transposeInPlace();
     }
 
-    Vec3T rota(const Eigen::Ref<const Vec3T>& v) {
+    template <typename T2>
+    Vec3T rota(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>>& v) {
         return R() * v;
     }
 
-    Vec3T rotp(const Eigen::Ref<const Vec3T>& v) {
+    template <typename T2>
+    Vec3T rotp(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>>& v) {
         return inverse().R() * v;
     }
 
-    SO3 boxplusr(const Eigen::Ref<const Vec3T> &v) {
+    template <typename T2>
+    SO3 boxplusr(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
         return (*this) * SO3::Exp(v);
     }
 
-    template <typename T2>
-    Vec3T boxminusr(const SO3<T2> &R2) {
+    // template <typename T2>
+    // Vec3T boxminusr(const SO3<T2> &R2) {
+    Vec3T boxminusr(const SO3 &R2) {
         return SO3::Log(R2.inverse() * (*this));
     }
 
-    SO3 boxplusl(const Eigen::Ref<const Vec3T> &v) {
+    template <typename T2>
+    SO3 boxplusl(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
         return SO3::Exp(v) * (*this);
     }
 
-    template <typename T2>
-    Vec3T boxminusl(const SO3<T2> &R2) {
+    // template <typename T2>
+    // Vec3T boxminusl(const SO3<T2> &R2) {
+    Vec3T boxminusl(const SO3 &R2) {
         return SO3::Log((*this) * R2.inverse());
     }
 
