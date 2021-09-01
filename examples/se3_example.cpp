@@ -126,9 +126,15 @@ int main(int argc, char *argv[]) {
   // Solve the problem
   ceres::Solver::Options options;
   options.minimizer_progress_to_stdout = true;
+  options.max_num_iterations = 100;
   ceres::Solver::Summary summary;
   ceres::Solve(options, &problem, &summary);
   std::cout << summary.FullReport() << std::endl;
+
+  std::ofstream fout("data.txt");
+  for (rt::SE3<double> p : poses)
+    fout << p.t().transpose() << std::endl;
+  fout.close();
 
   return 0;
 }
