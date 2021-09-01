@@ -221,7 +221,7 @@ TEST_F(Quat_Fixture, ActiveRotationOfAVector)
     for(Quatd q : transforms_)
     {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(q.rota(v));
+        Eigen::Vector3d vp(q.rota<double>(v));
         Eigen::Vector3d vp_true(q.R().transpose() * v);
 
         EXPECT_TRUE(vp_true.isApprox(vp));

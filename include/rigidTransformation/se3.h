@@ -64,7 +64,7 @@ class SE3 {
     template <typename F2>
     SE3 operator*(const SE3<F2>& T2) {
         Quaternion<F> q(q_ * T2.q_);
-        Vec3F trans(t() + q_.rota(T2.t()));
+        Vec3F trans(t() + q_.template rota<F2>(T2.t()));
         return SE3(q, trans);
     }
 
@@ -80,17 +80,17 @@ class SE3 {
 
     SE3 inverse() const {
         Quaternion<F> q_inv = q_.inverse();
-        Vec3F t_inv = -q_inv.rota(t());
+        Vec3F t_inv = -q_inv.template rota<F>(t());
         return SE3(q_inv, t_inv);
     }
 
     void inverse_() {
         q_.inverse_();
-        arr_.template head<3>() = -q_.rota(t());
+        arr_.template head<3>() = -q_.template rota<F>(t());
     }
 
     Vec3F transa(const Eigen::Ref<const Vec3F> &v) {
-        return t() + q_.rota(v);
+        return t() + q_.template rota<F>(v);
     }
 
     Vec3F transp(const Eigen::Ref<const Vec3F> &v) {

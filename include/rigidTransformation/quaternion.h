@@ -18,6 +18,7 @@ class Quaternion {
     using Vec3T = Eigen::Matrix<T, 3, 1>;
 
     Quaternion() : arr_(data_) {
+        arr_.setZero();
         arr_(0) = T(1.0);
     }
 
@@ -131,11 +132,12 @@ class Quaternion {
         arr_.template tail<3>() *= -1;
     }
 
-    Vec3T rota(const Eigen::Ref<const Vec3T>& v) const {
+    template <typename T2>
+    Vec3T rota(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>>& v) const {
         T _qw = qw();
         Vec3T _qv = qv();
 
-        Vec3T t(T(2) * skew3<T>(v) * _qv);
+        Vec3T t(T(2) * skew3<T2>(v) * _qv);
         return v - _qw*t + skew3<T>(t)*_qv;
     }
 

@@ -248,7 +248,7 @@ TEST_F(SE3_Fixture, ActiveTransformation)
     {
         Eigen::Vector3d v(getRandomVector(-10, 10));
         Eigen::Vector3d vp(T.transa(v));
-        Eigen::Vector3d vp_true(T.t() + T.quat().rota(v));
+        Eigen::Vector3d vp_true(T.t() + T.quat().rota<double>(v));
 
         EXPECT_TRUE(compareMat<3>(vp_true, vp));
     }
