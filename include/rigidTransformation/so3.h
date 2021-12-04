@@ -144,6 +144,14 @@ class SO3 {
         return SO3(Mat3T::Identity() + A * vx + B * vx * vx);
     }
 
+    static SO3 fromQuat(const Eigen::Ref<const Eigen::Matrix<T, 4, 1>> &q) {
+        T qw = q(0);
+        Vec3T qv = q.template tail<3>();
+        Mat3T R = Mat3T::Identity() * (2*qw*qw - 1);
+        R = R + 2 * qw * skew3<T>(qv) + 2 * qv * qv.transpose();
+        return SO3(R);
+    }
+
     static SO3 random() {
         std::random_device rd;
         std::mt19937 gen(rd());

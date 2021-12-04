@@ -5,6 +5,7 @@
 #include <random>
 
 #include "so3.h"
+#include "quaternion.h"
 #include "utils.h"
 
 namespace rt = rigidTransform;
@@ -103,6 +104,15 @@ TEST_F(SO3_Fixture, TestFromAxisAngle)
         Eigen::Matrix3d R_true = Eigen::AngleAxisd(phi, vec/vec.norm()).matrix();
 
         EXPECT_TRUE(R_true.isApprox(R.R()));
+    }
+}
+
+TEST_F(SO3_Fixture, TestFromQuaternion) {
+    for (int i{0}; i != 100; ++i) {
+        rt::Quaternion<double> q = rt::Quaternion<double>::random();
+        rt::SO3<double> R = rt::SO3<double>::fromQuat(q.q());
+
+        EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
     }
 }
 
