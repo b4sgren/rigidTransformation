@@ -77,6 +77,12 @@ class SE3 {
     F y() const { return arr_(1); }
     F z() const { return arr_(2); }
     Vec3F euler() const { return q_.euler(); }
+    Eigen::Matrix<F, 4, 4> matrix() const {
+        Eigen::Matrix<F, 4, 4> mat = Eigen::Matrix<F, 4, 4>::Identity();
+        mat.template block<3, 3>(0, 0) = R().transpose();
+        mat.template block<3, 1>(0, 3) = t();
+        return mat;
+    }
 
     SE3 inverse() const {
         Quaternion<F> q_inv = q_.inverse();

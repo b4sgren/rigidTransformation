@@ -371,3 +371,17 @@ TEST_F(SE3_Fixture, Adjoint)
         EXPECT_TRUE(compareMat<7>(T1.T(), T2.T()));
     }
 }
+
+TEST_F(SE3_Fixture, MatrixForm) {
+    for (SE3d T : transforms_) {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector4d vh;
+        vh << v, 1;
+
+        Eigen::Vector3d vp = T.transa<double>(v);
+        Eigen::Vector4d vph = T.matrix() * vh;
+        Eigen::Vector3d vp2 = vph.head<3>();
+
+        EXPECT_TRUE(compareMat<3>(vp, vp2));
+    }
+}
