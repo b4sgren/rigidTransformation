@@ -96,12 +96,12 @@ class SE3 {
     }
 
     template <typename F2>
-    Vec3F transa(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) {
+    Vec3F transa(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
         return t() + q_.template rota<F>(v);
     }
 
     template <typename F2>
-    Vec3F transp(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) {
+    Vec3F transp(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
         return inverse().transa(v);
     }
 
