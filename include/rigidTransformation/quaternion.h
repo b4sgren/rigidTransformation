@@ -88,7 +88,7 @@ class Quaternion {
 
     Mat3T R() const {
         Vec3T qv = this->qv();
-        Mat3T R = (2 * pow(qw(), 2) - 1) * Mat3T::Identity() -
+        Mat3T R = (2 * pow(qw(), 2) - 1) * Mat3T::Identity() +
                   2 * qw() * skew3<T>(qv) + 2 * qv * qv.transpose();
         return R;
     }
