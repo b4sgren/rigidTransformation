@@ -112,7 +112,7 @@ TEST_F(SO3_Fixture, TestFromQuaternion) {
         rt::Quaternion<double> q = rt::Quaternion<double>::random();
         rt::SO3<double> R = rt::SO3<double>::fromQuat(q.q());
 
-        EXPECT_TRUE(R.R().isApprox(q.R().transpose()));
+        EXPECT_TRUE(R.R().isApprox(q.R()));
     }
 }
 
