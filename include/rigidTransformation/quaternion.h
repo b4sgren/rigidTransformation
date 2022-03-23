@@ -111,7 +111,7 @@ class Quaternion {
     }
 
     Mat3T Adj() const {
-        return R().transpose();
+        return R();
     }
 
     T norm() const {
