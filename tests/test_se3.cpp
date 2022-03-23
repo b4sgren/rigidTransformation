@@ -215,173 +215,172 @@ TEST_F(SE3_Fixture, OrderOfGroupMultiplication)
     }
 }
 
-// TEST_F(SE3_Fixture, Inverse)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         SE3d T_inv(T.inverse());
-//         SE3d T3(T * T_inv);
-//         Vector7d I(Vector7d::Zero());
-//         I(3) = 1.0;
+TEST_F(SE3_Fixture, Inverse)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T_inv(T.inverse());
+        SE3d T3(T * T_inv);
+        Vector7d I(Vector7d::Zero());
+        I(3) = 1.0;
 
-//         EXPECT_TRUE(compareMat<7>(I, T3.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(I, T3.T()));
+    }
+}
 
-// TEST_F(SE3_Fixture, InverseInPlace)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         SE3d T_orig(T);
-//         T.inverse_();
-//         SE3d res(T * T_orig);
-//         Vector7d I(Vector7d::Zero());
-//         I(3) = 1.0;
+TEST_F(SE3_Fixture, InverseInPlace)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T_orig(T);
+        T.inverse_();
+        SE3d res(T * T_orig);
+        Vector7d I(Vector7d::Zero());
+        I(3) = 1.0;
 
-//         EXPECT_TRUE(compareMat<7>(I, res.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(I, res.T()));
+    }
+}
 
-// TEST_F(SE3_Fixture, ActiveTransformation)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         Eigen::Vector3d v(getRandomVector(-10, 10));
-//         Eigen::Vector3d vp(T.transa<double>(v));
-//         Eigen::Vector3d vp_true(T.t() + T.quat().rota<double>(v));
+TEST_F(SE3_Fixture, ActiveTransformation)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector3d vp(T.transa<double>(v));
+        Eigen::Vector3d vp_true(T.t() + T.quat().rota<double>(v));
 
-//         EXPECT_TRUE(compareMat<3>(vp_true, vp));
-//     }
-// }
+        EXPECT_TRUE(compareMat<3>(vp_true, vp));
+    }
+}
 
-// TEST_F(SE3_Fixture, PassiveTransformation)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         Eigen::Vector3d v(getRandomVector(-10, 10));
-//         Eigen::Vector3d vp(T.transp<double>(v));
-//         // Eigen::Vector3d vp_true(T.t() + T.quat().rota(v));
-//         Eigen::Vector3d res(T.transa<double>(vp));
+TEST_F(SE3_Fixture, PassiveTransformation)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector3d vp(T.transp<double>(v));
+        Eigen::Vector3d res(T.transa<double>(vp));
 
-//         EXPECT_TRUE(compareMat<3>(v, res));
-//     }
-// }
+        EXPECT_TRUE(compareMat<3>(v, res));
+    }
+}
 
-// TEST_F(SE3_Fixture, ExponentialMap)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         Eigen::Vector3d rho(getRandomVector(-10, 10));
-//         Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
-//         Eigen::Matrix<double, 6, 1> tau;
-//         tau << rho, theta;
+TEST_F(SE3_Fixture, ExponentialMap)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        Eigen::Vector3d rho(getRandomVector(-10, 10));
+        Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
+        Eigen::Matrix<double, 6, 1> tau;
+        tau << rho, theta;
 
-//         SE3d T = SE3d::Exp(tau);
-//         Eigen::Matrix3d thetax = rt::skew3<double>(theta);
-//         Eigen::Matrix4d logT;
-//         logT << thetax, rho, 0, 0, 0, 0;
-//         Eigen::Matrix4d TR_true = logT.exp();
+        SE3d T = SE3d::Exp(tau);
+        Eigen::Matrix3d thetax = rt::skew3<double>(theta);
+        Eigen::Matrix4d logT;
+        logT << thetax, rho, 0, 0, 0, 0;
+        Eigen::Matrix4d TR_true = logT.exp();
 
-//         SE3d T_true(TR_true.block<3,3>(0,0), TR_true.block<3,1>(0,3));
+        SE3d T_true(TR_true.block<3,3>(0,0), TR_true.block<3,1>(0,3));
 
-//         EXPECT_TRUE(compareMat<3>(T_true.t(), T.t()));
-//         EXPECT_TRUE(compareMat<4>(T_true.q(), T.q()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<3>(T_true.t(), T.t()));
+        EXPECT_TRUE(compareMat<4>(T_true.q(), T.q()));
+    }
+}
 
-// TEST_F(SE3_Fixture, LogarithmicMap)
-// {
-//     for(auto T : transforms_)
-//     {
-//         Eigen::Matrix<double,6,1> logT = T.Log();
-//         SE3d res = SE3d::Exp(logT);
+TEST_F(SE3_Fixture, LogarithmicMap)
+{
+    for(auto T : transforms_)
+    {
+        Eigen::Matrix<double,6,1> logT = T.Log();
+        SE3d res = SE3d::Exp(logT);
 
-//         EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
+    }
+}
 
-// TEST_F(SE3_Fixture, Boxplusr)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         Eigen::Vector3d rho(getRandomVector(-10, 10));
-//         Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
-//         Eigen::Matrix<double, 6, 1> tau;
-//         tau << rho, theta;
+TEST_F(SE3_Fixture, Boxplusr)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d rho(getRandomVector(-10, 10));
+        Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
+        Eigen::Matrix<double, 6, 1> tau;
+        tau << rho, theta;
 
-//         SE3d T2(T.boxplusr<double>(tau));
-//         SE3d T_true = T * SE3d::Exp(tau);
+        SE3d T2(T.boxplusr<double>(tau));
+        SE3d T_true = T * SE3d::Exp(tau);
 
-//         EXPECT_TRUE(compareMat<7>(T_true.T(), T2.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(T_true.T(), T2.T()));
+    }
+}
 
-// TEST_F(SE3_Fixture, Boxminusr)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         SE3d T2(SE3d::random());
-//         Eigen::Matrix<double, 6, 1> diff(T.boxminusr(T2));
-//         SE3d res(T2.boxplusr<double>(diff));
+TEST_F(SE3_Fixture, Boxminusr)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T2(SE3d::random());
+        Eigen::Matrix<double, 6, 1> diff(T.boxminusr(T2));
+        SE3d res(T2.boxplusr<double>(diff));
 
-//         EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
+    }
+}
 
-// TEST_F(SE3_Fixture, Boxplusl)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         Eigen::Vector3d rho(getRandomVector(-10, 10));
-//         Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
-//         Eigen::Matrix<double, 6, 1> tau;
-//         tau << rho, theta;
+TEST_F(SE3_Fixture, Boxplusl)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d rho(getRandomVector(-10, 10));
+        Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
+        Eigen::Matrix<double, 6, 1> tau;
+        tau << rho, theta;
 
-//         SE3d T2(T.boxplusl<double>(tau));
-//         SE3d T_true = SE3d::Exp(tau) * T;
+        SE3d T2(T.boxplusl<double>(tau));
+        SE3d T_true = SE3d::Exp(tau) * T;
 
-//         EXPECT_TRUE(compareMat<7>(T_true.T(), T2.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(T_true.T(), T2.T()));
+    }
+}
 
-// TEST_F(SE3_Fixture, Boxminusl)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         SE3d T2(SE3d::random());
-//         Eigen::Matrix<double, 6, 1> diff(T.boxminusl(T2));
-//         SE3d res(T2.boxplusl<double>(diff));
+TEST_F(SE3_Fixture, Boxminusl)
+{
+    for(SE3d T : transforms_)
+    {
+        SE3d T2(SE3d::random());
+        Eigen::Matrix<double, 6, 1> diff(T.boxminusl(T2));
+        SE3d res(T2.boxplusl<double>(diff));
 
-//         EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(T.T(), res.T()));
+    }
+}
 
-// TEST_F(SE3_Fixture, Adjoint)
-// {
-//     for(SE3d T : transforms_)
-//     {
-//         Eigen::Vector3d rho(getRandomVector(-10, 10));
-//         Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
-//         Eigen::Matrix<double, 6, 1> tau;
-//         tau << rho, theta;
+TEST_F(SE3_Fixture, Adjoint)
+{
+    for(SE3d T : transforms_)
+    {
+        Eigen::Vector3d rho(getRandomVector(-10, 10));
+        Eigen::Vector3d theta(getRandomVector(-rt::PI, rt::PI));
+        Eigen::Matrix<double, 6, 1> tau;
+        tau << rho, theta;
 
-//         SE3d T1(T.boxplusr<double>(tau));
-//         SE3d T2(T.boxplusl<double>(T.Adj() * tau));
+        SE3d T1(T.boxplusr<double>(tau));
+        SE3d T2(T.boxplusl<double>(T.Adj() * tau));
 
-//         EXPECT_TRUE(compareMat<7>(T1.T(), T2.T()));
-//     }
-// }
+        EXPECT_TRUE(compareMat<7>(T1.T(), T2.T()));
+    }
+}
 
-// TEST_F(SE3_Fixture, MatrixForm) {
-//     for (SE3d T : transforms_) {
-//         Eigen::Vector3d v(getRandomVector(-10, 10));
-//         Eigen::Vector4d vh;
-//         vh << v, 1;
+TEST_F(SE3_Fixture, MatrixForm) {
+    for (SE3d T : transforms_) {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector4d vh;
+        vh << v, 1;
 
-//         Eigen::Vector3d vp = T.transa<double>(v);
-//         Eigen::Vector4d vph = T.matrix() * vh;
-//         Eigen::Vector3d vp2 = vph.head<3>();
+        Eigen::Vector3d vp = T.transa<double>(v);
+        Eigen::Vector4d vph = T.matrix() * vh;
+        Eigen::Vector3d vp2 = vph.head<3>();
 
-//         EXPECT_TRUE(compareMat<3>(vp, vp2));
-//     }
-// }
+        EXPECT_TRUE(compareMat<3>(vp, vp2));
+    }
+}

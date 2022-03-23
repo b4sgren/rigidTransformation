@@ -79,7 +79,7 @@ class SE3 {
     Vec3F euler() const { return q_.euler(); }
     Eigen::Matrix<F, 4, 4> matrix() const {
         Eigen::Matrix<F, 4, 4> mat = Eigen::Matrix<F, 4, 4>::Identity();
-        mat.template block<3, 3>(0, 0) = R().transpose();
+        mat.template block<3, 3>(0, 0) = R();
         mat.template block<3, 1>(0, 3) = t();
         return mat;
     }
@@ -124,7 +124,7 @@ class SE3 {
     }
 
     Eigen::Matrix<F, 6, 6> Adj() const {
-        Mat3F rot = R().transpose();
+        Mat3F rot = R();
         Eigen::Matrix<F, 6, 6> adj;
         adj.setZero();
         adj.template block<3, 3>(0, 0) = rot;
