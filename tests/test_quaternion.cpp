@@ -166,29 +166,29 @@ TEST_F(Quat_Fixture, GroupMultiplication)
     }
 }
 
-// TEST_F(Quat_Fixture, OrderOfMultiplication)
-// {
-//     for(int i{0}; i != 100; ++i)
-//     {
-//         double ang1{randomDouble(-rt::PI, rt::PI)}, ang2{randomDouble(-rt::PI, rt::PI)};
-//         Eigen::Vector3d v{0, 0, 1};
+TEST_F(Quat_Fixture, OrderOfMultiplication)
+{
+    for(int i{0}; i != 100; ++i)
+    {
+        double ang1{randomDouble(-rt::PI, rt::PI)}, ang2{randomDouble(-rt::PI, rt::PI)};
+        Eigen::Vector3d v{0, 0, 1};
 
-//         Eigen::Vector3d v1 = v * ang1;
-//         Quatd q_1_from_orig(Quatd::fromAxisAngle(v1));
-//         Eigen::Matrix3d R_1_from_origin(Eigen::AngleAxisd(ang1, Eigen::Vector3d::UnitZ()));
+        Eigen::Vector3d v1 = v * ang1;
+        Quatd q_1_from_orig(Quatd::fromAxisAngle(v1));
+        Eigen::Matrix3d R_1_from_origin(Eigen::AngleAxisd(ang1, Eigen::Vector3d::UnitZ()));
 
-//         v = Eigen::Vector3d(1, 0, 0);
-//         Eigen::Vector3d v2 = v * ang2;
-//         Quatd q_2_from_1(Quatd::fromAxisAngle(v2));
-//         Eigen::Matrix3d R_2_from_1(Eigen::AngleAxisd(ang2, Eigen::Vector3d::UnitZ()));
+        v = Eigen::Vector3d(1, 0, 0);
+        Eigen::Vector3d v2 = v * ang2;
+        Quatd q_2_from_1(Quatd::fromAxisAngle(v2));
+        Eigen::Matrix3d R_2_from_1(Eigen::AngleAxisd(ang2, Eigen::Vector3d::UnitX()));
 
-//         Eigen::Matrix3d resR(R_1_from_origin * R_2_from_1);
-//         Quatd resq(q_1_from_orig * q_2_from_1);
+        Eigen::Matrix3d resR(R_1_from_origin * R_2_from_1);
+        Quatd resq(q_1_from_orig * q_2_from_1);
 
-//         Quatd resqR(Quatd::fromR(resR));
-//         EXPECT_TRUE(resq.q().isApprox(resqR.q()));
-//     }
-// }
+        Quatd resqR(Quatd::fromR(resR));
+        EXPECT_TRUE(resq.q().isApprox(resqR.q()));
+    }
+}
 
 // TEST_F(Quat_Fixture, QuaternionInverse)
 // {
