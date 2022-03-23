@@ -190,56 +190,55 @@ TEST_F(Quat_Fixture, OrderOfMultiplication)
     }
 }
 
-// TEST_F(Quat_Fixture, QuaternionInverse)
-// {
-//     for(Quatd q : transforms_)
-//     {
-//         Quatd q_inv(q.inverse());
-//         Quatd res(q * q_inv);
-//         Quatd I(Quatd::Identity());
+TEST_F(Quat_Fixture, QuaternionInverse)
+{
+    for(Quatd q : transforms_)
+    {
+        Quatd q_inv(q.inverse());
+        Quatd res(q * q_inv);
+        Quatd I(Quatd::Identity());
 
-//         EXPECT_TRUE(I.q().isApprox(res.q()));
-//     }
-// }
+        EXPECT_TRUE(I.q().isApprox(res.q()));
+    }
+}
 
-// TEST_F(Quat_Fixture, InverseInPlace)
-// {
-//     for(Quatd q: transforms_)
-//     {
-//         Quatd q_orig(q);
-//         q.inverse_();
+TEST_F(Quat_Fixture, InverseInPlace)
+{
+    for(Quatd q: transforms_)
+    {
+        Quatd q_orig(q);
+        q.inverse_();
 
-//         Quatd res(q * q_orig);
-//         Quatd I(Quatd::Identity());
+        Quatd res(q * q_orig);
+        Quatd I(Quatd::Identity());
 
-//         EXPECT_TRUE(I.q().isApprox(res.q()));
-//     }
-// }
+        EXPECT_TRUE(I.q().isApprox(res.q()));
+    }
+}
 
-// TEST_F(Quat_Fixture, ActiveRotationOfAVector)
-// {
-//     for(Quatd q : transforms_)
-//     {
-//         Eigen::Vector3d v(getRandomVector(-10, 10));
-//         Eigen::Vector3d vp(q.rota<double>(v));
-//         Eigen::Vector3d vp_true(q.R().transpose() * v);
+TEST_F(Quat_Fixture, ActiveRotationOfAVector)
+{
+    for(Quatd q : transforms_)
+    {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector3d vp(q.rota<double>(v));
+        Eigen::Vector3d vp_true(q.R() * v);
 
-//         EXPECT_TRUE(vp_true.isApprox(vp));
-//     }
-// }
+        EXPECT_TRUE(vp_true.isApprox(vp));
+    }
+}
 
-// TEST_F(Quat_Fixture, PassiveRotationOfAVector)
-// {
-//     for(Quatd q : transforms_)
-//     {
-//         Eigen::Vector3d v(getRandomVector(-10, 10));
-//         Eigen::Vector3d vp(q.rotp<double>(v));
-//         Eigen::Vector3d vp_true(q.R() * v);
+TEST_F(Quat_Fixture, PassiveRotationOfAVector)
+{
+    for(Quatd q : transforms_)
+    {
+        Eigen::Vector3d v(getRandomVector(-10, 10));
+        Eigen::Vector3d vp(q.rotp<double>(v));
+        Eigen::Vector3d vp_true(q.R().transpose() * v);
 
-//         EXPECT_TRUE(vp_true.isApprox(vp));
-
-//     }
-// }
+        EXPECT_TRUE(vp_true.isApprox(vp));
+    }
+}
 
 // TEST_F(Quat_Fixture, QuaternionExponentialMap)
 // {
