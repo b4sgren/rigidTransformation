@@ -2,8 +2,8 @@
 This is an example using the SO2 class. This class will find the mean of a
 bunch of rotation matrices in the plane
 */
-#include "so2.h"
-#include "utils.h"
+#include "rigidTransformation/so2.h"
+#include "rigidTransformation/utils.h"
 
 #include <ceres/ceres.h>
 #include <random>

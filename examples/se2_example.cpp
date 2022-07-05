@@ -2,8 +2,8 @@
 This is an example using the SE2 class. It will run a pose graph optimization
 routine using Ceres
 */
-#include "se2.h"
-#include "utils.h"
+#include "rigidTransformation/se2.h"
+#include "rigidTransformation/utils.h"
 
 #include <eigen3/Eigen/Dense>
 #include <ceres/ceres.h>
