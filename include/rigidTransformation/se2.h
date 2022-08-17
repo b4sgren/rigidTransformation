@@ -1,7 +1,7 @@
 #ifndef RIGIDTRANSFORMATION_SE2_H_
 #define RIGIDTRANSFORMATION_SE2_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <cmath>
 #include <iostream>
 #include <random>
@@ -62,6 +62,8 @@ class SE2 {
     SE2 operator*(const SE2<T2> &rhs) const {
         return SE2(T() * rhs.T());
     }
+
+    Mat3F matrix() const { return arr_; }
 
     Mat3F T() const { return arr_; }
 

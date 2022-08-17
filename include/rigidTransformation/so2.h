@@ -1,6 +1,6 @@
 #ifndef RIGIDTRANSFORMATION_SO2_H_
 #define RIGIDTRANSFORMATION_SO2_H_
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <iostream>
 #include <random>
 #include <cmath>
@@ -124,7 +124,7 @@ class SO2 {
         return SO2(ang);
     }
 
-    static SO2 identity() {
+    static SO2 Identity() {
         return SO2();
     }
 

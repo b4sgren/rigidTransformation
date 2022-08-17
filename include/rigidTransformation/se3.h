@@ -1,8 +1,8 @@
 #ifndef RIGIDTRANSFORMATION_SE3_H_
 #define RIGIDTRANSFORMATION_SE3_H_
 
+#include <eigen3/Eigen/Core>
 #include <cmath>
-#include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <random>
 
