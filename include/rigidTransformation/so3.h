@@ -1,7 +1,7 @@
 #ifndef RIGIDTRANSFORMATION_SO3_H_
 #define RIGIDTRANSFORMATION_SO3_H_
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <random>
 #include <iostream>
 #include <cmath>
