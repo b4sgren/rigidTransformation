@@ -107,18 +107,18 @@ class SE3 {
     }
 
     template <typename F2>
-    SE3 boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) {
+    SE3 boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
         return (*this) * SE3::Exp(tau);
     }
 
-    Vec6F boxminusr(const SE3 &T) { return SE3::Log(T.inverse() * (*this)); }
+    Vec6F boxminusr(const SE3 &T) const { return SE3::Log(T.inverse() * (*this)); }
 
     template <typename F2>
-    SE3 boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) {
+    SE3 boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
         return SE3::Exp(tau) * (*this);
     }
 
-    Vec6F boxminusl(const SE3 &T) { return SE3::Log((*this) * T.inverse()); }
+    Vec6F boxminusl(const SE3 &T) const { return SE3::Log((*this) * T.inverse()); }
 
     Eigen::Matrix<F, 6, 6> Adj() const {
         Mat3F rot = R();
