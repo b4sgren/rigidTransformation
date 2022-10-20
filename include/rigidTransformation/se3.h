@@ -29,8 +29,13 @@ class SE3 {
     explicit SE3(const F *data)
         : arr_(const_cast<F *>(data)), q_(const_cast<F *>(data + 3)) {}
 
+    // explicit SE3(const Eigen::Ref<const Vec7F> &T)
+    //     : arr_(data_), q_(data_ + 3) {
+    //     arr_ = T;
+    // }
+
     explicit SE3(const Eigen::Ref<const Vec7F> &T)
-        : arr_(data_), q_(data_ + 3) {
+        : arr_(const_cast<F *>(T.data())), q_(data_ + 3) {
         arr_ = T;
     }
 
@@ -111,14 +116,18 @@ class SE3 {
         return (*this) * SE3::Exp(tau);
     }
 
-    Vec6F boxminusr(const SE3 &T) const { return SE3::Log(T.inverse() * (*this)); }
+    Vec6F boxminusr(const SE3 &T) const {
+        return SE3::Log(T.inverse() * (*this));
+    }
 
     template <typename F2>
     SE3 boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
         return SE3::Exp(tau) * (*this);
     }
 
-    Vec6F boxminusl(const SE3 &T) const { return SE3::Log((*this) * T.inverse()); }
+    Vec6F boxminusl(const SE3 &T) const {
+        return SE3::Log((*this) * T.inverse());
+    }
 
     Eigen::Matrix<F, 6, 6> Adj() const {
         Mat3F rot = R();
