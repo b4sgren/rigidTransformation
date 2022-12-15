@@ -5,7 +5,7 @@
 #include <random>
 #include <vector>
 
-#include "se2.h"
+#include "rigidTransformation/se2.h"
 
 namespace rt = rigidTransform;
 using SE2d = rt::SE2<double>;

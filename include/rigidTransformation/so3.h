@@ -36,7 +36,8 @@ class SO3 {
         Rtheta << ct, 0, st, 0, 1, 0, -st, 0, ct;
         Rphi << 1, 0, 0, 0, cphi, -sphi, 0, sphi, cphi;
 
-        arr_ = Rpsi * Rtheta * Rphi;
+        // arr_ = Rpsi * Rtheta * Rphi;
+        arr_ = Rphi * Rtheta * Rpsi;
     }
 
     Mat3T R() const { return arr_; }
@@ -44,20 +45,24 @@ class SO3 {
     Vec3T euler() const {
         Mat3T R1 = R();
         T phi, theta, psi;
-        if (1 - abs(R1(2, 0)) > 1e-8) {
-            phi = atan2(R1(2, 1), R1(2, 2));
-            theta = asin(-R1(2, 0));
-            psi = atan2(R1(1, 0), R1(0, 0));
-        } else {
-            phi = 0.0;
-            if (R1(2, 0) > 0.0) {
-                theta = PI / 2.0;
-                psi = -atan2(-R1(1, 2), R1(1, 1));
-            } else {
-                theta = -PI / 2.0;
-                psi = atan2(-R1(1, 2), R1(1, 1));
-            }
-        }
+        // if (1 - abs(R1(2, 0)) > 1e-8) {
+        //     phi = atan2(R1(2, 1), R1(2, 2));
+        //     theta = asin(-R1(2, 0));
+        //     psi = atan2(R1(1, 0), R1(0, 0));
+        // } else {
+        //     phi = 0.0;
+        //     if (R1(2, 0) > 0.0) {
+        //         theta = PI / 2.0;
+        //         psi = -atan2(-R1(1, 2), R1(1, 1));
+        //     } else {
+        //         theta = -PI / 2.0;
+        //         psi = atan2(-R1(1, 2), R1(1, 1));
+        //     }
+        // }
+        phi = atan2(-R1(1, 2), R1(2, 2));
+        theta = asin(R1(0, 2));
+        psi = atan2(-R1(0, 1), R1(0, 0));
+
         return (Vec3T() << phi, theta, psi).finished();
     }
 
