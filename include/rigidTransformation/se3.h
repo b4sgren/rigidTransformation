@@ -35,7 +35,7 @@ class SE3 {
     // }
 
     explicit SE3(const Eigen::Ref<const Vec7F> &T)
-        : arr_(const_cast<F *>(T.data())), q_(data_ + 3) {
+        : arr_(const_cast<F *>(T.data())), q_(arr_.data() + 3) {
         arr_ = T;
     }
 
