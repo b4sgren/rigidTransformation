@@ -6,6 +6,8 @@
 #include <iostream>
 #include <random>
 
+// Remove so3 when I figure out the euler angle stuff
+#include "so3.h"
 #include "utils.h"
 
 namespace rigidTransform {
@@ -37,10 +39,10 @@ class Quaternion {
         T cps{cos(psi / 2.0)}, sps{sin(psi / 2.0)};
 
         Vec4T q{Vec4T::Zero()};
-        q(0) = cps * ct * cp + sps * st * sp;
-        q(1) = cps * ct * sp - sps * st * cp;
-        q(2) = cps * st * cp + sps * ct * sp;
-        q(3) = sps * ct * cp - cps * st * sp;
+        q(0) = cp * ct * cps - sp * st * sps;
+        q(1) = sp * ct * cps + cp * st * sps;
+        q(2) = cp * st * cps - sp * ct * sps;
+        q(3) = cp * ct * sps + sp * st * cps;
 
         if (q(0) < T(0.0)) q *= T(-1);
 
@@ -87,21 +89,10 @@ class Quaternion {
         return R;
     }
 
+    // Not a very efficient way to do it but it works
     Vec3T euler() const {
-        T t0 = 2 * (qw() * qx() + qy() * qz());
-        T t1 = 1 - 2 * (qx() * qx() + qy() * qy());
-        T phi = atan2(t0, t1);
-
-        T t2 = 2 * (qw() * qy() - qz() * qx());
-        int sign_t2 = (t2 > 0) ? 1 : ((t2 < 0) ? -1 : 0);
-        t2 = abs(t2) > 1.0 ? sign_t2 : t2;
-        T theta = asin(t2);
-
-        T t3 = 2 * (qw() * qz() + qx() * qy());
-        T t4 = 1 - 2 * (qy() * qy() + qz() * qz());
-        T psi = atan2(t3, t4);
-
-        return (Vec3T() << phi, theta, psi).finished();
+        SO3<T> Mat = SO3<T>::fromQuat(arr_);
+        return Mat.euler();
     }
 
     Mat3T Adj() const { return R(); }
