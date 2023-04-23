@@ -36,7 +36,6 @@ class SO3 {
         Rtheta << ct, 0, st, 0, 1, 0, -st, 0, ct;
         Rphi << 1, 0, 0, 0, cphi, -sphi, 0, sphi, cphi;
 
-        // arr_ = Rpsi * Rtheta * Rphi;
         arr_ = Rphi * Rtheta * Rpsi;
     }
 
