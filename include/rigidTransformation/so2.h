@@ -1,17 +1,17 @@
 #ifndef RIGIDTRANSFORMATION_SO2_H_
 #define RIGIDTRANSFORMATION_SO2_H_
 #include <Eigen/Dense>
+#include <cmath>
 #include <iostream>
 #include <random>
-#include <cmath>
 
 #include "utils.h"
 
 namespace rigidTransform {
 
-template<typename T>
+template <typename T>
 class SO2 {
- public:
+   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     using Mat2T = Eigen::Matrix<T, 2, 2>;
     using Vec2T = Eigen::Matrix<T, 2, 1>;
@@ -21,20 +21,20 @@ class SO2 {
         arr_.setIdentity();
     }
 
-    explicit SO2(const T *data) : arr_(const_cast<T*>(data)) {}
+    explicit SO2(const T *data) : arr_(const_cast<T *>(data)) {}
 
     explicit SO2(const Eigen::Ref<const Mat2T> &R) : arr_(data_) { arr_ = R; }
 
-    explicit SO2(const T& ang): arr_(data_) {
+    explicit SO2(const T &ang) : arr_(data_) {
         T ct{cos(ang)}, st{sin(ang)};
         arr_ << ct, -st, st, ct;
     }
 
-    SO2(const SO2 &R): arr_(data_) {
+    SO2(const SO2 &R) : arr_(data_) {
         arr_ = R.R();
     }
 
-    SO2& operator=(const SO2 &rhs) {
+    SO2 &operator=(const SO2 &rhs) {
         arr_ = rhs.R();
         return *this;
     }
@@ -47,7 +47,7 @@ class SO2 {
     }
 
     template <typename T2>
-    SO2& operator*=(const SO2<T2> &rhs) {
+    SO2 &operator*=(const SO2<T2> &rhs) {
         (*this) = (*this) * rhs;
         return (*this);
     }
@@ -76,12 +76,12 @@ class SO2 {
     }
 
     template <typename T2>
-    Vec2T rota(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
+    Vec2T rotate(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
         return R() * v;
     }
 
     template <typename T2>
-    Vec2T rotp(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
+    Vec2T inv_rotate(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
         return inverse().R() * v;
     }
 
@@ -115,7 +115,7 @@ class SO2 {
         return SO2::Log((*this) * R.inverse());
     }
 
-    T* data() {
+    T *data() {
         return arr_.data();
     }
 
@@ -136,15 +136,15 @@ class SO2 {
         return SO2(ang);
     }
 
- private:
+   private:
     T data_[4];
 
-//  public:
+    //  public:
     Eigen::Map<Mat2T> arr_;
 };
 
-template<typename T>
-std::ostream& operator <<(std::ostream &os, const SO2<T> &R) {
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const SO2<T> &R) {
     os << R.R();
     return os;
 }

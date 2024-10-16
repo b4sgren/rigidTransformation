@@ -147,7 +147,7 @@ TEST_F(SO2_Fixture, InverseInPlace) {
 TEST_F(SO2_Fixture, ActiveRotationOfAVector) {
     for (auto R : transforms_) {
         Eigen::Vector2d v{randVec2d(-10, 10)};
-        Eigen::Vector2d vp{R.rota<double>(v)};
+        Eigen::Vector2d vp{R.rotate<double>(v)};
 
         double ang{getAngle(R.R())};
         double ct{cos(ang)}, st{sin(ang)};
@@ -162,7 +162,7 @@ TEST_F(SO2_Fixture, ActiveRotationOfAVector) {
 TEST_F(SO2_Fixture, PassiveRotationOfAVector) {
     for (auto R : transforms_) {
         Eigen::Vector2d v{randVec2d(-10, 10)};
-        Eigen::Vector2d vp{R.rotp<double>(v)};
+        Eigen::Vector2d vp{R.inv_rotate<double>(v)};
 
         double ang{getAngle(R.R())};
         double ct{cos(ang)}, st{sin(ang)};
