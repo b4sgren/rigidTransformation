@@ -70,7 +70,7 @@ class SE3 {
     template <typename F2>
     SE3 operator*(const SE3<F2> &T2) const {
         Quaternion<F> q(q_ * T2.q_);
-        Vec3F trans(t() + q_.template rota<F2>(T2.t()));
+        Vec3F trans(t() + q_.template rotate<F2>(T2.t()));
         return SE3(q, trans);
     }
 
@@ -92,23 +92,23 @@ class SE3 {
 
     SE3 inverse() const {
         Quaternion<F> q_inv = q_.inverse();
-        Vec3F t_inv = -q_inv.template rota<F>(t());
+        Vec3F t_inv = -q_inv.template rotate<F>(t());
         return SE3(q_inv, t_inv);
     }
 
     void inverse_() {
         q_.inverse_();
-        arr_.template head<3>() = -q_.template rota<F>(t());
+        arr_.template head<3>() = -q_.template rotate<F>(t());
     }
 
     template <typename F2>
-    Vec3F transa(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
-        return t() + q_.template rota<F>(v);
+    Vec3F transform(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
+        return t() + q_.template rotate<F>(v);
     }
 
     template <typename F2>
-    Vec3F transp(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
-        return inverse().transa(v);
+    Vec3F inv_transform(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
+        return inverse().transform(v);
     }
 
     template <typename F2>

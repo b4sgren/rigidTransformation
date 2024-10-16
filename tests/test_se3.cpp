@@ -219,21 +219,21 @@ TEST_F(SE3_Fixture, InverseInPlace) {
     }
 }
 
-TEST_F(SE3_Fixture, ActiveTransformation) {
+TEST_F(SE3_Fixture, Transformation) {
     for (SE3d T : transforms_) {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(T.transa<double>(v));
-        Eigen::Vector3d vp_true(T.t() + T.quat().rota<double>(v));
+        Eigen::Vector3d vp(T.transform<double>(v));
+        Eigen::Vector3d vp_true(T.t() + T.quat().rotate<double>(v));
 
         EXPECT_TRUE(compareMat<3>(vp_true, vp));
     }
 }
 
-TEST_F(SE3_Fixture, PassiveTransformation) {
+TEST_F(SE3_Fixture, InverseTransformation) {
     for (SE3d T : transforms_) {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(T.transp<double>(v));
-        Eigen::Vector3d res(T.transa<double>(vp));
+        Eigen::Vector3d vp(T.inv_transform<double>(v));
+        Eigen::Vector3d res(T.transform<double>(vp));
 
         EXPECT_TRUE(compareMat<3>(v, res));
     }
@@ -336,7 +336,7 @@ TEST_F(SE3_Fixture, MatrixForm) {
         Eigen::Vector4d vh;
         vh << v, 1;
 
-        Eigen::Vector3d vp = T.transa<double>(v);
+        Eigen::Vector3d vp = T.transform<double>(v);
         Eigen::Vector4d vph = T.matrix() * vh;
         Eigen::Vector3d vp2 = vph.head<3>();
 

@@ -32,7 +32,9 @@ Eigen::Vector3d getRandomVector(double min, double max) {
 }
 
 void print(const Quatd &q1, const Quatd &q2) {
-    std::cout << "----------------\n" << q1 << "\n" << q2 << std::endl;
+    std::cout << "----------------\n"
+              << q1 << "\n"
+              << q2 << std::endl;
 }
 
 class Quat_Fixture : public ::testing::Test {
@@ -192,20 +194,20 @@ TEST_F(Quat_Fixture, InverseInPlace) {
     }
 }
 
-TEST_F(Quat_Fixture, ActiveRotationOfAVector) {
+TEST_F(Quat_Fixture, RotationOfAVector) {
     for (Quatd q : transforms_) {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(q.rota<double>(v));
+        Eigen::Vector3d vp(q.rotate<double>(v));
         Eigen::Vector3d vp_true(q.R() * v);
 
         EXPECT_TRUE(vp_true.isApprox(vp));
     }
 }
 
-TEST_F(Quat_Fixture, PassiveRotationOfAVector) {
+TEST_F(Quat_Fixture, InverseRotationOfAVector) {
     for (Quatd q : transforms_) {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(q.rotp<double>(v));
+        Eigen::Vector3d vp(q.inv_rotate<double>(v));
         Eigen::Vector3d vp_true(q.R().transpose() * v);
 
         EXPECT_TRUE(vp_true.isApprox(vp));

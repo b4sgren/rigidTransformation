@@ -110,7 +110,7 @@ class Quaternion {
     void inverse_() { arr_.template tail<3>() *= -1; }
 
     template <typename T2>
-    Vec3T rota(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
+    Vec3T rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
         T _qw = qw();
         Vec3T _qv = qv();
 
@@ -119,8 +119,8 @@ class Quaternion {
     }
 
     template <typename T2>
-    Vec3T rotp(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
-        return inverse().rota(v);
+    Vec3T inv_rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
+        return inverse().rotate(v);
     }
 
     template <typename T2>
