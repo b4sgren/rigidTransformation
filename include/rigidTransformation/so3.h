@@ -94,12 +94,12 @@ class SO3 {
     void inverse_() { arr_.transposeInPlace(); }
 
     template <typename T2>
-    Vec3T rota(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
+    Vec3T rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
         return R() * v;
     }
 
     template <typename T2>
-    Vec3T rotp(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
+    Vec3T inv_rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
         return inverse().R() * v;
     }
 
