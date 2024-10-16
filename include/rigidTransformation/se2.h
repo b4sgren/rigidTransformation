@@ -96,13 +96,13 @@ class SE2 {
     }
 
     template <typename F2>
-    Vec2F transa(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) {
+    Vec2F transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) {
         return R() * pt + t();
     }
 
     template <typename F2>
-    Vec2F transp(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) {
-        return inverse().template transa<F2>(pt);
+    Vec2F inv_transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) {
+        return inverse().template transform<F2>(pt);
     }
 
     template <typename F2 = F>
