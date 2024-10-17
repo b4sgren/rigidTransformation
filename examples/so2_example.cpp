@@ -2,55 +2,75 @@
 This is an example using the SO2 class. This class will find the mean of a
 bunch of rotation matrices in the plane
 */
-#include "rigidTransformation/so2.h"
-#include "rigidTransformation/utils.h"
-
+#include <ceres/autodiff_manifold.h>
 #include <ceres/ceres.h>
+
+#include <iostream>
 #include <random>
 #include <vector>
-#include <iostream>
+
+#include "rigidTransformation/so2.h"
+#include "rigidTransformation/utils.h"
 
 namespace rt = rigidTransform;
 
 class RotationResidual {
-
- public:
-    RotationResidual(const rt::SO2<double> &R, double cov) : R_{R},
-                                                             info_{1.0/cov} {}
+   public:
+    RotationResidual(const rt::SO2<double>& R, double cov) : R_{R},
+                                                             info_{1.0 / cov} {}
 
     template <typename T>
-    bool operator() (const T* const r, T* residuals) const {
+    bool operator()(const T* const r, T* residuals) const {
         rt::SO2<T> R(r);
         *residuals = info_ * rt::SO2<T>::Log(R.inverse() * R_);
         return true;
     }
 
- private:
+    static ceres::CostFunction* Create(rt::SO2<double>& R, double cov) {
+        return new ceres::AutoDiffCostFunction<RotationResidual, 1, 4>(new RotationResidual(R, cov));
+    }
+
+   private:
     rt::SO2<double> R_;
     double info_;
 };
-using RotationCost = ceres::AutoDiffCostFunction<RotationResidual, 1, 4>;
 
-class SO2_Parameterization {
- public:
+class SO2Manifold {
+   public:
     template <typename T>
-    bool operator() (const T* rot, const T* delta, T* R_plus_delta) const {
-        rt::SO2<T> R(rot), Rpd(R_plus_delta);
-        Rpd = R.boxplusr(*delta);
+    bool Plus(const T* rot, const T* delta, T* R_plus_delta) const {
+        rt::SO2<T> R(rot), res(R_plus_delta);
+        res = R.boxplusr(*delta);
 
         return true;
     }
+
+    template <typename T>
+    bool Minus(const T* rot1, const T* rot2, T* diff) const {
+        rt::SO2<T> R1(rot1), R2(rot2);
+        (*diff) = R1.boxminusr(R2);
+
+        return true;
+    }
+
+    static ceres::Manifold* Create() {
+        // <Manifold, GLobal size, Tangent size>
+        return new ceres::AutoDiffManifold<SO2Manifold, 4, 1>;
+    }
 };
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     // Establish the mean rotation
     rt::SO2<double> R = rt::SO2<double>::random();
     // Random Initial Guess
     rt::SO2<double> R_hat = rt::SO2<double>::random();
-    std::cout << "Initial Guess:\n" << R_hat << std::endl;
+    std::cout << "Initial Guess:\n"
+              << R_hat << std::endl;
+
+    ceres::Manifold* so2_manifold = SO2Manifold::Create();
 
     // Setup noise distribution
-    double theta_std{3 * rt::PI/180};
+    double theta_std{3 * rt::PI / 180};
     std::random_device rd;
     std::mt19937 engine(rd());
     std::normal_distribution<> generator(0, theta_std);
@@ -66,15 +86,11 @@ int main(int argc, char *argv[]) {
 
     // Add the reisduals
     for (rt::SO2<double> m : measurements) {
-        ceres::CostFunction *cost = new RotationCost(new
-                RotationResidual(m, theta_std*theta_std));
+        ceres::CostFunction* cost = RotationResidual::Create(m, theta_std * theta_std);
         problem.AddResidualBlock(cost, nullptr, R_hat.data());
     }
-
-    // Set the local parameterization
-    ceres::LocalParameterization *rot_param = new
-            ceres::AutoDiffLocalParameterization<SO2_Parameterization, 4, 1>();
-    problem.SetParameterization(R_hat.data(), rot_param);
+    // Set the manifold
+    problem.SetManifold(R_hat.data(), so2_manifold);
 
     // Set solver options
     ceres::Solver::Options options;
@@ -84,8 +100,10 @@ int main(int argc, char *argv[]) {
     ceres::Solver::Summary summary;
     ceres::Solve(options, &problem, &summary);
 
-    std::cout << "True Mean:\n" << R << std::endl;
-    std::cout << "Est Mean:\n" << R_hat << std::endl;
+    std::cout << "True Mean:\n"
+              << R << std::endl;
+    std::cout << "Est Mean:\n"
+              << R_hat << std::endl;
     std::cout << summary.FullReport() << std::endl;
 
     return 0;
