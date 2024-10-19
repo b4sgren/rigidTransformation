@@ -29,15 +29,15 @@ class SE3 {
     explicit SE3(const F *data)
         : arr_(const_cast<F *>(data)), q_(const_cast<F *>(data + 3)) {}
 
-    // explicit SE3(const Eigen::Ref<const Vec7F> &T)
-    //     : arr_(data_), q_(data_ + 3) {
-    //     arr_ = T;
-    // }
-
     explicit SE3(const Eigen::Ref<const Vec7F> &T)
-        : arr_(const_cast<F *>(T.data())), q_(arr_.data() + 3) {
+        : arr_(data_), q_(data_ + 3) {
         arr_ = T;
     }
+
+    // explicit SE3(const Eigen::Ref<const Vec7F> &T)
+    //     : arr_(const_cast<F *>(T.data())), q_(arr_.data() + 3) {
+    //     arr_ = T;
+    // }
 
     SE3(const F &r, const F &p, const F &y, const Eigen::Ref<const Vec3F> &t)
         : arr_(data_), q_(data_ + 3) {

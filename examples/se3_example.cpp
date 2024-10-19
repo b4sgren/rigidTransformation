@@ -98,8 +98,8 @@ void readData(const std::string &filename, std::vector<rt::SE3<double>> &poses,
             fin >> from_id >> dx >> dy >> dz >> qx >> qy >> qz >> qw;
             Eigen::Matrix<double, 7, 1> T;
             T << dx, dy, dz, qw, qx, qy, qz;
-            // poses.emplace_back(T);
-            poses.emplace_back(dx, dy, dz, qw, qx, qy, qz);
+            poses.emplace_back(T);
+            // poses.emplace_back(dx, dy, dz, qw, qx, qy, qz);
         } else {
             fin >> from_id >> to_id >> dx >> dy >> dz >> qx >> qy >> qz >> qw >>
                 cxx >> cxy >> cxz >> cxq1 >> cxq2 >> cxq3 >> cyy >> cyz >>
@@ -107,8 +107,8 @@ void readData(const std::string &filename, std::vector<rt::SE3<double>> &poses,
                 cq12 >> cq13 >> cq2 >> cq23 >> cq3;
             Eigen::Matrix<double, 7, 1> T;
             T << dx, dy, dz, qw, qx, qy, qz;
-            // rt::SE3<double> edge(T);  // Doesn't work.
-            rt::SE3<double> edge(dx, dy, dz, qw, qz, qy, qz);
+            rt::SE3<double> edge(T);  // Doesn't work.
+            // rt::SE3<double> edge(dx, dy, dz, qw, qz, qy, qz);
             Matrix6d info;
             info << cxx, cxy, cxz, cxq1, cxq2, cxq3, cxy, cyy, cyz, cyq1, cyq2,
                 cyq3, cxz, cyz, czz, czq1, czq2, czq3, cxq1, cyq1, czq1, cq1,
