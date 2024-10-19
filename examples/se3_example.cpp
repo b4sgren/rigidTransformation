@@ -43,22 +43,38 @@ class EdgeResidual {
         return true;
     }
 
+    static ceres::CostFunction *Create(rt::SE3<double> &T, Matrix6d &info) {
+        return new ceres::AutoDiffCostFunction<EdgeResidual, 6, 7, 7>(new EdgeResidual(T, info));
+    }
+
    private:
     rt::SE3<double> dT_;
     Matrix6d Xi_;
 };
-using EdgeCost = ceres::AutoDiffCostFunction<EdgeResidual, 6, 7, 7>;
 
-class SE3_Parameterization {
+class SE3Manifold {
    public:
     template <typename T>
-    bool operator()(const T *P, const T *delta, T *T_plus_delta) const {
-        rt::SE3<T> T_(P), Tpd(T_plus_delta);
-        Eigen::Map<const Eigen::Matrix<T, 6, 1>> xi(delta);
-        Tpd = T_.template boxplusr<T>(xi);
-        // std::cout << Tpd << std::endl;
-        // std::cout << "--------------" << std::endl;
+    bool Plus(const T *T1, const T *delta, T *T_plus_delta) const {
+        rt::SE3<T> T1_(T1), Tpd(T_plus_delta);
+        Eigen::Map<const Eigen::Matrix<T, 6, 1>> eta(delta);
+        Tpd = T1_.template boxplusr<T>(eta);
+
         return true;
+    }
+
+    template <typename T>
+    bool Minus(const T *T1, const T *T2, T *diff) const {
+        rt::SE3<T> T1_(T1), T2_(T2);
+        Eigen::Map<Eigen::Matrix<T, 6, 1>> eta(diff);
+        rt::SE3<T> dT = T1_.inverse() * T2_;
+        eta = rt::SE3<T>::Log(dT);
+
+        return true;
+    }
+
+    static ceres::Manifold *Create() {
+        return new ceres::AutoDiffManifold<SE3Manifold, 7, 6>;
     }
 };
 
@@ -82,7 +98,8 @@ void readData(const std::string &filename, std::vector<rt::SE3<double>> &poses,
             fin >> from_id >> dx >> dy >> dz >> qx >> qy >> qz >> qw;
             Eigen::Matrix<double, 7, 1> T;
             T << dx, dy, dz, qw, qx, qy, qz;
-            poses.emplace_back(T);
+            // poses.emplace_back(T);
+            poses.emplace_back(dx, dy, dz, qw, qx, qy, qz);
         } else {
             fin >> from_id >> to_id >> dx >> dy >> dz >> qx >> qy >> qz >> qw >>
                 cxx >> cxy >> cxz >> cxq1 >> cxq2 >> cxq3 >> cyy >> cyz >>
@@ -90,7 +107,8 @@ void readData(const std::string &filename, std::vector<rt::SE3<double>> &poses,
                 cq12 >> cq13 >> cq2 >> cq23 >> cq3;
             Eigen::Matrix<double, 7, 1> T;
             T << dx, dy, dz, qw, qx, qy, qz;
-            rt::SE3<double> edge(T);
+            // rt::SE3<double> edge(T);  // Doesn't work.
+            rt::SE3<double> edge(dx, dy, dz, qw, qz, qy, qz);
             Matrix6d info;
             info << cxx, cxy, cxz, cxq1, cxq2, cxq3, cxy, cyy, cyz, cyq1, cyq2,
                 cyq3, cxz, cyz, czz, czq1, czq2, czq3, cxq1, cyq1, czq1, cq1,
@@ -111,19 +129,17 @@ int main(int argc, char *argv[]) {
 
     // Setup the Problem
     ceres::Problem problem;
+    ceres::Manifold *se3_manifold = SE3Manifold::Create();
 
     for (EdgeData e : edges) {
-        ceres::CostFunction *cost =
-            new EdgeCost(new EdgeResidual(e.T_, e.info_));
+        ceres::CostFunction *cost = EdgeResidual::Create(e.T_, e.info_);
         problem.AddResidualBlock(cost, nullptr, poses[e.from_id_].data(),
                                  poses[e.to_id_].data());
+        problem.SetManifold(poses[e.from_id_].data(), se3_manifold);
+        problem.SetManifold(poses[e.to_id_].data(), se3_manifold);
     }
 
-    ceres::LocalParameterization *param =
-        new ceres::AutoDiffLocalParameterization<SE3_Parameterization, 7, 6>();
-    for (size_t i{0}; i != poses.size(); ++i) {
-        problem.SetParameterization(poses[i].data(), param);
-    }
+    problem.SetParameterBlockConstant(poses[0].data());
 
     // Solve the problem
     ceres::Solver::Options options;

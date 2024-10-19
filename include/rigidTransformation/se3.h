@@ -45,6 +45,16 @@ class SE3 {
         arr_.template tail<4>() = Quaternion<F>(r, p, y).q();
     }
 
+    SE3(const F &x, const F &y, const F &z, const F &qw, const F &qx, const F &qy, const F &qz) : arr_(data_), q_(data_ + 3) {
+        arr_(0) = x;
+        arr_(1) = y;
+        arr_(2) = z;
+        arr_(3) = qw;
+        arr_(4) = qx;
+        arr_(5) = qy;
+        arr_(6) = qz;
+    }
+
     SE3(const F &x, const F &y, const F &z, const F &r, const F &p, const F &h)
         : SE3(r, p, h, Vec3F(x, y, z)) {}
 
