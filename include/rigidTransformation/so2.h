@@ -41,14 +41,13 @@ class SO2 {
 
     template <typename T2>
     SO2 operator*(const SO2<T2> &rhs) const {
-        SO2 temp;
-        temp.arr_ = R() * rhs.R();
+        SO2 temp = this->template otimes<T, T2>(rhs);
         return temp;
     }
 
     template <typename T2>
     SO2 &operator*=(const SO2<T2> &rhs) {
-        (*this) = (*this) * rhs;
+        (*this) = this->template otimes<T, T2>(rhs);
         return (*this);
     }
 
@@ -93,26 +92,24 @@ class SO2 {
         return 1.0;
     }
 
-    template <typename T2>
-    SO2 boxplusr(const T2 &ang) const {
-        return (*this) * SO2::Exp(ang);
+    template <typename Tout = T, typename T2>
+    SO2<Tout> boxplusr(const T2 &ang) const {
+        return otimes<Tout, T2>(SO2::Exp(ang));
     }
 
-    // template <typename T2>
-    // T boxminusr(const SO2<T2> &R) const {
-    T boxminusr(const SO2 &R) const {
-        return SO2::Log(R.inverse() * (*this));
+    template <typename Tout = T, typename T2>
+    Tout boxminusr(const SO2<T2> &R) const {
+        return SO2<Tout>::Log(R.inverse().template otimes<Tout, T>(*this));
     }
 
-    template <typename T2>
-    SO2 boxplusl(const T2 &ang) const {
-        return SO2::Exp(ang) * (*this);
+    template <typename Tout = T, typename T2>
+    SO2<Tout> boxplusl(const T2 &ang) const {
+        return SO2::Exp(ang).template otimes<T, T>(*this);
     }
 
-    // template <typename T2>
-    // T boxminusl(const SO2<T2> &R) const {
-    T boxminusl(const SO2 &R) const {
-        return SO2::Log((*this) * R.inverse());
+    template <typename Tout = T, typename T2>
+    Tout boxminusl(const SO2<T2> &R) const {
+        return SO2<Tout>::Log(this->template otimes<Tout, T2>(R.inverse()));
     }
 
     T *data() {
@@ -136,10 +133,16 @@ class SO2 {
         return SO2(ang);
     }
 
+    template <typename Tout = T, typename T2>
+    SO2<Tout> otimes(const SO2<T2> &R) const {
+        SO2<Tout> res;
+        res.arr_ = arr_ * R.R();
+        return res;
+    }
+
    private:
     T data_[4];
 
-    //  public:
     Eigen::Map<Mat2T> arr_;
 };
 

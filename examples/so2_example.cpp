@@ -22,7 +22,7 @@ class RotationResidual {
     template <typename T>
     bool operator()(const T* const r, T* residuals) const {
         rt::SO2<T> R(r);
-        *residuals = info_ * rt::SO2<T>::Log(R.inverse() * R_);
+        *residuals = info_ * R_.boxminusr<T, T>(R);
         return true;
     }
 
@@ -48,7 +48,7 @@ class SO2Manifold {
     template <typename T>
     bool Minus(const T* rot1, const T* rot2, T* diff) const {
         rt::SO2<T> R1(rot1), R2(rot2);
-        (*diff) = R1.boxminusr(R2);
+        (*diff) = R1.template boxminusr<T, T>(R2);
 
         return true;
     }

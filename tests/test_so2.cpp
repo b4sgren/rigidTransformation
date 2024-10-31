@@ -227,7 +227,7 @@ TEST_F(SO2_Fixture, RightBoxPlus) {
 TEST_F(SO2_Fixture, RightBoxMinus) {
     for (auto R1 : transforms_) {
         rt::SO2<double> R2{rt::SO2<double>::random()};
-        double delta{R1.boxminusr(R2)};
+        double delta{R1.boxminusr<double, double>(R2)};
         rt::SO2<double> R{R2.boxplusr(delta)};
 
         EXPECT_TRUE(R1.R().isApprox(R.R()));
@@ -251,7 +251,7 @@ TEST_F(SO2_Fixture, LeftBoxPlus) {
 TEST_F(SO2_Fixture, LeftBoxMinus) {
     for (auto R : transforms_) {
         rt::SO2<double> R2{rt::SO2<double>::random()};
-        double delta{R.boxminusl(R2)};
+        double delta{R.boxminusl<double, double>(R2)};
         rt::SO2<double> R3{R2.boxplusl(delta)};
 
         EXPECT_TRUE(R.R().isApprox(R3.R(), 1e-8));
