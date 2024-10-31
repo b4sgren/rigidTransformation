@@ -25,7 +25,7 @@ class RotationResidual {
     bool operator()(const T* const r, T* residuals) const {
         rt::SO3<T> R(r);
         Eigen::Map<Eigen::Matrix<T, 3, 1>> res(residuals);
-        res = info_ * rt::SO3<T>::Log(R.inverse() * R_);
+        res = info_ * R_.boxminusr<T, T>(R);
         return true;
     }
 
@@ -44,7 +44,7 @@ class SO3Manifold {
     bool Plus(const T* rot, const T* delta, T* R_plus_delta) const {
         rt::SO3<T> R(rot), res(R_plus_delta);
         Eigen::Map<const Eigen::Matrix<T, 3, 1>> theta(delta);
-        res = R.template boxplusr<T>(theta);
+        res = R.template boxplusr<T, T>(theta);
 
         return true;
     }
@@ -53,7 +53,7 @@ class SO3Manifold {
     bool Minus(const T* rot1, const T* rot2, T* diff) const {
         rt::SO3<T> R1(rot1), R2(rot2);
         Eigen::Map<Eigen::Matrix<T, 3, 1>> theta(diff);
-        theta = R1.boxminusr(R2);
+        theta = R1.template boxminusr<T, T>(R2);
 
         return true;
     }
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     std::vector<rt::SO3<double>> measurements{};
     for (size_t i{0}; i < num_rotations; ++i) {
         theta << generator(engine), generator(engine), generator(engine);
-        measurements.emplace_back(R.boxplusr<double>(theta));
+        measurements.emplace_back(R.boxplusr<double, double>(theta));
     }
     rt::SO3<double> R_hat = measurements[0];
     std::cout << "Initial Guess:\n"

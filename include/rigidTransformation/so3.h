@@ -74,14 +74,12 @@ class SO3 {
 
     template <typename T2>
     SO3 operator*(const SO3<T2> &rhs) const {
-        SO3 temp;
-        temp.arr_ = R() * rhs.R();
-        return temp;
+        return this->template otimes<T, T2>(rhs);
     }
 
     template <typename T2>
     SO3 &operator*=(const SO3<T2> &rhs) {
-        (*this) = (*this) * rhs;
+        (*this) = this->template otimes<T, T2>(rhs);
         return (*this);
     }
 
@@ -103,23 +101,25 @@ class SO3 {
         return inverse().R() * v;
     }
 
-    template <typename T2>
-    SO3 boxplusr(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
-        return (*this) * SO3::Exp(v);
+    template <typename Tout = T, typename T2>
+    SO3<Tout> boxplusr(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
+        return this->template otimes<Tout, T2>(SO3<T2>::Exp(v));
     }
 
-    // template <typename T2>
-    // Vec3T boxminusr(const SO3<T2> &R2) {
-    Vec3T boxminusr(const SO3 &R2) { return SO3::Log(R2.inverse() * (*this)); }
-
-    template <typename T2>
-    SO3 boxplusl(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
-        return SO3::Exp(v) * (*this);
+    template <typename Tout = T, typename T2>
+    Eigen::Matrix<Tout, 3, 1> boxminusr(const SO3<T2> &R2) const {
+        return SO3<Tout>::Log(R2.inverse().template otimes<Tout, T>(*this));
     }
 
-    // template <typename T2>
-    // Vec3T boxminusl(const SO3<T2> &R2) {
-    Vec3T boxminusl(const SO3 &R2) { return SO3::Log((*this) * R2.inverse()); }
+    template <typename Tout = T, typename T2>
+    SO3<Tout> boxplusl(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
+        return SO3<T2>::Exp(v).template otimes<Tout, T>(*this);
+    }
+
+    template <typename Tout = T, typename T2>
+    Eigen::Matrix<Tout, 3, 1> boxminusl(const SO3<T2> &R2) const {
+        return SO3<Tout>::Log(this->template otimes<Tout, T2>(R2.inverse()));
+    }
 
     T *data() { return arr_.data(); }
 
@@ -199,6 +199,13 @@ class SO3 {
         Vec3T v;
         v << M(2, 1), M(0, 2), M(1, 0);
         return v;
+    }
+
+    template <typename Tout = T, typename T2>
+    SO3<Tout> otimes(const SO3<T2> &R) const {
+        SO3<Tout> res;
+        res.arr_ = arr_ * R.R();
+        return res;
     }
 
    private:
