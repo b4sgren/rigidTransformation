@@ -26,7 +26,8 @@ class RotationResidual {
     bool operator()(const T* const r, T* residuals) const {
         rt::Quaternion<T> q(r);
         Eigen::Map<Eigen::Matrix<T, 3, 1>> res(residuals);
-        res = info_ * rt::Quaternion<T>::Log(q.inverse() * q_);
+        // res = info_ * rt::Quaternion<T>::Log(q.inverse() * q_);
+        res = info_ * q_.template boxminusr<T, T>(q);
         return true;
     }
 
@@ -45,7 +46,7 @@ class QuatManifold {
     bool Plus(const T* rot, const T* delta, T* q_plus_delta) const {
         rt::Quaternion<T> q(rot), res(q_plus_delta);
         Eigen::Map<const Eigen::Matrix<T, 3, 1>> theta(delta);
-        res = q.template boxplusr<T>(theta);
+        res = q.template boxplusr<T, T>(theta);
 
         return true;
     }
@@ -54,7 +55,7 @@ class QuatManifold {
     bool Minus(const T* rot1, const T* rot2, T* diff) const {
         rt::Quaternion<T> q1(rot1), q2(rot2);
         Eigen::Map<Eigen::Matrix<T, 3, 1>> dq(diff);
-        dq = q1.boxminusr(q2);
+        dq = q1.template boxminusr<T, T>(q2);
 
         return true;
     }
@@ -84,7 +85,7 @@ int main(int argc, char* argv[]) {
     std::vector<rt::Quaternion<double>> measurements{};
     for (size_t i{0}; i < num_rotations; ++i) {
         theta << generator(engine), generator(engine), generator(engine);
-        measurements.emplace_back(q.boxplusr<double>(theta));
+        measurements.emplace_back(q.boxplusr<double, double>(theta));
     }
     rt::Quaternion<double> q_hat = measurements[0];
     std::cout << "Initial Guess:\n"

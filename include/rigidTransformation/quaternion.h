@@ -61,17 +61,13 @@ class Quaternion {
 
     template <typename T2>
     Quaternion operator*(const Quaternion<T2> &rhs) const {
-        Eigen::Matrix<T, 4, 4> Q;
-        Q(0, 0) = qw();
-        Q.template block<1, 3>(0, 1) = -qv().transpose();
-        Q.template block<3, 1>(1, 0) = qv();
-        Q.template block<3, 3>(1, 1) =
-            qw() * Mat3T::Identity() + skew3<T>(qv());
-        Vec4T qp = Q * rhs.q();
+        return this->template otimes<T, T2>(rhs);
+    }
 
-        if (qp(0) < T(0)) qp *= T(-1);
-
-        return Quaternion(qp);
+    template <typename T2>
+    Quaternion operator*=(const Quaternion<T2> &rhs) {
+        (*this) = this->template otimes<T, T2>(rhs);
+        return (*this);
     }
 
     Vec4T q() const { return arr_; }
@@ -123,22 +119,24 @@ class Quaternion {
         return inverse().rotate(v);
     }
 
-    template <typename T2>
-    Quaternion boxplusr(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
-        return (*this) * Quaternion::Exp(v);
+    template <typename Tout = T, typename T2>
+    Quaternion<Tout> boxplusr(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
+        return (*this).template otimes<Tout, T2>(Quaternion::Exp(v));
     }
 
-    Vec3T boxminusr(const Quaternion &q) {
-        return Quaternion::Log(q.inverse() * (*this));
+    template <typename Tout = T, typename T2>
+    Eigen::Matrix<Tout, 3, 1> boxminusr(const Quaternion<T2> &q) const {
+        return Quaternion<Tout>::Log(q.inverse().template otimes<Tout, T>(*this));
     }
 
-    template <typename T2>
-    Quaternion boxplusl(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
-        return Quaternion::Exp(v) * (*this);
+    template <typename Tout = T, typename T2>
+    Quaternion<Tout> boxplusl(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
+        return Quaternion::Exp(v).template otimes<Tout, T>(*this);
     }
 
-    Vec3T boxminusl(const Quaternion &q) {
-        return Quaternion::Log((*this) * q.inverse());
+    template <typename Tout = T, typename T2>
+    Eigen::Matrix<Tout, 3, 1> boxminusl(const Quaternion<T2> &q) const {
+        return Quaternion::Log((*this).template otimes<Tout, T2>(q.inverse()));
     }
 
     T *data() { return arr_.data(); }
@@ -220,6 +218,21 @@ class Quaternion {
         else
             logq = T(2) * _qv / _qw;
         return logq;
+    }
+
+    template <typename Tout = T, typename T2>
+    Quaternion<Tout> otimes(const Quaternion<T2> &R) const {
+        Eigen::Matrix<T, 4, 4> Q;
+        Q(0, 0) = qw();
+        Q.template block<1, 3>(0, 1) = -qv().transpose();
+        Q.template block<3, 1>(1, 0) = qv();
+        Q.template block<3, 3>(1, 1) =
+            qw() * Mat3T::Identity() + skew3<T>(qv());
+        Eigen::Matrix<Tout, 4, 1> qp = Q * R.q();
+
+        if (qp(0) < Tout(0)) qp *= Tout(-1);
+
+        return Quaternion<Tout>(qp);
     }
 
    private:
