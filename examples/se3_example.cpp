@@ -38,7 +38,7 @@ class EdgeResidual {
         Eigen::Map<Eigen::Matrix<T, 6, 1>> res(residuals);
 
         rt::SE3<T> dT = T1_.inverse() * T2_;
-        res = Xi_ * rt::SE3<T>::Log(dT.inverse() * dT_);
+        res = Xi_ * dT_.template boxminusr<T, T>(dT);
 
         return true;
     }
@@ -58,7 +58,7 @@ class SE3Manifold {
     bool Plus(const T *T1, const T *delta, T *T_plus_delta) const {
         rt::SE3<T> T1_(T1), Tpd(T_plus_delta);
         Eigen::Map<const Eigen::Matrix<T, 6, 1>> eta(delta);
-        Tpd = T1_.template boxplusr<T>(eta);
+        Tpd = T1_.template boxplusr<T, T>(eta);
 
         return true;
     }
@@ -67,8 +67,7 @@ class SE3Manifold {
     bool Minus(const T *T1, const T *T2, T *diff) const {
         rt::SE3<T> T1_(T1), T2_(T2);
         Eigen::Map<Eigen::Matrix<T, 6, 1>> eta(diff);
-        rt::SE3<T> dT = T1_.inverse() * T2_;
-        eta = rt::SE3<T>::Log(dT);
+        eta = T1_.template boxminusr<T, T>(T2_);
 
         return true;
     }

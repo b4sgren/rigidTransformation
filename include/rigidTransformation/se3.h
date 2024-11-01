@@ -79,9 +79,13 @@ class SE3 {
 
     template <typename F2>
     SE3 operator*(const SE3<F2> &T2) const {
-        Quaternion<F> q(q_ * T2.q_);
-        Vec3F trans(t() + q_.template rotate<F2>(T2.t()));
-        return SE3(q, trans);
+        return this->template otimes<F, F2>(T2);
+    }
+
+    template <typename F2>
+    SE3 operator*=(const SE3<F2> &T2) const {
+        (*this) = this->template otimes<F, F2>(T2);
+        return (*this);
     }
 
     Vec7F T() const { return arr_; }
@@ -121,22 +125,24 @@ class SE3 {
         return inverse().transform(v);
     }
 
-    template <typename F2>
-    SE3 boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
-        return (*this) * SE3::Exp(tau);
+    template <typename Fout = F, typename F2>
+    SE3<Fout> boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
+        return this->template otimes<Fout, F2>(SE3<F2>::Exp(tau));
     }
 
-    Vec6F boxminusr(const SE3 &T) const {
-        return SE3::Log(T.inverse() * (*this));
+    template <typename Fout = F, typename F2>
+    Eigen::Matrix<Fout, 6, 1> boxminusr(const SE3<F2> &T) const {
+        return SE3<Fout>::Log(T.inverse().template otimes<Fout, F>(*this));
     }
 
-    template <typename F2>
-    SE3 boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
-        return SE3::Exp(tau) * (*this);
+    template <typename Fout = F, typename F2>
+    SE3<Fout> boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
+        return SE3::Exp(tau).template otimes<Fout, F>(*this);
     }
 
-    Vec6F boxminusl(const SE3 &T) const {
-        return SE3::Log((*this) * T.inverse());
+    template <typename Fout = F, typename F2>
+    Eigen::Matrix<Fout, 6, 1> boxminusl(const SE3<F2> &T) const {
+        return SE3::Log(this->template otimes<Fout, F2>(T.inverse()));
     }
 
     Eigen::Matrix<F, 6, 6> Adj() const {
@@ -213,6 +219,13 @@ class SE3 {
         Vec6F logT;
         logT << rho, logq;
         return logT;
+    }
+
+    template <typename Fout = F, typename F2>
+    SE3<Fout> otimes(const SE3<F2> &T2) const {
+        Quaternion<Fout> q(q_.template otimes<Fout, F2>(T2.q_));
+        Eigen::Matrix<Fout, 3, 1> trans(t() + q_.template rotate<F2>(T2.t()));
+        return SE3<Fout>(q, trans);
     }
 
    private:
