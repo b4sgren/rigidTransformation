@@ -216,7 +216,7 @@ TEST_F(SE2_Fixture, Boxplusr) {
         Eigen::Vector3d tau;
         tau << rho, theta;
 
-        SE2d T2(T.boxplusr<double>(tau));
+        SE2d T2(T.boxplusr<double, double>(tau));
         SE2d T_true(T * SE2d::Exp(tau));
 
         EXPECT_TRUE(compareMat(T_true.T(), T2.T()));
@@ -226,8 +226,8 @@ TEST_F(SE2_Fixture, Boxplusr) {
 TEST_F(SE2_Fixture, Boxminusr) {
     for (SE2d T : transforms_) {
         SE2d T2{SE2d::random()};
-        Eigen::Vector3d diff(T.boxminusr(T2));
-        SE2d res(T2.boxplusr<double>(diff));
+        Eigen::Vector3d diff(T.boxminusr<double, double>(T2));
+        SE2d res(T2.boxplusr<double, double>(diff));
 
         EXPECT_TRUE(compareMat(res.T(), T.T()));
     }
@@ -240,7 +240,7 @@ TEST_F(SE2_Fixture, Boxplusl) {
         Eigen::Vector3d tau;
         tau << rho, theta;
 
-        SE2d T2(T.boxplusl<double>(tau));
+        SE2d T2(T.boxplusl<double, double>(tau));
         SE2d T_true(SE2d::Exp(tau) * T);
 
         EXPECT_TRUE(compareMat(T_true.T(), T2.T()));
@@ -250,8 +250,8 @@ TEST_F(SE2_Fixture, Boxplusl) {
 TEST_F(SE2_Fixture, Boxminusl) {
     for (SE2d T : transforms_) {
         SE2d T2{SE2d::random()};
-        Eigen::Vector3d diff(T.boxminusl(T2));
-        SE2d res(T2.boxplusl<double>(diff));
+        Eigen::Vector3d diff(T.boxminusl<double, double>(T2));
+        SE2d res(T2.boxplusl<double, double>(diff));
 
         EXPECT_TRUE(compareMat(res.T(), T.T()));
     }
@@ -264,8 +264,8 @@ TEST_F(SE2_Fixture, Adjoint) {
         Eigen::Vector3d tau;
         tau << rho, theta;
 
-        SE2d T2 = T.boxplusr<double>(tau);
-        SE2d T3 = T.boxplusl<double>(T.Adj() * tau);
+        SE2d T2 = T.boxplusr<double, double>(tau);
+        SE2d T3 = T.boxplusl<double, double>(T.Adj() * tau);
 
         EXPECT_TRUE(compareMat(T2.T(), T3.T()));
     }

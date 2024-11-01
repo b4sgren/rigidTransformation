@@ -58,9 +58,9 @@ class SE2 {
         return (*this);
     }
 
-    template <typename T2>
-    SE2 operator*(const SE2<T2> &rhs) const {
-        return SE2(T() * rhs.T());
+    template <typename F2>
+    SE2 operator*(const SE2<F2> &rhs) const {
+        return this->template otimes<F, F2>(rhs);
     }
 
     Mat3F T() const { return arr_; }
@@ -96,28 +96,34 @@ class SE2 {
     }
 
     template <typename F2>
-    Vec2F transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) {
+    Vec2F transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) const {
         return R() * pt + t();
     }
 
     template <typename F2>
-    Vec2F inv_transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) {
+    Vec2F inv_transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) const {
         return inverse().template transform<F2>(pt);
     }
 
-    template <typename F2 = F>
-    SE2 boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &tau) {
-        return (*this) * SE2::Exp(tau);
+    template <typename Fout = F, typename F2>
+    SE2<Fout> boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &tau) const {
+        return this->template otimes<Fout, F2>(SE2::Exp(tau));
     }
 
-    Vec3F boxminusr(const SE2 &T) { return SE2::Log(T.inverse() * (*this)); }
-
-    template <typename F2 = F>
-    SE2 boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &tau) {
-        return SE2::Exp(tau) * (*this);
+    template <typename Fout = F, typename F2>
+    Eigen::Matrix<Fout, 3, 1> boxminusr(const SE2<F2> &T) const {
+        return SE2<Fout>::Log(T.inverse().template otimes<Fout, F>(*this));
     }
 
-    Vec3F boxminusl(const SE2 &T) { return SE2::Log((*this) * T.inverse()); }
+    template <typename Fout = F, typename F2>
+    SE2<Fout> boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &tau) const {
+        return SE2<F2>::Exp(tau).template otimes<Fout, F>(*this);
+    }
+
+    template <typename Fout = F, typename F2>
+    Eigen::Matrix<Fout, 3, 1> boxminusl(const SE2<F2> &T) const {
+        return SE2<Fout>::Log(this->template otimes<Fout, F2>(T.inverse()));
+    }
 
     F *data() { return arr_.data(); }
 
@@ -174,6 +180,11 @@ class SE2 {
         V << A, -B, B, A;
         Vec2F t(V * rho);
         return SE2(t, theta);
+    }
+
+    template <typename Fout = F, typename F2>
+    SE2<Fout> otimes(const SE2<F2> &rhs) const {
+        return SE2<Fout>(this->T() * rhs.T());
     }
 
    private:
