@@ -166,7 +166,7 @@ TEST_F(SE2_Fixture, InverseInPlace) {
 TEST_F(SE2_Fixture, Transformation) {
     for (SE2d T : transforms_) {
         Eigen::Vector2d pt(getRandomVector(-10, 10));
-        Eigen::Vector2d pt2(T.transform<double>(pt));
+        Eigen::Vector2d pt2(T.transform<double, double>(pt));
 
         Eigen::Vector3d pth;
         pth << pt, 1;
@@ -179,7 +179,7 @@ TEST_F(SE2_Fixture, Transformation) {
 TEST_F(SE2_Fixture, InverseTransformation) {
     for (SE2d T : transforms_) {
         Eigen::Vector2d pt(getRandomVector(-10, 10));
-        Eigen::Vector2d pt2(T.inv_transform<double>(pt));
+        Eigen::Vector2d pt2(T.inv_transform<double, double>(pt));
 
         Eigen::Vector3d pth;
         pth << pt, 1;

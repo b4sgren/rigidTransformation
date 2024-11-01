@@ -105,8 +105,8 @@ class Quaternion {
 
     void inverse_() { arr_.template tail<3>() *= -1; }
 
-    template <typename T2>
-    Vec3T rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
+    template <typename Tout = T, typename T2>
+    Eigen::Matrix<Tout, 3, 1> rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
         T _qw = qw();
         Vec3T _qv = qv();
 
@@ -114,9 +114,9 @@ class Quaternion {
         return v - _qw * t + skew3<T>(t) * _qv;
     }
 
-    template <typename T2>
-    Vec3T inv_rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
-        return inverse().rotate(v);
+    template <typename Tout = T, typename T2>
+    Eigen::Matrix<Tout, 3, 1> inv_rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
+        return inverse().template rotate<Tout, T2>(v);
     }
 
     template <typename Tout = T, typename T2>

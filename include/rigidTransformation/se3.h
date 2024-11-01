@@ -106,23 +106,23 @@ class SE3 {
 
     SE3 inverse() const {
         Quaternion<F> q_inv = q_.inverse();
-        Vec3F t_inv = -q_inv.template rotate<F>(t());
+        Vec3F t_inv = -q_inv.template rotate<F, F>(t());
         return SE3(q_inv, t_inv);
     }
 
     void inverse_() {
         q_.inverse_();
-        arr_.template head<3>() = -q_.template rotate<F>(t());
+        arr_.template head<3>() = -q_.template rotate<F, F>(t());
     }
 
-    template <typename F2>
-    Vec3F transform(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
-        return t() + q_.template rotate<F>(v);
+    template <typename Fout = F, typename F2>
+    Eigen::Matrix<Fout, 3, 1> transform(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
+        return t() + q_.template rotate<Fout, F2>(v);
     }
 
-    template <typename F2>
-    Vec3F inv_transform(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
-        return inverse().transform(v);
+    template <typename Fout = F, typename F2>
+    Eigen::Matrix<Fout, 3, 1> inv_transform(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
+        return inverse().template transform<Fout, F2>(v);
     }
 
     template <typename Fout = F, typename F2>
@@ -224,7 +224,7 @@ class SE3 {
     template <typename Fout = F, typename F2>
     SE3<Fout> otimes(const SE3<F2> &T2) const {
         Quaternion<Fout> q(q_.template otimes<Fout, F2>(T2.q_));
-        Eigen::Matrix<Fout, 3, 1> trans(t() + q_.template rotate<F2>(T2.t()));
+        Eigen::Matrix<Fout, 3, 1> trans(t() + q_.template rotate<Fout, F2>(T2.t()));
         return SE3<Fout>(q, trans);
     }
 

@@ -74,13 +74,13 @@ class SO2 {
         arr_.transposeInPlace();
     }
 
-    template <typename T2>
-    Vec2T rotate(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
+    template <typename Tout = T, typename T2>
+    Eigen::Matrix<Tout, 2, 1> rotate(const Eigen::Ref<const Eigen::Matrix<T2, 2, 1>> &v) const {
         return R() * v;
     }
 
-    template <typename T2>
-    Vec2T inv_rotate(const Eigen::Ref<const Eigen::Matrix<T, 2, 1>> &v) const {
+    template <typename Tout = T, typename T2>
+    Eigen::Matrix<Tout, 2, 1> inv_rotate(const Eigen::Ref<const Eigen::Matrix<T2, 2, 1>> &v) const {
         return inverse().R() * v;
     }
 

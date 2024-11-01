@@ -95,14 +95,14 @@ class SE2 {
         arr_.template block<2, 1>(0, 2) = -R() * t();
     }
 
-    template <typename F2>
-    Vec2F transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) const {
+    template <typename Fout = F, typename F2>
+    Eigen::Matrix<Fout, 2, 1> transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) const {
         return R() * pt + t();
     }
 
-    template <typename F2>
-    Vec2F inv_transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) const {
-        return inverse().template transform<F2>(pt);
+    template <typename Fout = F, typename F2>
+    Eigen::Matrix<Fout, 2, 1> inv_transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) const {
+        return inverse().template transform<Fout, F2>(pt);
     }
 
     template <typename Fout = F, typename F2>

@@ -197,7 +197,7 @@ TEST_F(Quat_Fixture, InverseInPlace) {
 TEST_F(Quat_Fixture, RotationOfAVector) {
     for (Quatd q : transforms_) {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(q.rotate<double>(v));
+        Eigen::Vector3d vp(q.rotate<double, double>(v));
         Eigen::Vector3d vp_true(q.R() * v);
 
         EXPECT_TRUE(vp_true.isApprox(vp));
@@ -207,7 +207,7 @@ TEST_F(Quat_Fixture, RotationOfAVector) {
 TEST_F(Quat_Fixture, InverseRotationOfAVector) {
     for (Quatd q : transforms_) {
         Eigen::Vector3d v(getRandomVector(-10, 10));
-        Eigen::Vector3d vp(q.inv_rotate<double>(v));
+        Eigen::Vector3d vp(q.inv_rotate<double, double>(v));
         Eigen::Vector3d vp_true(q.R().transpose() * v);
 
         EXPECT_TRUE(vp_true.isApprox(vp));

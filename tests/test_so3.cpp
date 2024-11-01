@@ -170,7 +170,7 @@ TEST_F(SO3_Fixture, TestInPlaceInverse) {
 TEST_F(SO3_Fixture, TestRotation) {
     for (auto R : transforms_) {
         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-        Eigen::Vector3d vp{R.rotate<double>(v)};
+        Eigen::Vector3d vp{R.rotate<double, double>(v)};
         Eigen::Vector3d vp_true{R.R() * v};
 
         EXPECT_TRUE(vp_true.isApprox(vp));
@@ -180,8 +180,8 @@ TEST_F(SO3_Fixture, TestRotation) {
 TEST_F(SO3_Fixture, TestInverseRotation) {
     for (auto R : transforms_) {
         Eigen::Vector3d v{getRandomVector(-10.0, 10.0)};
-        Eigen::Vector3d vp{R.inv_rotate<double>(v)};
-        Eigen::Vector3d vpp{R.rotate<double>(vp)};
+        Eigen::Vector3d vp{R.inv_rotate<double, double>(v)};
+        Eigen::Vector3d vpp{R.rotate<double, double>(vp)};
 
         EXPECT_TRUE(v.isApprox(vpp));
     }
