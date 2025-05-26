@@ -91,34 +91,34 @@ class SO3 {
 
     void inverse_() { arr_.transposeInPlace(); }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 3, 1> rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
         return R() * v;
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 3, 1> inv_rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
         return inverse().R() * v;
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     SO3<Tout> boxplusr(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
-        return this->template otimes<Tout, T2>(SO3<T2>::Exp(v));
+        return this->template otimes<T2, Tout>(SO3<T2>::Exp(v));
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 3, 1> boxminusr(const SO3<T2> &R2) const {
-        return SO3<Tout>::Log(R2.inverse().template otimes<Tout, T>(*this));
+        return SO3<Tout>::Log(R2.inverse().template otimes<T, Tout>(*this));
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     SO3<Tout> boxplusl(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) {
-        return SO3<T2>::Exp(v).template otimes<Tout, T>(*this);
+        return SO3<T2>::Exp(v).template otimes<T, Tout>(*this);
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 3, 1> boxminusl(const SO3<T2> &R2) const {
-        return SO3<Tout>::Log(this->template otimes<Tout, T2>(R2.inverse()));
+        return SO3<Tout>::Log(this->template otimes<T2, Tout>(R2.inverse()));
     }
 
     T *data() { return arr_.data(); }
@@ -201,7 +201,7 @@ class SO3 {
         return v;
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     SO3<Tout> otimes(const SO3<T2> &R) const {
         SO3<Tout> res;
         res.arr_ = arr_ * R.R();

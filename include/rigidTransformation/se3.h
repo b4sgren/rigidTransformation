@@ -117,32 +117,32 @@ class SE3 {
 
     template <typename Fout = F, typename F2>
     Eigen::Matrix<Fout, 3, 1> transform(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
-        return t() + q_.template rotate<Fout, F2>(v);
+        return t() + q_.template rotate<F2, Fout>(v);
     }
 
     template <typename Fout = F, typename F2>
     Eigen::Matrix<Fout, 3, 1> inv_transform(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &v) const {
-        return inverse().template transform<Fout, F2>(v);
+        return inverse().template transform<F2, Fout>(v);
     }
 
     template <typename Fout = F, typename F2>
     SE3<Fout> boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
-        return this->template otimes<Fout, F2>(SE3<F2>::Exp(tau));
+        return this->template otimes<F2, Fout>(SE3<F2>::Exp(tau));
     }
 
     template <typename Fout = F, typename F2>
     Eigen::Matrix<Fout, 6, 1> boxminusr(const SE3<F2> &T) const {
-        return SE3<Fout>::Log(T.inverse().template otimes<Fout, F>(*this));
+        return SE3<Fout>::Log(T.inverse().template otimes<F, Fout>(*this));
     }
 
     template <typename Fout = F, typename F2>
     SE3<Fout> boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 6, 1>> &tau) const {
-        return SE3::Exp(tau).template otimes<Fout, F>(*this);
+        return SE3::Exp(tau).template otimes<F, Fout>(*this);
     }
 
     template <typename Fout = F, typename F2>
     Eigen::Matrix<Fout, 6, 1> boxminusl(const SE3<F2> &T) const {
-        return SE3::Log(this->template otimes<Fout, F2>(T.inverse()));
+        return SE3::Log(this->template otimes<F2, Fout>(T.inverse()));
     }
 
     Eigen::Matrix<F, 6, 6> Adj() const {
@@ -223,8 +223,8 @@ class SE3 {
 
     template <typename Fout = F, typename F2>
     SE3<Fout> otimes(const SE3<F2> &T2) const {
-        Quaternion<Fout> q(q_.template otimes<Fout, F2>(T2.q_));
-        Eigen::Matrix<Fout, 3, 1> trans(t() + q_.template rotate<Fout, F2>(T2.t()));
+        Quaternion<Fout> q(q_.template otimes<F2, Fout>(T2.q_));
+        Eigen::Matrix<Fout, 3, 1> trans(t() + q_.template rotate<F2, Fout>(T2.t()));
         return SE3<Fout>(q, trans);
     }
 

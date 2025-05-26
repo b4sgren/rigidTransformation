@@ -105,7 +105,7 @@ class Quaternion {
 
     void inverse_() { arr_.template tail<3>() *= -1; }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 3, 1> rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
         T _qw = qw();
         Vec3T _qv = qv();
@@ -114,29 +114,29 @@ class Quaternion {
         return v - _qw * t + skew3<T>(t) * _qv;
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 3, 1> inv_rotate(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
-        return inverse().template rotate<Tout, T2>(v);
+        return inverse().template rotate<T2, Tout>(v);
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Quaternion<Tout> boxplusr(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
-        return (*this).template otimes<Tout, T2>(Quaternion::Exp(v));
+        return (*this).template otimes<T2, Tout>(Quaternion::Exp(v));
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 3, 1> boxminusr(const Quaternion<T2> &q) const {
-        return Quaternion<Tout>::Log(q.inverse().template otimes<Tout, T>(*this));
+        return Quaternion<Tout>::Log(q.inverse().template otimes<T, Tout>(*this));
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Quaternion<Tout> boxplusl(const Eigen::Ref<const Eigen::Matrix<T2, 3, 1>> &v) const {
-        return Quaternion::Exp(v).template otimes<Tout, T>(*this);
+        return Quaternion::Exp(v).template otimes<T, Tout>(*this);
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 3, 1> boxminusl(const Quaternion<T2> &q) const {
-        return Quaternion::Log((*this).template otimes<Tout, T2>(q.inverse()));
+        return Quaternion::Log((*this).template otimes<T2, Tout>(q.inverse()));
     }
 
     T *data() { return arr_.data(); }
@@ -220,7 +220,7 @@ class Quaternion {
         return logq;
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Quaternion<Tout> otimes(const Quaternion<T2> &R) const {
         Eigen::Matrix<T, 4, 4> Q;
         Q(0, 0) = qw();

@@ -74,12 +74,12 @@ class SO2 {
         arr_.transposeInPlace();
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 2, 1> rotate(const Eigen::Ref<const Eigen::Matrix<T2, 2, 1>> &v) const {
         return R() * v;
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Eigen::Matrix<Tout, 2, 1> inv_rotate(const Eigen::Ref<const Eigen::Matrix<T2, 2, 1>> &v) const {
         return inverse().R() * v;
     }
@@ -92,24 +92,24 @@ class SO2 {
         return 1.0;
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     SO2<Tout> boxplusr(const T2 &ang) const {
-        return otimes<Tout, T2>(SO2::Exp(ang));
+        return otimes<T2, Tout>(SO2::Exp(ang));
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Tout boxminusr(const SO2<T2> &R) const {
-        return SO2<Tout>::Log(R.inverse().template otimes<Tout, T>(*this));
+        return SO2<Tout>::Log(R.inverse().template otimes<T, Tout>(*this));
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     SO2<Tout> boxplusl(const T2 &ang) const {
         return SO2::Exp(ang).template otimes<T, T>(*this);
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     Tout boxminusl(const SO2<T2> &R) const {
-        return SO2<Tout>::Log(this->template otimes<Tout, T2>(R.inverse()));
+        return SO2<Tout>::Log(this->template otimes<T2, Tout>(R.inverse()));
     }
 
     T *data() {
@@ -133,7 +133,7 @@ class SO2 {
         return SO2(ang);
     }
 
-    template <typename Tout = T, typename T2>
+    template <typename T2, typename Tout = T>
     SO2<Tout> otimes(const SO2<T2> &R) const {
         SO2<Tout> res;
         res.arr_ = arr_ * R.R();
