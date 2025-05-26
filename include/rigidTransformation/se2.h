@@ -95,32 +95,32 @@ class SE2 {
         arr_.template block<2, 1>(0, 2) = -R() * t();
     }
 
-    template <typename Fout = F, typename F2>
+    template <typename F2, typename Fout = F>
     Eigen::Matrix<Fout, 2, 1> transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) const {
         return R() * pt + t();
     }
 
-    template <typename Fout = F, typename F2>
+    template <typename F2, typename Fout = F>
     Eigen::Matrix<Fout, 2, 1> inv_transform(const Eigen::Ref<const Eigen::Matrix<F, 2, 1>> &pt) const {
         return inverse().template transform<F2, Fout>(pt);
     }
 
-    template <typename Fout = F, typename F2>
+    template <typename F2, typename Fout = F>
     SE2<Fout> boxplusr(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &tau) const {
         return this->template otimes<F2, Fout>(SE2::Exp(tau));
     }
 
-    template <typename Fout = F, typename F2>
+    template <typename F2, typename Fout = F>
     Eigen::Matrix<Fout, 3, 1> boxminusr(const SE2<F2> &T) const {
         return SE2<Fout>::Log(T.inverse().template otimes<F, Fout>(*this));
     }
 
-    template <typename Fout = F, typename F2>
+    template <typename F2, typename Fout = F>
     SE2<Fout> boxplusl(const Eigen::Ref<const Eigen::Matrix<F2, 3, 1>> &tau) const {
         return SE2<F2>::Exp(tau).template otimes<F, Fout>(*this);
     }
 
-    template <typename Fout = F, typename F2>
+    template <typename F2, typename Fout = F>
     Eigen::Matrix<Fout, 3, 1> boxminusl(const SE2<F2> &T) const {
         return SE2<Fout>::Log(this->template otimes<F2, Fout>(T.inverse()));
     }
@@ -182,7 +182,7 @@ class SE2 {
         return SE2(t, theta);
     }
 
-    template <typename Fout = F, typename F2>
+    template <typename F2, typename Fout = F>
     SE2<Fout> otimes(const SE2<F2> &rhs) const {
         return SE2<Fout>(this->T() * rhs.T());
     }
